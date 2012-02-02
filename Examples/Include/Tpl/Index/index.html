@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>ThinkPHP: include 带参数</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+        <load href="__PUBLIC__/Css/style.css" />
+    </head>
+    <body>
+        <div id="test" style="padding:2px 15px;">
+            <include file='Public:block' title='这是体育新闻' list='sportList' />
+            <br/>
+            <include file='Public:block' title='这是娱乐新闻' list='entList' />
+        </div>
+        <div style="padding:2px 15px;">
+            <h2>模板写法</h2>
+            &nbsp;在index.html模板中插入Public/block.html模板
+            <pre>
+<literal>
+<?php
+  echo htmlspecialchars("<include file='Public:block' title='这是体育新闻' list='sportList' />
+<br/>
+<include file='Public:block' title='这是娱乐新闻' list='entList' />");
+?>
+ <br/>
+ </literal>
+ Public/block.html模板写法
+ <php>
+   echo htmlspecialchars(file_get_contents(TMPL_PATH.'/Public/block.html'));
+ </php>
+            </pre>
+        </div>
+        <p>3.0仍然支持include 时传自定义参数，方便包含复杂的模板，在显示时传参控制</p>
+        <table>
+            <tr>
+                <td></td>
+                <td><hr/> 示例源码<br/>控制器IndexAction类<br/><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php><br/>模型FormModel类<br/><php>highlight_file(LIB_PATH.'Model/FormModel.class.php');</php></td>
+            </tr>
+        </table>
+    </body>
+</html>

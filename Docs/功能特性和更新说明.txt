@@ -1,0 +1,245 @@
+﻿3.0 功能特性和更新说明
+
+新版特性概述：
+全新的CBD（核心+行为+驱动）架构模式，打造DIY框架和类AOP编程体验；
+全新改进的项目编译机制，更快更方便，并且支持编译文件直接作为入口载入，并且支持常量外部载入，利于产品发布；
+调试模式更易用，可以设置不同的项目状态 并自动加载对应不同的项目配置文件，并且详细记录行为执行日志；
+路由的增强更加灵活 支持新的规则路由，改进正则路由，并改进定义方式；
+内部导入机制和自动加载机制优化 全面提升import A D R等方法的性能；
+URL模式简化，兼容URL地址优先判断；
+查询语言进一步增强，query和execute方法增强 支持连贯操作和SQL解析；
+模板引擎性能提升，PHP语法检测，include用法改进 支持变量传输；
+全新的布局模板实现，支持布局嵌套；
+实现了扩展和驱动的完全分离，并且驱动集中管理；
+AJAX返回数据支持扩展，提供更好的AJAX支持；
+更强大和易用的模式扩展；
+U函数重新设计；
+去除Think基类设计，Think重新设计为入口类和静态类；
+增加MongoDb支持；
+增加REST模式，提供RESTFul支持；
+增加SAE模式扩展提供新浪SAE部署和本地调试支持；
+增加自动验证规则；
+动态配置文件和函数文件支持；
+
+更新说明
+[入口文件和编译]
+[新增] 调试模式增加不同的应用状态 自动加载不同的项目配置文件
+[新增] 入口文件增加RUNTIME_FILE常量定义
+[调整] THINK_PATH 和APP_PATH 常量定义最后必须是 / 结束
+[调整] 调试模式设置改为在入口文件中使用APP_DEBUG常量
+[调整] 默认调试模式配置调整 默认情况下不开启运行信息和页面Trace信息
+[改进] 部署模式和原ALLINONE模式合并 最终只生成一个项目编译缓存文件
+[改进] runtime自动生成和目录检测优化
+[改进] 核心编译生成文件支持常量分离到单独的文件外部加载
+[改进] CORE_PATH TMPL_PATH HTML_PATH EXTEND_PATH MODE_PATH VENDOR_PATH常量可以在入口重新定义
+[改进] 部署编译生成新的入口文件 可以用于替换入口
+[改进] 支持 自定义编译缓存文件名 可以在入口文件增加常量 RUNTIME_FILE 默认位置不变
+[改进] 调试模式切换删除编译缓存 便于调试后直接切换到部署模式
+[删除] 废除入口文件中的APP_CACHE_NAME、NO_CACHE_RUNTIME、RUNTIME_ALLINONE、STRIP_RUNTIME_SPACE常量定义
+[删除] 去掉入口文件中的App::run() 代码
+
+[配置]
+新版的惯例配置中去掉了行为才需要使用的配置项
+部分惯例配置参数移动到行为扩展中
+所以我们建议
+[新增] 增加APP_STATUS 参数 用于调试模式下面设置不同的应用状态 自动加载不同的项目配置文件
+[新增] 增加TMPL_LAYOUT_ITEM 参数，用于配置布局内容替换标识 默认是 {__CONTENT__}
+[新增] 增加LOAD_EXT_FILE和LOAD_EXT_CONFIG参数，用于动态加载外部文件和配置文件
+[新增] 增加APP_TAGS_ON参数 用于设置是否开启系统行为扩展，默认开启
+[新增] 新增DB_SQL_BUILD_CACHE和DB_SQL_BUILD_LENGTH 参数用于sql缓存
+[新增] 增加DB_MASTER_NUM参数用于设置主（写）服务器数量
+[新增] 增加MEMCACHE_HOST和MEMCACHE_PORT配置
+[新增] 增加LANG_LIST参数，用于设置允许切换的语言列表，用逗号分隔
+[新增] 增加TMPL_DENY_PHP参数，用于设置模板是否禁用PHP代码
+[新增] 增加DEFAULT_FILTER参数，用于设置默认的参数过滤方法
+[新增] 增加VAR_SESSION_ID参数，用户可以指定session_id
+[新增] 增加VAR_URL_PARAMS参数
+[新增] 增加SHOW_LOAD_FILE 参数，用于控制是否显示加载文件数
+[新增] 增加TOKEN_RESET参数，用于设置令牌错误后是否重置 默认为true
+[新增] 惯例配置添加 APP_SUB_DOMAIN_RULES和APP_SUB_DOMAIN_DENY 默认设置
+[调整] 当前模板主题名配置TEMPLATE_NAME更改为THEME_NAME
+[调整] 当前扩展名称的定义THINK_MODE 更改为MODE_NAME
+[调整] APP_CONFIG_LIST配置参数改为字符串方式，用逗号分隔
+[调整] LOG_RECORD_LEVEL 配置参数改为字符串方式，用逗号分隔
+[调整] 数据库端口设置DB_PORT默认为空
+[调整] TMPL_ACTION_ERROR和TMPL_ACTION_SUCCESS默认采用内置的错误提示模板
+[调整] TMPL_STRIP_SPACE 默认为true
+[调整] APP_AUTOLOAD_PATH参数设置最后不需要加. 例如 ORG.Util 原先为ORG.Util.
+[删除] 删除原调试模式配置参数APP_DEBUG 改为常量定义
+[删除] 删除APP_GROUP_DEPR 参数
+[删除] 删除APP_CONFIG_LIST 参数
+[删除] 删除APP_PLUGIN_ON参数
+[删除] 删除APP_AUTOLOAD_REG参数 
+[删除] 删除APP_DOMAIN_DEPLOY参数 只需要设置APP_NAME 为空即可
+[删除] 删除URL_PATHINFO_MODEL参数 只保留原来的智能模式
+[删除] 惯例配置中去掉 VAR_PAGE定义
+[删除] 取消模块配置文件
+[删除] 取消taglibs.php(标签库定义) 标签库会自动加载
+[删除] 取消modules.php(扩展模块), actions.php(扩展操作)
+
+[控制器]
+[新增] 增加_get _post _put _request _session _cookie _server _globals方法 并支持参数过滤和默认值，例如： $this->_post('name','h'); 等效于 h($_POST['name']); $this->_get('id','intval',0); 等效于 intval($_GET['id']) 如果没有传入过滤方法 则采用惯例配置默认配置的方法 由DEFAULT_FILTER设置（默认为htmlspecialchars） 因此 $this->post('name'); 等效于 htmlspecialchars($_POST['name']);
+[新增] 增加 __hack_module 方法支持
+[新增] 增加规则路由支持
+[新增] 增加全新的静态缓存机制，无需定义任何静态缓存规则
+[新增] 增加 $_GET['_URL_'][1] $_GET['_URL_'][2]用法支持 
+[修正] 修正Action类的display方法 配置TMPL_CONTENT_TYPE参数无效的bug
+[修正] 修正分组模块不存在 自动加载上层模块的bug
+[改进] 完善正则路由支持
+[改进] U函数支持路由定义 例如 U('/cate/3') 以/开头的地址定义表示是路由 不再解析为模块和操作
+[改进] 模块和操作不存在 发送404状态信息
+[改进] 改进兼容模式的判断 优先判断兼容模式URL
+[改进] 分组目录的Action类 也支持自动加载 并且优先
+[改进] A方法格式调整为: [项目://][分组/]模块 
+[改进] R方法格式为：[项目://][分组/]模块/操作
+[改进] 增加一个P_ACTION_NAME 常量定义 用于获取实际的操作名称（区分大小写） 便于空操作使用
+[改进] 改进U函数用法 格式统一为：U('[分组/模块/操作][?参数]','参数','伪静态后缀','是否跳转','显示域名')
+[改进] 扩展ajax返回数据, 可以在Action文件中定义ajaxAssign方法来扩展ajax返回数据。
+[删除] 废除操作链功能
+[删除] 去掉Action类的相关trace方法
+
+[模型]
+[新增] 添加自动验证的批量验证功能 需要在模型类里面设置patchValidate属性为true 默认为false，批处理验证采用getError() 方法获取后的错误信息是一个数组 需要自行处理。
+[新增]  Model增加check方法 用于个别需要的情况手动验证数据,支持部分自动验证的规则 用法 check('验证数据'，'验证规则','验证类型') 验证类型支持 in between equal length regex expire ip_allow ip_deny，默认为regex 结果返回布尔值 $model->check($value,'email'); $model->check($value,'1,2,3','in');
+[新增] 自动验证规则增加between 用于判断提交数据是否在一个范围之内 例如 array('num','10,100','必须在10到100之间',0,’between’) 完善in规则，支持逗号分隔的字符串 array('num','1,2,5','只能选择1,2,5',0,’in’) 和下面的定义等效 array('num',array(1,2,5),'只能选择1,2,5',0,’in’)
+[新增] Model增加子查询支持，使用子查询的时候 select方法的参数必须为false，例如： // 首先构造子查询SQL $subQuery = $model->field('id,name')->table('tablename')->group('field')->where($where)->order('status')->select(false); // 进行查询 $model->table($subQuery.' a')->where()->order()->select() 构造的子查询SQL可用于TP的连贯操作方法，例如table where等
+[新增] 视图模型的视图定义添加实际表名定义支持 使用 '_table'=>'test_db.test_table'
+[新增] 自动验证添加操作有效期验证 支持时间戳和日期格式定义 定义格式 array('任意字段','2011-10-1,2011-12-31','已经过了投票时间',self::MUST_VALIDATE,'expire',self::MODEL_INSERT)
+[新增] 字段验证方式 增加长度验证，格式定义如下： 区间格式定义 array('username','3,6','用户名长度必须大于等于3小于等于6',self::MUST_VALIDATE,'length',self::MODEL_INSERT) 指定长度定义 array('mobile','11','手机号码长度必须11位',self::MUST_VALIDATE,'length',self::MODEL_INSERT)
+[新增] 增加查询缓存支持
+[新增] 增加联合查询union支持
+[新增] 查询条件增强 支持 $map['a&b'] $map['a|b'] 
+[新增] 增加了getFieldBy*** 查询
+[新增] 增加了_sql方法 替代 getlastsql方法
+[新增] Model类的field方法支持NOT机制 例如 field('id,name') 表示查询id,name字段 field('id,name',true); 表示查询除id,name之外的字段
+[新增] Model增加parseFieldsMap方法 用于处理字段映射的数据写入和读取 create方法已经内置对字段映射的数据写入支持 字段映射的读取需要手动处理 在find方法之后调用，例如： $data = $Model->where()->find(); parseFieldsMap($data);
+[新增] query和execute增加第二个参数 表示是否需要解析SQL 默认为false 表示直接执行sql 如果设为true 则会解析sql中特殊字符串 （需要配合连贯操作）例如 支持 $model->table()->where()->field()->query('select %FIELD% from %TABLE% %WHERE%);
+[新增] Db类增加buildSelectSql方法 用于生成查询sql Model类增加buildSql方法 用于生成子查询SQL 用法 $Model->where()->field()->order()->limit()->buildSql(); 和select用法一样 buildSql方法必须用在连贯操作的最后
+[新增] Model类增加_parseType 用于字段类型检测和转换
+[新增] Model类增加_after_db回调接口
+[修正] 修正模型类的find方法当主键值为0的时候的BUG
+[改进] 改进Model类和M方法 Model类架构方法增加dbName支持和tablePrefix参数 M方法可以直接用于跨库和不同数据表前缀支持
+[改进] 表单令牌验证增强 支持多窗口令牌
+[改进] 自动验证增强 增加between length expire ip_allow  ip_deny等规则
+[改进] 优化unique验证规则
+[改进] 多数据库操作支持，包括M方法支持和Model类的切换数据库的Db方法 支持
+[改进] join方法增强
+[改进] getField方法增加用法支持 并支持跨库和表操作
+[改进] Model的add和save方法 如果用了$this->data 则及时清空 避免混淆
+[改进] Model的getlastsql方法支持当前模型 全局请用M()
+[改进] 关联模型跨库操作的改进 操作关联的时候M方法改用D方法
+[改进] D方法格式为：[项目://][分组/]模型 
+[改进] Model类的db方法的第二个config参数支持配置参数
+[改进] create方法中的检查字段映射 放到状态检查之前 用于需要映射主键的情况
+[改进] Model类create方法中生成数据对象 增加 autoCheckFields属性的判断 如果autoCheckFields关闭 则不过滤表单中的非数据表字段
+[改进] 优化Model类的flush方法 在没有获取到字段信息则直接返回false 也不会记录字段缓存
+[改进] 字段缓存文件名 增加数据库前缀
+[改进] Db类对page连贯操作的完善支持
+[改进] 令牌验证放到自动验证成功后 避免验证错误后 表单令牌错误的情况
+[改进] 改进模型类的create方法对数据的验证
+[改进] 修正Model类的getTableName中关于dbName的获取
+[改进] Model类db方法增加params参数 用于切换数据库的时候传人额外的模型参数 原则上支持任意Model类的属性
+[删除] 废除model类的findall 如需要用select替代或者在公共模型类里面添加findall定义
+[删除] 删除高级模型类里面的切换数据库相关方法 2.1版本以上推荐直接使用模型类的db方法切换
+[删除] 去掉setField getField setInc setDec方法的condition条件参数 用连贯操作where替代
+[删除] 删除了tableSuffix属性 可以用trueTableName属性替代
+
+[数据库]
+[新增] IN 查询增加表达式参数支持 用于某些特殊情况的IN查询 $map['id'] = array('IN',$subQuery,'exp'); 其中subQuery是一个子查询或者SQL函数语法等 就可以使用exp参数在后面
+[新增] Mongo驱动增加调试SQL支持 也可以在MongoModel中采用getlastsql或者_sql方法调试最后执行命令 但是仅限于调试模式支持
+[新增] db类增加查询sql封装的缓存支持 惯例配置增加 'DB_SQL_BUILD_CACHE' => false, // 数据库查询的SQL创建缓存 'DB_SQL_BUILD_QUEUE' => 'file', // SQL缓存队列的缓存方式 支持 file xcache和apc 'DB_SQL_BUILD_LENGTH' => 20, // SQL缓存的队列长度
+[新增] 增加pdo的sqlsrv数据库类型的支持
+[新增] 增加sqlsrv数据库驱动
+[新增] 查询条件增加定义方式，并增加条件字段安全检测，例如： $map['name|title'] = array('like','%Think'); 等效于 $map['title'] = array('like','%Think'); $map['name'] = array('like','%Think'); $map['_logic'] = 'OR';
+[修正] 修正数据库驱动类的getFields方法
+[修正] 修正Db类的parseWhere方法在not between 查询条件下面的BUG
+[改进] 改进mysql对存储过程查询的支持
+[改进] 改进数据库的不等于判断符号 neq 解析为 <>
+[改进] 完善Db类的parseFields方法 改进对 Model中field('key,value')的支持
+[改进] 改进Db类的parseWhere方法对between数据的处理
+[改进] 完善Db类的table解析方法 可以支持数组方式 model类的table方法支持数组方式参数 支持表别名定义，例如 table(array('think_user'=>'user','think_article'=>'article'))
+[改进] Db类addSpecialChar方法更名为parseKey 用于统一处理字段名中的关键字
+[改进] 数据库驱动类的__destruct方法移到Db类
+[改进] 将__TABLE_NAME__这样的字符串替换成正规的表名,并且带上前缀和后缀 例如 $dao->join("__CHANNEL__ as c on c.pid = __COMPANY__.channelpid")->limit(10)->select(); 其中__CHANNEL__ 和 __COMPANY__ 将会翻译成对应的表名 这样使代码更好看也更易理解。
+[改进] 改进数据库驱动类对长连接配置的支持,配置下面参数即可 'DB_PARAMS'=>array('persist'=>true),
+[改进] 改进PDO驱动类的getFields方法对sqlite的支持
+[改进] 完善mssql驱动类的端口支持
+[改进] Db类parseConfig方法支持数组配置信息
+[改进] mysql和mysqli驱动insertAll方法增加replace参数
+[删除] 删除Db类中多余的addConnect和switchConnect方法
+
+[模板]
+[新增] 增加布局模板支持 
+[新增] 在模版中的include标签，可以使用自定义属性， 替换被包含模版中格式为[var]的变量。 如 <include file="xxx" varname="value"/>  则被导入的模版中 [varname] 标签会被替换为 value
+[新增] Cx标签库增加for标签支持
+[新增] 模板禁用PHP语法支持
+[新增] 模板标签增加 {++$a} {--$b} 用法支持
+[修正] 修正Cx标签库的volist标签的mod属性
+[修正] 修正模板变量的函数解析的参数中带有=的BUG
+[改进] 去除Cx标签库的layout标签 增加新的layout标签用法
+[改进] 分组的模板结构改变为 Tpl/分组名/主题名/模块/操作.html
+[改进] 优化include标签解析
+[改进] 模板输出规则调整为 [模板主题:][模块:][操作] 不支持 跨项目和跨分组调用 该用法可用于display方法和include标签
+[改进] 改进模板输出替换变量__GROUP__ 如果当前没有分组则输出同 __APP__
+[调整] 当前模板文件名配置 更名为 TEMPLATE_NAME
+[调整] 默认模板主题设置为空 原来为default
+[调整] Think模板引擎的load方法更名为fetch
+[删除] 去掉Cx标签库的iterate方法定义
+[删除] 取消模板快捷变量输出 统一使用标准变量输出方式
+[删除] 废弃模板引擎的普通标签方式的include和load标签 以下用法不再支持 {include:public/header.html} {load:/public/css/common.css} 替代用法 <include file="public/header.html" /> <load file="/public/css/common.css" /> 因为XML标签方式的include和load用法更强大 ，包括可以传人模板变量名等，XML方式的load标签还有很多的别名用法，完全可以取代普通标签加载。 目前，普通标签仅仅用于输出变量和一些快捷输出。
+
+[扩展]
+[新增] 增加REST模式
+[新增] CLI模式扩展 增加参数获取功能 所有命令行参数均可以采用 $_GET 方式获取
+[修正] 修正amf phprpc模式扩展在allinone模式下面的编译缓存错误
+[调整] Model目录移出核心类库 作为扩展模型 放入Extend 
+[调整] Html标签库移入扩展标签库目录
+[调整] auto_charset函数移入扩展函数库
+[调整] 更改模块扩展和操作扩展方式 采用hack方式 分别定义__hack_module和__hack_action
+[改进] CLI模式支持两种URL方式： pathinfo方式调用（默认） php index.php module/action/id/4/name/hello 并且支持pathinfo分隔符定制 配置URL_PATHINFO_DEPR即可 php index.php module_action_id_4_name_hello 普通方式调用 php index.php module action id 4 name hello
+[改进] Cli模式的Action类增加_initialize方法支持
+[删除] 移除兼容模式扩展Compat
+
+[其他]
+[新增] 添加标签执行的日志记录
+[新增] 添加行为的执行日志记录
+[新增] 添加add_tag_behavior方法 用于动态添加行为扩展到某个标签
+[修正] 修正load方法重复导入冲突的问题
+[修正] 修正 核心编译列表文件定义后 再次import的冲突bug
+[修正] 优化内存开销计算
+[修正] 修复分页参数的一个漏洞
+[修正] 修正PHP 5.4版本支持
+[改进] msubstr函数改进
+[改进] 修正String类的msubstr方法不添加...的问题
+[改进] 修正扩展函数库的msubstr方法不添加...的问题
+[修正] Widget类修正路径
+[改进] Widget支持第三方模板引擎扩展
+[改进] 框架加载底层默认语言包 并编译缓存
+[改进] 优化import方法 去掉同名类库冲突检测
+[改进] 优化require_cache函数 去掉realpath处理
+[改进] 实现了驱动类库的扩展分离 包括数据库驱动、缓存驱动和模板引擎驱动
+[改进] 去掉核心php文件最后的?>
+[改进] 重写get_client_ip函数 修正iis下面的问题， 优化而且增加合法性验证，并且从扩展函数库移到内置函数库
+[改进] 改进tag方法 没有执行任何行为的话返回false
+[修正] 修正init运行时间的显示问题
+[改进] View类 output方法并入fetch方法 并删除templateFile属性
+[改进] 改进tag方法 允许应用标签扩展覆盖系统标签扩展 默认情况下是合并标签扩展 如果在应用扩展中设置 '_overlay'=>1 则表示完全覆盖系统标签扩展的（对应的系统标签扩展将不被执行） 例如， 'app_begin'=>array('appBehavior1','appBehavior2','_overlay'=>1) 则表示app_begin标签将不再读取系统定义的标签扩展行为
+[改进] 自动生成目录的时候 生成项目的Behavior、Widget和Filter目录
+[改进] Action析构方法增加日志保存操作
+[改进] 优化编译缓存
+[改进] 日志信息添加当前URL记录
+[调整] 去掉Think基类的依赖和继承 Think类用于放置静态方法
+[调整] Dispatcher类移动到Think/Core包
+[调整] 系统内置模板文件统一为tpl 后缀
+[删除] 去掉compat函数文件
+
+[缓存]
+[新增] Cache类增加队列功能
+[新增] 增加redis缓存方式支持
+[新增] S方法添加options参数 用于传人缓存类的连接配置参数 cache驱动类取消type属性，调整expire参数 加入连接配置参数，另外配置参数增加 length 驱动队列的长度 默认为0 表示不限制 queue 驱动队列的缓存方式 默认为file 支持xcache和apc
+[新增] Model增加查询缓存支持，使用连贯操作cache调用，用法如下： 采用默认配置缓存 $Model->cache()->select(); 采用memcche缓存1小时 $Model->cache(true,3600,'memcache')->select(); 采用memcache缓存一小时 并设置缓存别名cache_name $Model->cache('cache_name',3600,'memcache')->select();
+[修正] 修正CacheDb缓存驱动类
+[改进] 完善Memcache缓存驱动 增加MEMCACHE_HOST和MEMCACHE_PORT配置 Db缓存类的缓存表去掉id字段 cachekey字段改为唯一
+[改进] 优化缓存驱动类
+[改进] F方法缓存的时候去掉空白和注释 修正C方法的二级配置大小写问题
+

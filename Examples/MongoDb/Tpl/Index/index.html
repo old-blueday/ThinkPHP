@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MongoDB logo 分布式文档存储数据库 MongoDB</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <h1>MongoDB logo 分布式文档存储数据库 MongoDB</h1>
+        <h2>简介</h2>
+        <div>
+            <p>MongoDB是一个介于关系数据库和非关系数据库之间的产品，是非关系数据库当中功能最丰富，最像关系数据库的。他支持的数据结构非常松散，是类似json的bjson格式，因此可以存储比较复杂的数据类型。Mongo最大的特点是他支持的查询语言非常强大，其语法有点类似于面向对象的查询语言，几乎可以实现类似关系数据库单表查询的绝大部分功能，而且还支持对数据建立索引。</p> 
+            <p>它的特点是高性能、易部署、易使用，存储数据非常方便。主要功能特性有：</p> 
+            <ul> 
+                <li>面向集合存储，易存储对象类型的数据。</li> 
+                <li>模式自由。</li> 
+                <li>支持动态查询。 </li> 
+                <li>支持完全索引，包含内部对象。</li> 
+                <li>支持查询。 </li> 
+                <li>支持复制和故障恢复。</li> 
+                <li>使用高效的二进制数据存储，包括大型对象（如视频等）。</li> 
+                <li>自动处理碎片，以支持云计算层次的扩展性</li> 
+                <li>支持RUBY，PYTHON，JAVA，C++，PHP等多种语言。</li> 
+                <li>文件存储格式为BSON（一种JSON的扩展）</li> 
+                <li>可通过网络访问</li> 
+            </ul> 
+            <p>所谓“面向集合”（Collenction-Orented），意思是数据被分组存储在数据集中，被称为一个集合（Collenction)。每个 集合在数据库中都有一个唯一的标识名，并且可以包含无限数目的文档。集合的概念类似关系型数据库（RDBMS）里的表（table），不同的是它不需要定 义任何模式（schema)。<br/>模式自由（schema-free)，意味着对于存储在mongodb数据库中的文件，我们不需要知道它的任何结构定义。如果需要的话，你完全可以把不同结构的文件存储在同一个数据库里。<br/>存储在集合中的文档，被存储为键-值对的形式。键用于唯一标识一个文档，为字符串类型，而值则可以是各中复杂的文件类型。我们称这种存储形式为BSON（Binary Serialized dOcument Format）。</p> 
+            <p>MongoDB服务端可运行在Linux、Windows或OS X平台，支持32位和64位应用，默认端口为27017。推荐运行在64位平台，因为MongoDB</p> 
+            <p>在32位模式运行时支持的最大文件尺寸为2GB。</p> 
+            <p>MongoDB把数据存储在文件中（默认路径为：/data/db），为提高效率使用内存映射文件进行管理。</p>
+        </div>
+        <h2>安装</h2>
+        <div>
+            <p>windows下的安装：</p>
+            <p>1）先去php.net官网下的mongoDbwin<a href="http://us.php.net/manual/en/mongo.installation.php#mongo.installation.windows">安装页面</a>下一个扩展DLL。</p>
+            <p>如何选择DLL可以参考<a href="http://code-tech.diandian.com/post/2012-01-04/15427581">《php 安装dll 的注意事项》一文</a></p>
+            <p>然后将其解压放入你的php目录下的ext文件夹中，并在php.ini中加上这么一句<code>extension=php_mongo.dll</code></p>
+            <p>然后可以在phpinfo()中看mongo扩展是否存在了。</p>
+            <p>这只是php扩展驱动的安装</p>
+            <p>2)然后mongoDb服务的安装</p>
+            <p>  首先在新建你的mongo DB 的数据库目录和日志文件 我的是放在"E:\data"目录下 和"E:\data\log\mongodb.log"文件中。</p>
+            <p>然后安装从<a href="http://www.mongodb.org/downloads">官网</a>下载的安装包。我安装的是"D:\mongodb2.0.2"目录下</p>
+            <p>进入cmd命令行 先切换当前路径到安装目录的bin文件夹下,我的命令是<code>cd D:\mongodb2.0.2\bin</code>所有可以操作的exe都在此目录下。然后输入以下命令：</p>
+            <p><code>mongod.exe --dbpath=E:\data\ --logpath=E:\data\log\mongodb.log --install</code>。然后回车，出现"all output going to: E:\data\log\mongodb.log"</p>
+            <img src="../Public/images/install_service.png" alt="cmd安装mongo db" />
+            <p>说明服务就装好了，如果未成功，请看错误说明，一般都是文件不存在，目录不存在之类的。</p>
+            <p>最后打开windows开始菜单，在搜索框中输入"service"点击查看本地服务，开启刚安装的mongo服务就行了。</p>
+            <p>当然也可以下载我的mongodb压缩包，里面有个安装和卸载服务的批处理。<a href="http://115.com/file/be8xy1af">下载</a></p>
+        </div>
+        <h2>使用mongo进阶</h2>
+        <div><a href="__URL__/db">小例子</a>参考书《MongoDB权威指南中文版》pdf版 <a href="http://115.com/file/aqubl3r8#">下载</a></div>
+    </body>
+</html>

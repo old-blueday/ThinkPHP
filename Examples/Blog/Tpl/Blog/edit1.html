@@ -1,0 +1,155 @@
+<tagLib name="html" />
+<!--头部部分-->
+<include file="Public:header" />
+
+<!--中间部分-->
+
+<div id="mainWrapper">
+<div id="content" class="content">
+<div id="innerContent">
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+	function addRow(){
+	curFileNum++;
+	rowsnum++;
+    var row=tbl.insertRow(-1);
+	//var td = arow.insertCell();
+	var cell = document.createElement("td");
+	cell.innerHTML='<div class="impBtn  fLeft" ><INPUT TYPE="file" id="file'+curFileNum+'" name="file'+ curFileNum +'" class="file  huge"></div><div class="fLeft hMargin"><IMG SRC="../Public/images/del.gif"  style="cursor:pointer" onfocus="javascript:getObject(this)" onclick="deleteRow();" WIDTH="20" HEIGHT="20" BORDER="0" ALT="删除" align="absmiddle"></div> ';
+	cell.align="center"
+	row.appendChild(cell);
+	//addFileForm.num.value=rowsnum;
+}
+function deleteRow(){
+	if(tbl.rows.length>0){
+            tbl.deleteRow(rindex); //删除当前行
+            rowsnum--;
+	}else{
+		return;
+	}
+	rindex="";
+}
+function getObject(obj){
+	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+}
+function selectCategory(){
+ var result= PopModalWindow('__APP__/Category/treeSelect/',268,360);
+ if(typeof(result) == "undefined") return;
+	$('categoryName').value=result[0][0];
+	$('categoryId').value=result[0][1];
+}
+function uploading(msg){
+	$('result').style.display = 'block';
+	$('result').innerHTML	=	'<IMG SRC="../Public/images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
+	return true;
+}
+function save(){
+	if ($('file1').value)
+	{
+		uploading();
+		$('upload').submit();
+	}
+	saveEditor();
+	ThinkAjax.sendForm('form1','__URL__/update/',doComplete,'result');
+
+}
+function uploadComplete(){
+	$('upload').reset();
+}
+function doComplete(data,status){
+
+}
+	function delAttachComplete(data,status){
+			if (status==1)
+			{
+			$('attach_'+data).style.display = 'none';
+			}
+	}
+</SCRIPT>
+<div class="commentbox">
+<TABLE cellpadding=3 cellspacing=3 width="680px">
+<TR>
+	<TD colspan="2"><div class="block-title"><H5><IMG SRC="../Public/images/modify.gif" WIDTH="20" HEIGHT="23" BORDER="0" ALT="" align="absmiddle"> 编辑日志</H5></div>
+</TD>
+</TR>
+<TR>
+	<TD colspan="2">
+	<FORM METHOD=POST id="form1" >
+	<TABLE cellpadding=3 cellspacing=3 width="100%" style="font-size:14px">
+	<TR>
+	<TD colspan="2"><div id="result" class="result none"></div></TD>
+	</TR>
+	<TR>
+	<TD class="tRight tTop" width="125px">标题：</TD>
+	<TD class="tLeft"><INPUT TYPE="text" class="huge text" check='Require' warning="标题不能为空" NAME="title" value="{$vo.title}"></TD>
+	</TR>
+	<TR>
+		<TD class="tRight" >分类：</TD>
+		<TD class="tLeft" ><INPUT TYPE="text" class="medium readonly text"  readonly NAME="categoryName" value="{$vo.categoryId|getCategoryName}"><INPUT TYPE="hidden" class="medium bLeft" NAME="categoryId"  value="{$vo.categoryId}"> </TD>
+	</TR>
+	<TR>
+	<TD class="tRight tTop" >日志：</TD>
+	<TD class="tLeft"><html:editor type="FCKeditor"  id="editor" width="550px" height="185px" name="content" content="{$vo.content}" /></TD>
+	</TR>
+	<TR>
+		<TD class="tRight">标签：</TD>
+		<TD class="tLeft"><INPUT TYPE="text" class="huge text"   NAME="tags" value="{$vo.tags}"> <span style="color:gray">用空格隔开多个标签</span></TD>
+	</TR>
+	<TR>
+		<TD ></TD>
+		<TD class="center">
+		<div style="width:85%;color:gray">
+		<INPUT TYPE="hidden" name="ajax" value="1">
+		<INPUT TYPE="hidden" name="id" value="{$vo.id}">
+		<div class="fLeft hMargin"><img id="verifyImg" src="__URL__/verify" align="absmiddle"> <INPUT TYPE="text" NAME="verify" class="text small"> 输入验证码 [ <A HREF="javascript:fleshVerify()">看不清？</A> ] </div>
+		<div class="fLeft hMargin"><INPUT TYPE="reset" class="submit small"  value="重 置" ></div>
+		<div class="fLeft hMargin"><INPUT TYPE="button" id="submit" value="保存日志" onclick="save()" class="submit small"></div>
+		</div></TD>
+	</TR>
+	</TABLE>
+	</form>
+	<TABLE cellpadding=3 cellspacing=3 width="100%" style="font-size:14px">
+	<tr><td ></td><td>
+	<fieldset  style="float:left;width:75%">
+	<legend >附件列表</legend>	<div>
+	<volist name="attachs" id="attach" empty="还没有上传任何附件">
+	<div id="attach_{$attach.id}"><IMG SRC="../Public/images/file.gif" WIDTH="19" HEIGHT="20" BORDER="0" style="border:none" ALT="" align="absmiddle"> <A HREF="__URL__/download/id/{$attach.id}">{$attach.name}</A> {$attach.size|byte_format} <IMG SRC="../Public/images/del.gif" WIDTH="20" HEIGHT="20" onclick="ThinkAjax.send('__URL__/delAttach/id/{$attach.id}','ajax=1',delAttachComplete,'result')" BORDER="0" ALT="删除附件"  style="cursor:hand" align="absmiddle"></div>
+	</volist>
+	</div>
+	</fieldset>
+	</td></tr>
+<form id="upload" METHOD=POST action="__URL__/upload/" onsubmit="return CheckForm(this);" enctype="multipart/form-data" target="iframeUpload">
+<TR>
+	<TD class="tRight tTop">附件：</TD>
+	<TD class="tLeft tTop"><INPUT TYPE="hidden" name="ajax" value="1">
+	<iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  SCROLLING="no" style="display:none"></iframe>
+	<INPUT TYPE="hidden" name="_uploadFileResult" value="result">
+	<INPUT TYPE="hidden" name="_uploadFormId" value="upload">
+	<INPUT TYPE="hidden" name="_uploadFileSize" value="-1">
+	<INPUT TYPE="hidden" name="_uploadResponse" value="uploadComplete">
+	<INPUT TYPE="hidden" name="_uploadRecordId" value="{$vo.id}">
+	<INPUT TYPE="hidden" name="_uploadFileType" value="jpeg,jpg,gif,png,doc,rar,zip,mp3,wav,flv,rm,asf">
+	<INPUT TYPE="hidden" name="_uploadSavePath" value="<?php echo APP_PATH.'/../'.'Public/Uploads/';?>" >
+	<INPUT TYPE="button" value="增 加" onclick="addRow();" class="submit small">
+	<INPUT TYPE="submit" value="上 传" onclick="uploading();" class="small submit ">
+	<TABLE id='tbl' style="clear:both"></TABLE>
+	</TD>
+</TR>
+</TABLE>
+</form>
+
+	</TD>
+</TR>
+</TABLE>
+</div>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var curFileNum = 0;
+var rowsnum=0;  //记录行数
+var rindex="";       //列索引
+var tbl	=	$('tbl');
+addRow();
+//-->
+</SCRIPT>
+<include file="Public:footer" />

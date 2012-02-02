@@ -1,0 +1,158 @@
+<tagLib name="html" />
+<include file="Public:header" />
+<!--中间部分-->
+<div id="mainWrapper">
+    <div id="content" class="content">
+        <div id="innerContent">
+            <div class="announce text" style="border:1px solid silver;padding:5px;font-size:14px;">
+                <h4 style="color:#FF3300"><img src="../Public/images/wav.gif" width="18" height="18" border="0" alt="" align="absmiddle"> 简单的BLOG示例</h4>
+                本示例Blog基于ThinkPHP3.0实现，包括日志的新增、修改、列表、统计、评论、标签、归档、上传附件和删除等功能，涵盖了新版ThinkPHP的路由功能、内置模板引擎标签的使用、视图模型、文本字段、AJAX操作、前置和后置操作、自动验证、自动填充、分页功能、查询语言、统计查询、动态查询、自动时间戳记录、CURD操作、触发器、默认模块设置、页面Trace、浏览器缓存、Action缓存、静态缓存、操作重定向、文件上传（批量上传、AJAX上传）、验证码等知识点的实现，可以作为入门ThinkPHP的绝佳示例。<P>请按照下面步骤操作，增加分类、添加日志、增加评论。
+            </div>
+            <div class="article-top">
+                <div class="view-mode">浏览模式: <a href="?mode=normal">普通</a> | <a href="?mode=list">列表</a></div><div class="pages">{$page}</div>
+            </div>
+            <switch name="mode">
+            <case value="list">
+                <volist id="vo" name="list">
+                    <div class="textbox-list">
+                        <div class="textbox-list-title">
+                            <img src="../Public/images/icon_point2.gif" width="13" height="13" border="0" alt="" align="absmiddle"> [ <a href="__APP__/Blog/category/id/{$vo.categoryId}">{$vo.category} </a> ] <a href="__URL__/show/id/{$vo.id}">{$vo.title|ubb}</a> {$vo.cTime|toDate='Y-m-d'}
+                        </div>
+                        <div class="textbox-author"> [ <a href="__URL__/show/id/{$vo.id}#reply"> {$vo.commentCount}</a> | {$vo.readCount}  ]
+                        </div>
+                    </div>
+                </volist>
+            </case>
+            <default />
+            <volist id="vo" name="list">
+                <div id="blog_{$vo.id}">
+                    <div class="textbox-title">
+                        <h4>
+                            <img src="../Public/images/icon_point2.gif" width="13" height="13" border="0" alt="" align="absmiddle">
+                            <a href="__URL__/show/id/{$vo.id}">{$vo.title|ubb}</a>
+                        </h4>
+                        <div class="textbox-label">
+                            [ {$vo.cTime|toDate='Y-m-d H:i:s'}  | <a href="__APP__/Blog/category/id/{$vo.categoryId}">{$vo.category} </a>]
+                        </div>
+                    </div>
+                    <div class="textbox-content">{$vo.content}</div>
+                    <div class="textbox-bottom"> [ 管理：<a href="__URL__/edit/id/{$vo.id}">编辑</a> <a href="javascript:delBlog({$vo.id})">删除</a> ]   关键词: {$vo.tags|showTags} | <a href="__URL__/show/id/{$vo.id}#reply">评论: {$vo.commentCount}</a> | 浏览: {$vo.readCount}</div><P>
+                </div>
+            </volist>
+            </switch>
+            <div class="article-bottom">
+                <div class="pages">{$page}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script language="JavaScript">
+        <!--
+        function addCategory(){
+            ThinkAjax.send('__APP__/Category/insert','ajax=1&title='+$F('categoryName'),addComplete);
+        }
+        function addComplete(data,status){
+            if (status==1){
+                $('category').innerHTML += '<li id="category_'+data.id+'"><img src="../Public/images/folder.gif" width="18" height="18" border="0" alt="" align="absmiddle"><a href="__APP__/Category/'+data.id+'">'+data.title+'</a> <span >(0)</span><img src="../Public/images/del.gif" width="20" height="20" border="0" style="cursor:pointer" alt="" onclick="delCategory('+data.id+')" align="absmiddle">';
+            }
+        }
+        function delCategory(id){
+            ThinkAjax.send('__APP__/Category/delete/','ajax=1&id='+id,delComplete);
+        }
+        function delComplete(data,status){
+            if (status==1){
+                $('category_'+data).style.display = 'none';
+            }
+        }
+        //-->
+    </script>
+    <div id="sidebar" class="sidebar">
+        <div id="innerSidebar">
+            <div id="panelSearch" class="panel">
+                <div id="panelStats" class="panel">
+                    <h5>统计数据</h5>
+                    <div class="panel-content">
+                        创建日期：<span style="color:#CC9933">{$beginTime|toDate='Y-m-d'}</span><br />
+                        日志总数：<span style="color:#CC9933">{$blogCount}</span><br />
+                        阅读总数：<span style="color:#6699FF">{$readCount}</span><br />
+                        评论总数：<span style="color:#FF9900">{$commentCount}</span><br />
+                    </div>
+                </div>
+                <h5 >日志分类 </h5>
+                <div class="panel-content">
+                    <ul id="category">
+                        <li>
+                            <div class="fLeft" >
+                                <input TYPE="text" id="categoryName" class="text" NAME="name">
+                            </div>
+                            <input TYPE="button" value="增 加" class="submit hMargin small" onclick="addCategory()">
+                            <br style="clear:both;float:auto"/>
+                        </li>
+                        <volist name="category" id="vo">
+                            <li id="category_{$vo.id}">
+                                <img src="../Public/images/folder.gif" width="18" height="18" border="0" alt="" align="absmiddle">
+                                <a href="__APP__/Blog/category/id/{$vo.id}">{$vo.title}</a>
+                                <span>({$vo.id|getCategoryBlogCount})</span>
+                                <img src="../Public/images/del.gif" style="cursor:pointer" width="20" height="20" border="0" alt="" onclick="delCategory({$vo.id})" align="absmiddle">
+                            </li>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >最新日志</h5>
+                <div class="panel-content">
+                    <ul>
+                        <volist id="vo" name="lastArticles">
+                            <li>
+                                <img src="../Public/images/icon_ctb.gif" width="11" height="11" border="0" alt="" align="absmiddle"/>
+                                <a href="__APP__/Blog/show/id/{$vo.id}" title="{$vo.title}">{$vo.title|getShortTitle}</a>
+                                <sup style="color:silver;font-size:12px">[<span style="color:#3366CC">{$vo.readCount}</span> |<span style="color:#FF6600"> {$vo.commentCount}</span>]</sup>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >最新评论</h5>
+                <div class="panel-content">
+                    <ul>
+                        <volist id="vo" name="lastComments">
+                            <li>
+                                <img src="../Public/images/Comment.gif" width="9" height="9" border="0" alt="" align="absmiddle">
+                                <a href="mailto:{$vo.email}"> <span style="color:#3366CC">{$vo.author}</span></a>：<a href="__APP__/blog/{$vo.recordId}#{$vo.id}" title="">{$vo.content|ubb|strip_tags|getShortTitle}</a>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >标签云集 [ <a href="__URL__/tag/">更多</a> ]</h5>
+                <div class="panel-content">
+                    <ul>
+                        <li>
+                        <volist id="vo" name="tags" >
+                            <a href="__APP__/Blog/tag/name/{$vo.name|urlencode}">
+                                <span style="font-size:{$vo.count|getTitleSize};color:{$vo.id|rand_color}">{$vo.name}
+                                </span>
+                            </a>&nbsp;
+                        </volist>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >日志归档</h5>
+                <div class="panel-content">
+                    <ul>
+                        <volist name="monthList" id="date">
+                            <li>
+                                <img src="../Public/images/icon_quote.gif" width="11" height="11" border="0" alt="" align="absmiddle">
+                                <a href="__APP__/blog/{$date['year']}/{$date['month']}">{$date['show']|toDate='Y年m月'}</a>
+                            </li>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<include file="Public:footer" />

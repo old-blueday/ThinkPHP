@@ -1,0 +1,58 @@
+<tagLib name="html" /> 
+<include file="Public:header" />
+<div id="mainWrapper">
+    <div id="content" class="content">
+        <div id="innerContent">
+            <div class="announce">
+                <div class="announce-content" style="height:45px"><h4>[ {$categoryName} ] 下面的日志<span style="font-weight:normal"> [ {$count} ] </span></h4></div>
+            </div>
+            <div class="article-top"><div class="pages">共{$page}</div></div>
+            <volist id="vo" name="list">
+                <div class="textbox-list">
+                    <div class="textbox-list-title"><img src="../Public/images/icon_point2.gif" width="13" height="13" BORDER="0" ALT="" align="absmiddle"> <a href="__URL__/show/id/{$vo.id}">{$vo.title|ubb}</a> {$vo.cTime|toDate='Y-m-d'} </div><div class="textbox-author">  [ <a href="__URL__/{$vo.id}#reply"> {$vo.commentCount}</a> | {$vo.readCount}  ]</div></div>
+            </volist>
+            <div class="article-bottom"><div class="pages">共{$page}</div></div>
+        </div>
+    </div>
+    <div id="sidebar" class="sidebar">
+        <div id="innerSidebar">
+            <div id="panelSearch" class="panel">
+                <h5 >日志分类</h5>
+                <div class="panel-content">
+                    <ul>
+                        <volist name="category" id="vo">
+                            <li><img src="../Public/images/folder.gif" width="18" height="18" BORDER="0" ALT="" align="absmiddle"> <a href="__APP__/Blog/category/id/{$vo.id}">{$vo.title}</a> <span >({$vo.id|getCategoryBlogCount})</span> 
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >最新日志</h5><div class="panel-content">
+                    <ul>
+                        <volist id="vo" name="lastArticles">
+                            <li><img src="../Public/images/icon_ctb.gif" width="11" height="11" BORDER="0" ALT="" align="absmiddle"> <a href="__APP__/Blog/show/id/{$vo.id}" title="{$vo.title}">{$vo.title|getShortTitle}</a> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">{$vo.readCount}</span> |<span style="color:#FF6600"> {$vo.commentCount}</span>]</sup>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >最新评论</h5><div class="panel-content">
+                    <ul>
+                        <volist id="vo" name="lastComments">
+                            <li><img src="../Public/images/Comment.gif" width="9" height="9" BORDER="0" ALT="" align="absmiddle"> <a href="mailto:{$vo.email}"> <span style="color:#3366CC">{$vo.author}</span></a>：<a href="__APP__/blog/{$vo.recordId}#{$vo.id}" title="">{$vo.content|ubb|strip_tags|getShortTitle}</a>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >日志归档</h5><div class="panel-content">
+                    <ul>
+                        <volist name="monthList" id="date"><li><img src="../Public/images/icon_quote.gif" width="11" height="11" BORDER="0" ALT="" align="absmiddle"> <a href="__APP__/blog/{$date['year']}/{$date['month']}">{$date['show']|toDate='Y年m月'}</a>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+<include file="Public:footer" />

@@ -1,0 +1,69 @@
+<tagLib name="html" /> <include file="Public:header" />
+<div id="mainWrapper">
+<div id="content" class="content">
+<div id="innerContent">
+<div class="announce">
+<div class="announce-content" style="height:45px">
+<present name="list"> 
+<H4>和[ <span style="color:#63B4CD">{$tag}</span> ] 相关的日志<span style="font-weight:normal"> [ {$count} ] </span></H4>
+<else/>
+<H4 >标签云集</H4>
+<volist id="vo" name="tags" ><A HREF="__APP__/Blog/tag/name/{$vo.name|rawurlencode}"><span style="font-size:{$vo.count|getTitleSize};color:{$vo.id|rand_color}">{$vo.name}</span></A> &nbsp;&nbsp; </volist>
+</present>
+</div>
+</div>
+<present name="list">
+<div class="article-top"><div class="pages">{$page}</div></div>
+<volist id="vo" name="list" >
+<div class="textbox-list">
+<div class="textbox-list-title">
+<IMG SRC="../Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> 
+[ <A HREF="__APP__/cate/{$vo.categoryId}">{$vo.category} </A> ]
+<A HREF="__APP__/blog/{$vo.id}">{$vo.title|ubb}</A> {$vo.cTime|toDate='Y-m-d'} </div>
+<div class="textbox-author"> 
+<A HREF="__URL__/author/id/{$vo.userId}">{$vo.userId|getUserName}
+</A> [ <A HREF="__APP__/blog/{$vo.id}#reply"> {$vo.commentCount}</A> | {$vo.readCount}  ]</div></div>
+</volist>
+<div class="article-bottom"><div class="pages">{$page}</div></div>
+</present>
+ </div>
+
+</div>
+
+<div id="sidebar" class="sidebar">
+<div id="innerSidebar">
+  <div id="panelSearch" class="panel">
+	<H5 >日志分类 </H5><div class="panel-content">
+  <ul id="category">
+  <li><div class="fLeft"><INPUT TYPE="text" id="categoryName" class="text" NAME="name"></div><div class="fLeft"><INPUT TYPE="button" value="增 加" class="submit hMargin small" onclick="addCategory()"></div>
+  <volist name="category" id="vo"><li id="category_{$vo.id}"><IMG SRC="../Public/images/folder.gif" WIDTH="18" HEIGHT="18" BORDER="0" ALT="" align="absmiddle"><A HREF="__APP__/cate/{$vo.id}">{$vo.title}</A> <span >({$vo.id|getCategoryBlogCount})</span> <IMG SRC="../Public/images/del.gif" style="cursor:pointer" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" onclick="delCategory({$vo.id})" align="absmiddle"></volist></ul></div>
+</div>
+  <div id="panelSearch" class="panel">
+<H5 >最新日志</H5><div class="panel-content">
+  <ul><volist id="vo" name="lastArticles"><li><IMG SRC="../Public/images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="__APP__/blog/{$vo.id}" title="{$vo.title}">{$vo.title|getShortTitle}</A> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">{$vo.readCount}</span> |<span style="color:#FF6600"> {$vo.commentCount}</span>]</sup> </volist></ul></div>
+</div>
+
+  <div id="panelSearch" class="panel">
+<H5 >最新评论</H5><div class="panel-content">
+  <ul><volist id="vo" name="lastComments"><li><IMG SRC="../Public/images/Comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" ALT="" align="absmiddle"> <A HREF="mailto:{$vo.email}"> <span style="color:#3366CC">{$vo.author}</span></A>：<A HREF="__APP__/Blog/{$vo.recordId}#{$vo.id}" title="">{$vo.content|ubb|strip_tags|getShortTitle}</A> </volist></ul></div>
+</div>
+
+  <div id="panelSearch" class="panel">
+<H5 >标签云集 [ <A HREF="__URL__/tag/">更多</A> ]</H5>
+<div class="panel-content">
+  <ul><li>
+<volist id="vo" name="tags" ><A HREF="__APP__/Blog/tag/name/{$vo.name|urlencode}"><span style="font-size:{$vo.count|getTitleSize};color:{$vo.id|rand_color}">{$vo.name}</span></A>&nbsp;
+	</volist></ul></div>
+</div>
+
+  <div id="panelSearch" class="panel">
+	<H5 >日志归档</H5> 	<div class="panel-content">
+  <ul><volist name="monthList" id="date"><li> <IMG SRC="../Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="__APP__/Blog/{$date['year']}/{$date['month']}">{$date['show']|toDate='Y年m月'}</A></volist></ul></div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+ <include file="Public:footer" />

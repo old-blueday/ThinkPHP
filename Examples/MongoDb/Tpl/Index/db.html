@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>mongoDB的CURD演示</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <p>首先更改配置项:</p>
+        <php>highlight_file(CONFIG_PATH.'config.php');</php>
+        <p>表名{$table_name}</p>
+        <notempty name="clear">
+            <p>所有记录清除成功！</p>
+        </notempty>
+        <p>添加后的记录：</p>
+        <p>{:dump($add)}</p>
+        <p>修改后的记录：</p>
+        <p>{:dump($update)}</p>
+        <p>action源码:</p>
+        <p>{$action_code}</p>
+    </body>
+</html>

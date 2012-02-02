@@ -1,0 +1,151 @@
+<taglib name="html,tp" />
+<!--头部部分-->
+<include file="Public:header" />
+<tp:editor id="textContent" uploadurl="/Public/editor_up" width="600"></tp:editor>
+<!--中间部分-->
+<div id="mainWrapper">
+    <div id="content" class="content">
+        <div id="innerContent">
+            <script language="JavaScript">
+                <!--
+                function addRow(){
+                    curFileNum++;
+                    rowsnum++;
+                    var row=tbl.insertRow(-1);
+                    //var td = arow.insertCell();
+                    var cell = document.createElement("td");
+                    cell.innerHTML='<div class="impBtn  fLeft" ><input type="file" id="file'+curFileNum+'" name="file'+ curFileNum +'" class="file  huge"></div><div class="fLeft hMargin"><img src="../Public/images/del.gif"  style="cursor:hand" onfocus="javascript:getObject(this)" onclick="deleteRow();" width="20" height="20" border="0" alt="删除" align="absmiddle"></div> ';
+                    cell.align="center"
+                    row.appendChild(cell);
+                    //addFileForm.num.value=rowsnum;
+                }
+                function deleteRow(){
+                    if(tbl.rows.length>0){
+                        tbl.deleteRow(rindex); //删除当前行
+                        rowsnum--;
+                    }else{
+                        return;
+                    }
+                    rindex="";
+                }
+                function getObject(obj){
+                    rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+                }
+
+                function uploading(msg){
+                    $('result').style.display = 'block';
+                    $('result').innerHTML = '<img src="../Public/images/ajaxloading.gif" width="16" height="16" border="0" alt="" align="absmiddle"> 文件上传中～';
+                    return true;
+                }
+                function save(){
+                    if ($('file1').value){
+                        $('#form1').uploading();
+                        $('upload').submit();
+                    }else{
+                        //document.getElementById('editor').value = KE.html('editor');
+                        ThinkAjax.sendForm('form1','__URL__/insert/',doComplete,'result');
+                    }
+                }
+                function selectCategory(){
+                    var result= PopModalWindow('__APP__/Category/treeSelect/',268,360);
+                    if(typeof(result) == "undefined") return;
+                    $('categoryName').value=result[0][0];
+                    $('categoryId').value=result[0][1];
+                }
+                function uploadComplete(){
+                    document.getElementById('editor').value = KE.html('editor');
+                    ThinkAjax.sendForm('form1','__URL__/insert/',doComplete,'result');
+                    $('upload').reset();
+                }
+                function doComplete(data,status){
+                    if (status==1){
+                        window.location.href='__URL__';
+                        $('form1').reset();
+                        $('upload').reset();
+                        fleshVerify();
+                    }
+                }
+                //-->
+            </script>
+            <div class="commentbox">
+                <table cellpadding=3 cellspacing=3 width="680px" >
+                    <tr>
+                        <td colspan="2"><div class="block-title"><h5><img src="../Public/images/modify.gif" width="20" height="23" border="0" alt="" align="absmiddle"> 发表新的日志</h5></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <form method=post id="form1" >
+                                <table cellpadding=3 cellspacing=3 style="font-size:14px">
+                                    <tr>
+                                        <td colspan="2"><div id="result" class="result none"></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tRight tTop" width="20%">标题：</td>
+                                        <td class="tLeft"><input type="text" class="huge text" check='Require' warning="标题不能为空" name="title"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tRight tTop" >类别：</td>
+                                        <td class="tLeft">
+                                            <select name="categoryId" class="medium text">
+                                                <volist name="category" id="cate">
+                                                    <option value="{$cate.id}">{$cate.title}
+                                                </volist>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tRight tTop" >日志：</td>
+                                        <td class="tLeft"><textarea name="content" id="textContent" cols="45" rows="5"></textarea></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tRight tTop" >标签：</td>
+                                        <td class="tLeft"><input type="text" class="huge text"  name="tags"> <span style="color:gray">用空格隔开多个标签</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td ></td>
+                                        <td class="center">
+                                            <div style="width:85%;color:gray">
+                                                <input type="hidden" name="ajax" value="1">
+                                                <div class="fLeft hMargin"><img id="verifyImg" src="__URL__/verify" align="absmiddle"> <input type="text" name="verify" class="text small"> 输入验证码 [ <a href="javascript:fleshVerify()">看不清？</a> ] </div>
+                                                <div class="fLeft hMargin"><input type="reset" class="submit small"  value="重 置" ></div>
+                                                <div class="fLeft hMargin"><input type="button" id="submit" value="发表日志" onclick="save()" class="submit small"></div>
+                                            </div></td>
+                                    </tr>
+                                </table>
+                            </form>
+                            <form id="upload" method=post action="__URL__/upload/" onsubmit="return CheckForm(this);" enctype="multipart/form-data" target="iframeUpload">
+                                <table cellpadding=3 cellspacing=3 style="font-size:14px">
+                                    <tr>
+                                        <td class="tRight tTop">附件：</td>
+                                        <td class="tLeft tTop"><input type="hidden" name="ajax" value="1">
+                                            <iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  scrolling="no" style="display:none;" ></iframe>
+                                            <input type="hidden" name="_uploadFileResult" value="result">
+                                            <input type="hidden" name="_uploadFormId" value="upload">
+                                            <input type="hidden" name="_uploadFileSize" value="-1">
+                                            <input type="hidden" name="_uploadResponse" value="uploadComplete">
+                                            <input type="hidden" name="_uploadFileVerify" value="{$verify}">
+                                            <input type="hidden" name="_uploadFileType" value="jpeg,jpg,gif,png,doc,rar,zip,mp3,wav,flv,rm,asf">
+                                            <input type="hidden" name="_uploadSavePath" value="<?php echo APP_PATH.'/../'.'Public/Uploads/';?>" >
+                                            <input type="button" value="增 加" onclick="addRow();" class="submit small">
+                                            <input type="submit" value="上 传" onclick="uploading();" class="small submit" />
+                                            <table id='tbl' style="clear:both"></table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <script language="JavaScript">
+            <!--
+            var curFileNum = 0;
+            var rowsnum=0;  //记录行数
+            var rindex="";       //列索引
+            var tbl	= $('tbl');
+            addRow();
+            //-->
+        </script>
+        <include file="Public:footer" />

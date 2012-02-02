@@ -1,0 +1,41 @@
+<tagLib name="article" />
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>ThinkPHP示例：自定义标签</title>
+        <link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+    </head>
+    <body>
+        <div class="main">
+            <h2>ThinkPHP示例之自定义标签：定义查询数据库的标签</h2>
+            3.0中TagLib自定义路径的功能，会自动识别<code><tagLib name="article" /></code>中的标签名<br />
+            不会去加载项目下的Lib下TagLib目录里对应的TagLib标签名.class.php文件，只会去系统标签库目录（框架目录）<br/>
+            Lib\Think\Template\TagLib\下寻找，需要用户自定义位置，用conf下别名定义路径，或者指定项目的自动加载路径。<br/>
+            本示例定义一个查询数据库的标签，可以使模板直接按条件查找指定的数据库并列表显示，本例仅是展示自定义标签的方便之处，可以进一步扩充和完善,打造属于自已的标签体系。<br />
+            标签库适用于公用模板上的数据查询显示处理、复杂包含头部模块，可以用来实现一部分复杂的前台模板显示需求，对后期维护提供便利。不过最好一个标签库仅实现一个特定的功能，
+            适当的时候可以通过include包含模板传参的形式，简单处理。
+            <p>配置源码<php>highlight_file(CONFIG_PATH.'config.php')</php></p>
+            <table cellpadding=2 cellspacing=2>
+                <thead>
+                    <tr>
+                        <td class="tLeft" width="8%">序列</td><td class="tLeft" width="12%">标题</td><td>内容</td>
+                    </tr>
+                </thead>
+                <article:article name="form" limit="10">
+                    <tr>
+                        <td>{$article.id}</td>
+                        <td>{$article.title}</td>
+                        <td>{$article.content}</td>
+                    </tr>
+                </article:article>
+                <tr>
+                    <td colspan='3'>
+                        <hr> 示例源码<br/>控制器自定义标签类<br/>
+                        <php>highlight_file(LIB_PATH.'TagLib/TagLibArticle.class.php');</php>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

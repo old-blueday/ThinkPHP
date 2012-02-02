@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>ThinkPHP示例：表单提交、自动验证和自动填充</title>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/Css/style.css" /> 
+ </head>
+ <body>
+ <div class="main">
+<h2>ThinkPHP示例之分页操作：普通分页和自定义样式分页</h2>
+ 本示例主要是展示一下分页的使用方法和基本原理。
+ <div><A href="__APP__/Index">自定义分页</a>   <a href="__APP__/Index/Mypage">普通分页</a></div> 
+ <table cellpadding=2 cellspacing=2>
+  <volist name="list" id="vo">
+  <tr>
+  <td></td>
+	<td style="border-bottom:1px dotted silver">{$vo.title} <span style="color:gray">[ {$vo.create_time|date='Y-m-d H:i:s',###}]</span></td>
+  </tr>
+  </volist>
+ <tr>
+ <tr>
+ 	<td></td><td><p class="sabrosus">{$page}</p></td>
+ </tr>
+ <td></td>
+	<td><hr> 示例源码<br/>控制器IndexAction类<br/><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php><br/></td>
+ </tr>
+ </table>
+   </form>
+</div>
+ </body>
+</html>

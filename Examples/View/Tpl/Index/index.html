@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>ThinkPHP示例：视图查询</title>
+        <load href="__PUBLIC__/Css/common.css" />
+    </head>
+    <body>
+        <div class="main">
+            <h3>ThinkPHP示例之视图查询：视图查询</h3>
+            <p class="red">注意3.0将视图模型(ViewModel)放入了扩展包内，要用时得将其从网上下下来放入自己项目里的Model目录里。</p>
+            <table cellpadding=2 cellspacing=2>
+                <td></td>
+                <td><hr></td>
+                </tr>
+                <volist name="list" id="vo">
+                    <tr>
+                        <td></td>
+                        <td style="border-bottom:1px dotted silver">{$vo.title} <span style="color:gray">[{$vo.username} {$vo.create_time|date='Y-m-d H:i:s',###}]</span></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><div class="content">{$vo.content|nl2br}</div></td>
+                    </tr>
+                </volist>
+                <tr>
+                    <td></td>
+                    <td><hr> 视图通常是指数据库的视图，视图是一个虚拟表，其内容由查询定义。同真实的表一样，视图包含一系列带有名称的列和行数据。但是，视图并不在数据库中以存储的数据值集形式存在。行和列数据来自由定义视图的查询所引用的表，并且在引用视图时动态生成。对其中所引用的基础表来说，视图的作用类似于筛选。定义视图的筛选可以来自当前或其它数据库的一个或多个表，或者其它视图。分布式查询也可用于定义使用多个异类源数据的视图。如果有几台不同的服务器分别存储组织中不同地区的数据，而您需要将这些服务器上相似结构的数据组合起来，这种方式就很有用。
+    视图在有些数据库下面并不被支持，但是ThinkPHP模拟实现了数据库的视图，该功能可以用于多表联合查询。非常适合解决HAS_ONE 和  BELONGS_TO 类型的关联查询。
+    要定义视图模型，只需要继承ViewModel，然后设置viewFields属性即可。
+    <hr>示例源码<br/>控制器IndexAction类<br/><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php><br/>模型FormViewModel类<br/><php>highlight_file(LIB_PATH.'Model/FormViewModel.class.php');</php></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

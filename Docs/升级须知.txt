@@ -1,0 +1,79 @@
+[ 升级须知 ]
+请注意：3.0版本要求PHP的版本5.2.0以上 如果低于该版本 不建议使用或升级
+首先下载3.0最新核心版本
+删除项目的Runtime目录
+备份现有的ThinkPHP系统目录后删除 ThinkPHP目录
+把3.0的ThinkPHP目录放入原来的项目对应位置
+然后按照下面的升级步骤进行检查：
+
+1、入口文件
+修改入口文件 确保你的THINK_PATH APP_PATH 以/结束
+去掉入口文件中的App::run()代码
+建议在入口文件中添加 define('APP_DEBUG',TRUE); 开启调试模式
+如果定义则删除入口文件中的APP_CACHE_NAME、NO_CACHE_RUNTIME、RUNTIME_ALLINONE、STRIP_RUNTIME_SPACE常量定义代码
+开启调试模式后就已经具有了NO_CACHE_RUNTIME的效果。
+注： 新版TP已经取消了对配置文件修改时间的判断。 在没有开启调试的情况下，如果修改了配置文件，需要手动删除runtime核心缓存。
+
+2、配置文件
+[调整] 当前模板主题名配置TEMPLATE_NAME更改为THEME_NAME
+[调整] 当前扩展名称的定义THINK_MODE 更改为MODE_NAME
+[调整] APP_CONFIG_LIST配置参数改为字符串方式，用逗号分隔
+[调整] LOG_RECORD_LEVEL 配置参数改为字符串方式，用逗号分隔
+[调整] 数据库端口设置DB_PORT默认为空
+[调整] TMPL_ACTION_ERROR和TMPL_ACTION_SUCCESS默认采用内置的错误提示模板
+[调整] TMPL_STRIP_SPACE 默认为true
+[调整] APP_AUTOLOAD_PATH参数设置最后不需要加. 例如 ORG.Util 原先为ORG.Util.
+[调整] DEFAULT_THEME 参数默认为空，升级原有项目需要设置为default 如果启用了分组的话，模板主题目录需要移动到分组目录下面
+[删除] 删除原调试模式配置参数APP_DEBUG
+[删除] 删除 APP_GROUP_DEPR 参数
+[删除] 删除APP_CONFIG_LIST 参数
+[删除] 删除APP_PLUGIN_ON参数
+[删除] 删除APP_AUTOLOAD_REG参数 
+[删除] 删除APP_DOMAIN_DEPLOY参数 只需要设置APP_NAME 为空即可
+[删除] 删除URL_PATHINFO_MODEL参数 只保留原来的智能模式
+[删除] 惯例配置中去掉 VAR_PAGE定义
+[删除] 取消模块配置文件
+[删除] 取消taglibs.php(标签库定义) 标签库会自动加载
+[删除] 取消modules.php(扩展模块), actions.php(扩展操作)
+
+控制器
+[删除] 废除操作链功能
+[删除] 去掉Action类的相关trace方法
+[改进] A方法格式调整为: [项目://][分组/]模块 
+[改进] R方法格式为：[项目://][分组/]模块/操作
+路由定义规范更改如下： 
+1、正则路由
+ '路由正则'=>'[分组/模块/操作]?参数1=值1&参数2=值2...' 
+'路由正则'=>array('[分组/模块/操作]','参数1=值1&参数2=值2...') 
+'路由正则'=>'外部地址' '路由正则'=>array('外部地址','重定向代码') 
+参数值和外部地址中可以用动态变量 采用 :1 :2 的方式 
+2、规则路由 
+'路由规则'=>'[分组/模块/操作]?额外参数1=值1&额外参数2=值2...' 
+'路由规则'=>array('[分组/模块/操作]','额外参数1=值1&额外参数2=值2...') 
+'路由规则'=>'外部地址' '路由规则'=>array('外部地址','重定向代码') 
+路由规则中 :开头 表示动态变量 外部地址中可以用动态变量 采用 :1 :2 的方式
+路由规则加上变量的数字约束定义，例如： 'news/:id|d'=>'News/read'
+规则路由可以支持 全动态和动静结合定义，
+例如 ':user/blog/:id'=>array('Home/Blog/user')
+
+模型
+[删除] 废除model类的findall 如需要用select替代或者在公共模型类里面添加findall定义
+[删除] 删除高级模型类里面的切换数据库相关方法 2.1版本以上推荐直接使用模型类的db方法切换
+[删除] 去掉setField getField setInc setDec方法的condition条件参数 用连贯操作where替代
+[删除] 删除了tableSuffix属性 可以用trueTableName属性替代
+[改进] D方法格式为：[项目://][分组/]模型 
+
+模板
+[调整] 当前模板文件名配置 更名为 TEMPLATE_NAME
+[调整] 默认模板主题设置为空 原来为default
+[调整] Think模板引擎的load方法更名为fetch
+[删除] 去掉Cx标签库的iterate方法定义
+[删除] 取消模板快捷变量输出 统一使用标准变量输出方式
+[删除] 废弃模板引擎的普通标签方式的include和load标签 以下用法不再支持 {include:public/header.html} {load:/public/css/common.css} 替代用法 <include 
+file="public/header.html" /> <load file="/public/css/common.css" /> 因为XML标签方式的include和load用法更强大 ，包括可以传人模板变量名等，XML方式的load标签还
+有很多的别名用法，完全可以取代普通标签加载。 目前，普通标签仅仅用于输出变量和一些快捷输出。
+[改进] 去除Cx标签库的layout标签 增加新的layout标签用法
+[改进] 模板输出规则调整为 [模板主题:][模块:][操作] 不支持 跨项目和跨分组调用 该用法可用于display方法和include标签
+
+其他
+[调整] 更改模块扩展和操作扩展方式 采用hack方式 分别定义__hack_module和__hack_action

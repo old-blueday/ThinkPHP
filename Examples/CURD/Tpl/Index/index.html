@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>ThinkPHP示例：CURD操作</title>
+<load href='__PUBLIC__/Css/common.css' />
+<load href="__PUBLIC__/Js/Base.js" />
+<load href="__PUBLIC__/Js/prototype.js" />
+<load href="__PUBLIC__/Js/mootools.js" />
+<load href="__PUBLIC__/Js/Ajax/ThinkAjax.js" />
+ </head>
+ <body><script language="JavaScript">
+ <!--
+	function add(){
+		window.location.href="__URL__/add";
+	}
+	function edit(id){
+		window.location.href="__URL__/edit/id/"+id;
+	}
+	function del(id){
+		ThinkAjax.send('__URL__/delete','ajax=1&id='+id,complete,'result');
+	}
+	function complete(data,status){
+		if (status==1)
+		{
+			$('list').removeChild($('div_'+data));
+		}
+	}
+ //-->
+ </script>
+ <div class="main">
+ <h2>ThinkPHP示例之：CURD操作</h2>
+方便地完成对单表的CURD操作<P>
+
+ <table cellpadding=2 cellspacing=2>
+  <tr>
+	<td colspan="2"><input type="button" value="新 增" class="small button" onClick="add()"><div id="result" class="none result" style="font-family:微软雅黑,Tahoma;letter-spacing:2px"></div></td>
+ </tr>
+  <tr>
+  <td></td>
+	<td> <div id="list" >
+	<volist name="list" id="vo"><div id="div_{$vo.id}" class="result" style='font-weight:normal;<eq name="key%2" value="1">background:#ECECFF</eq>'><div style="border-bottom:1px dotted silver">{$vo.title}  [{$vo.email} {$vo.create_time|date='Y-m-d H:i:s',###}] <br/><input type="button" value="编辑" class="small button" onClick="edit({$vo.id})"> <input type="button" value="删除" class="small button" onClick="del({$vo.id})"> </div>
+	<div class="content">{$vo.content|nl2br}</div></div>
+	</volist></div></td>
+  </tr>
+ <tr>
+ <td></td>
+	<td><hr> 示例源码<br/>控制器IndexAction类<br/><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php><br/>模型FormModel类<br/><php>highlight_file(LIB_PATH.'Model/FormModel.class.php');</php></td>
+ </tr>
+ </table>
+
+</div>
+ </body>
+</html>

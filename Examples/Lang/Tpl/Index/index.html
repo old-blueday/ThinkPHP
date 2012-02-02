@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>ThinkPHP示例：多语言</title>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </head>
+ <body>
+ <div class="main">
+ <h2>ThinkPHP示例之：多语言支持</h2>
+  给项目定义了三个语言包：简体中文、繁体中文和英文。<br/>
+  ThinkPHP内置多语言支持，如果你的应用涉及到国际化的支持，那么可以定义相关的语言包文件。任何字符串形式的输出，都可以定义语言常量。
+可以为项目定义不同的语言文件，框架的系统语言包目录在系统框架的Lang目录下面，每个语言都对应一个语言包文件，系统默认只有简体中文语言包文件zh-cn.php ，
+如果要增加繁体中文 zh-tw或者英文en，只要增加相应的文件。
+<p>项目语言包文件位于项目的Lang目录下面，并且按照语言类别分子目录存放，在执行的时候系统会自动加载，无需手动加载。语言包文件可以按照模块来定义，
+    每个模块单独定义语言包文件，文件名和模块名称相同，例如：
+Lang/zh-cn/user.php 表示给User模块定义简体中文语言包文件
+Lang/zh-tw/user.php 表示给User模块定义繁体中文语言包文件
+语言子目录采用浏览器的语言命名(全部小写)定义，例如English (United States)  可以使用en-us作为目录名。如果项目比较小，
+整个项目只有一个语言包文件，那可以定义common.php文件，而无需按照模块分开定义。
+</p>
+<p>语言文件定义
+ThinkPHP语言文件定义采用返回数组方式：
+<pre>
+return array(
+'lan_define'=>'欢迎使用ThinkPHP',
+);
+</pre>
+要在程序里面设置语言定义的值，使用下面的方式：
+<pre>
+L('define2','语言定义');
+$value = L('define2');
+</pre>
+</p>
+ <table  cellpadding=3 cellspacing=3>
+  <tr>
+	<td><div class="result">{$Think.lang.welcome} {$Think.lang.remark}</div></td>
+ </tr>
+ <tr>
+	<td class="tLeft" >切换到：<a href="?l=zh-cn">简体中文</a> | <a href="?l=zh-tw">繁体中文</a> | <a href="?l=en-us">英文</a></td>
+ </tr>
+ <tr>
+     <td><span style="color: red">关键在于上面链接中的参数l</span></td>
+ </tr>
+ <tr>
+	<td><hr>
+        示例源码<br/>
+        配置文件config.php<br/>
+        <php>highlight_file(APP_PATH.'/Conf/config.php');</php><br/>
+        控制器IndexAction类<br/><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php>
+	</td>
+ </tr>
+ <tr>
+     <td>同时要给项目Conf，下面加个tags.php配置行为标签作用域的文件，从网上下载扩展包的语言行为类CheckLangBehavior类放入Lib\Behavior中</td>
+     <br/>
+ </tr>
+ <tr>
+     <td>文件源码：<php>highlight_file(CONFIG_PATH.'tags.php');</php></td>
+ </tr>
+ </table>
+</div>
+ </body>
+</html>

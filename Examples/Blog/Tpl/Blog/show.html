@@ -1,0 +1,113 @@
+<taglib name="html" />
+<include file="Public:header" />
+<div id="mainWrapper">
+    <div id="content" class="content">
+        <div id="innerContent">
+            <div class="article-top">
+                <div class="prev-article"><a HREF="__URL__/{$vo['id']+1}">{$vo['id']+1|getBlogTitle}</a></div>
+                <div class="next-article"><a HREF="__URL__/{$vo['id']-1}">{$vo['id']-1|getBlogTitle}</a></div>
+            </div>
+            <div class="textbox-title"><h4><img src="../Public/Images/icon_ctb.gif" width="11" height="11" border="0"  align="absmiddle">  {$vo.title|ubb} </h4>
+                <div class="textbox-label"><span style="color:gray;font-weight:normal">[ <img src="__PUBLIC__/Images/write.gif" width="17" height="16" border="0"  align="absmiddle">  {$vo.cTime|toDate='Y-m-d H:i:s'} 发表在 <a HREF="__APP__/cate/{$vo.categoryId}">{$vo.category}</a>  ]</div></div>
+            <div class="textbox-content">{$vo.content} </div>
+            <present name="attachs">
+                <fieldset  style="width:75%;margin:8px;color:gray">
+                    <legend>附件列表</legend>
+                    <div>
+                        <volist name="attachs" id="attach" empty="还没有上传任何附件">
+                            <div id="attach_{$attach.id}" style="padding:3px">
+                                {$attach.extension|showExt} <a HREF="__URL__/download/id/{$attach.id}">{$attach.name}</a> {$attach.size|byte_format} [ 下载 {$attach.downCount}]
+                            </div>
+                        </volist>
+                    </div>
+                </fieldset>
+            </present>
+            <div class="textbox-bottom"> 关键词: {$vo.tags|showTags} | <img src="../Public/images/cm_t_ArtRank2.gif" width="12" height="12" border="0"  align=""> <a HREF="#reply">我有话要说</a></div>
+            <div class="textbox-urls" align="right"></div>
+            <div class="no-comment-box"> [ 管理：<a HREF="__URL__/edit/id/{$vo.id}" target="_blank">编辑日志</a> <a HREF="javascript:delBlog({$vo.id})">删除日志</a> ]</div>
+            <script language="JavaScript">
+                <!--
+                function delComplete(data,status){
+                    if (status==1){
+                        $('comment_'+data).style.display = 'none';
+                    }
+                }
+                function delComment(id){
+                    ThinkAjax.send('__URL__/delComment','ajax=1&id='+id,delComplete);
+                }
+                function doComplete(data,status){
+                    if (status==1){
+                        $('comments').innerHTML += '<div id="comment_'+data.id+'" class="commentbox" style="border:1px solid #56CD2E;"><div class="commentbox-content"> '+data.content+' </div></div>';
+                        $('form1').reset();
+                        fleshVerify();
+                    }
+                }
+                //-->
+            </script>
+            <div id="comments">
+                <notpresent name="comments"><div class="no-comment-box">这篇日志还没有评论</div></notpresent>
+                <present name="comments">
+                    <div class="comment-pages">{$page}</div>
+                    <volist name="comments" id="comment">
+                        <div id="comment_{$comment.id}" class="commentbox">
+                            <a name="{$comment.id}"></a> <div class="commentbox-title" > <a href="mailto:{$comment.email}">{$comment.author}</a> 发表的评论 <span style="color:gray">[ {$comment.cTime|firendlyTime} ]</span>
+                                <a HREF="javascript:delComment({$comment.id})">删除评论</a></div>
+                            <div class="commentbox-content">{$comment.content|ubb|nl2br}</div>
+                        </div></volist>
+                    <div class="comment-pages">{$page}</div>
+                </present>
+            </div>
+            <a name="reply"></a>
+            <div id="comment">
+                <div id="result" class="result none"></div>
+                <form method="post" id="form1" >
+                    <table cellpadding=3 cellspacing=3 width="450px">
+                        <tr>
+                            <td class="tRight tTop"></td>
+                            <td class="tLeft">用户名：<input type="text" namE="author" class="text"> 邮箱: <input type="text" name="email" class="text"></td>
+                        </tr>
+                        <tr>
+                            <td class="tRight tTop"></td>
+                            <td class="tLeft"><html:editor type="ubb"  id="editor" width="450px" height="185px" name="content"></html:editor></td>
+                        </tr>
+                        <tr>
+                            <td ></td>
+                            <td class="center">
+                                <input type="hidden" name="ajax" value="1">
+                                <input type="hidden" name="module" value="Blog">
+                                <input type="hidden" name="recordId" value="{$vo.id}">
+                                <div class="fLeft hMargin">输入验证码 [ <a href="javascript:fleshVerify()">看不清？</a> ] <img id="verifyImg" src="__URL__/verify" align="absmiddle"> <input type="text" name="verify" class="small text" /></div>
+                                <div class="fLeft hMargin"><input type="reset" class="submit small" onclick="resetEditor()" value="重 置" ></div>
+                                <div class="fLeft hMargin"><input type="button" id="submit" value="发表评论" onclick="ThinkAjax.sendForm('form1','__URL__/comment/',doComplete,'result');" class="submit small"></div>
+                            </TD>
+                        </tr>
+                    </TABLE>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <div id="sidebar" class="sidebar">
+        <div id="innerSidebar">
+            <div id="panelSearch" class="panel">
+                <h5 >日志分类</h5><div class="panel-content">
+                    <ul>
+                        <volist name="category" id="vo"><li><img src="../Public/images/folder.gif" width="18" height="18" border="0" align="absmiddle"/> <a HREF="__APP__/cate/{$vo.id}" >{$vo.title}</a> <span>({$vo.id|getCategoryBlogCount})</span> </volist></ul></div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >最新日志</h5><div class="panel-content">
+                    <ul><volist id="vo" name="lastArticles"><li><img src="../Public/images/icon_ctb.gif" width="11" height="11" border="0" align="absmiddle"> <a HREF="__APP__/blog/{$vo.id}" title="{$vo.title}">{$vo.title|getShortTitle}</a> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">{$vo.readCount}</span> |<span style="color:#FF6600"> {$vo.commentCount}</span>]</sup> </volist></ul></div>
+            </div>
+
+            <div id="panelSearch" class="panel">
+                <h5 >最新评论</h5><div class="panel-content">
+                    <ul><volist id="vo" name="lastComments"><li><img src="../Public/images/Comment.gif" width="9" height="9" border="0"  align="absmiddle"> <a HREF="mailto:{$vo.email}"> <span style="color:#3366CC">{$vo.author}</span></a>：<a HREF="__APP__/blog/{$vo.recordId}#{$vo.id}" title="">{$vo.content|ubb|strip_tags|getShortTitle}</a> </volist></ul></div>
+            </div>
+            <div id="panelSearch" class="panel">
+                <h5 >日志归档</h5> 	<div class="panel-content">
+                    <ul><volist name="monthList" id="date"><li> <img src="../Public/images/icon_quote.gif" width="11" height="11" border="0"  align="absmiddle"> <a HREF="__APP__/blog/{$date['year']}/{$date['month']}">{$date['show']|toDate='Y年m月'}</a></volist></ul></div>
+            </div>
+        </div>
+    </div>
+</div>
+<include file="Public:footer" />
