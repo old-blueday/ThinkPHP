@@ -112,6 +112,10 @@ class Think {
                 CORE_PATH.'Core/View.class.php',  // 视图类
             );
         }
+        // 项目追加核心编译列表文件
+        if(is_file(CONF_PATH.'core.php')) {
+            $list  =  array_merge($list,include CONF_PATH.'core.php');
+        }
         foreach ($list as $file){
             if(is_file($file))  {
                 require_cache($file);
