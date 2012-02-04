@@ -23,7 +23,7 @@
  */
 class DbIbase extends Db{
 
-    protected $selectSql  =     'SELECT %LIMIT% %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%';
+    protected $selectSql  =     'SELECT %LIMIT% %DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%';
     /**
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
