@@ -82,7 +82,7 @@ class DbIbase extends Db{
      */
     public function free() {
         ibase_free_result($this->queryID);
-        $this->queryID = 0;
+        $this->queryID = null;
     }
 
     /**
@@ -349,16 +349,12 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function close() {
-        if (!empty($this->queryID))
-            ibase_free_result($this->queryID);
-        if ($this->_linkID && !ibase_close($this->_linkID)){
-            throw_exception($this->error());
+        if ($this->_linkID){
+            ibase_close($this->_linkID);
         }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     }
 
     /**

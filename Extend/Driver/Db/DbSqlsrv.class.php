@@ -74,7 +74,7 @@ class DbSqlsrv extends Db{
      */
     public function free() {
         sqlsrv_free_stmt($this->queryID);
-        $this->queryID = 0;
+        $this->queryID = null;
     }
 
     /**
@@ -336,16 +336,12 @@ class DbSqlsrv extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function close() {
-        if (!empty($this->queryID))
-            sqlsrv_free_stmt($this->queryID);
-        if ($this->_linkID && !sqlsrv_close($this->_linkID)){
-            throw_exception($this->error());
+        if ($this->_linkID){
+            sqlsrv_close($this->_linkID);
         }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     }
 
     /**

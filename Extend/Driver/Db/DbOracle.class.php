@@ -86,7 +86,7 @@ class DbOracle extends Db{
      */
      public function free() {
         oci_free_statement($this->queryID);
-        $this->queryID = 0;
+        $this->queryID = null;
     }
 
     /**
@@ -311,16 +311,12 @@ class DbOracle extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function close() {
-        if (!empty($this->queryID))
-            oci_free_statement($this->queryID);
-        if(!oci_close($this->_linkID)){
-            throw_exception($this->error(false));
+        if($this->_linkID){
+            oci_close($this->_linkID);
         }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     }
 
     /**

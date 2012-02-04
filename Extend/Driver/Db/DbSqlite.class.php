@@ -82,7 +82,7 @@ class DbSqlite extends Db
      +----------------------------------------------------------
      */
     public function free() {
-        $this->queryID = 0;
+        $this->queryID = null;
     }
 
     /**
@@ -295,14 +295,12 @@ class DbSqlite extends Db
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function close() {
-        if ($this->_linkID && !sqlite_close($this->_linkID)){
-            throw_exception($this->error());
+        if ($this->_linkID){
+            sqlite_close($this->_linkID);
         }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     }
 
     /**

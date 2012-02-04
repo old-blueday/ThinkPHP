@@ -83,7 +83,7 @@ class DbPgsql extends Db{
      */
     public function free() {
         pg_free_result($this->queryID);
-        $this->queryID = 0;
+        $this->queryID = null;
     }
 
     /**
@@ -315,16 +315,12 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function close() {
-        if (!empty($this->queryID))
-        pg_free_result($this->queryID);
-        if($this->_linkID && !pg_close($this->_linkID)){
-            throw_exception($this->error(false));
+        if($this->_linkID){
+            pg_close($this->_linkID);
         }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     }
 
     /**

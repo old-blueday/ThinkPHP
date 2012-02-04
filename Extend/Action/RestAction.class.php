@@ -12,13 +12,7 @@
 
 /**
  +------------------------------------------------------------------------------
- * ThinkPHP RESTFul 控制器基类 抽象类
- +------------------------------------------------------------------------------
- * @category   Think
- * @package  Think
- * @subpackage  Core
- * @author   liu21st <liu21st@gmail.com>
- * @version  $Id$
+ * ThinkPHP RESTFul 控制器扩展类
  +------------------------------------------------------------------------------
  */
 abstract class RestAction {
@@ -42,6 +36,8 @@ abstract class RestAction {
     public function __construct() {
         //实例化视图类
         $this->view       = Think::instance('View');
+
+        if(!defined('__EXT__')) define('__EXT__','');
 
         // 资源类型检测
         if(''==__EXT__) { // 自动检测资源类型

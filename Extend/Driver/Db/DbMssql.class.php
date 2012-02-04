@@ -83,7 +83,7 @@ class DbMssql extends Db{
      */
     public function free() {
         mssql_free_result($this->queryID);
-        $this->queryID = 0;
+        $this->queryID = null;
     }
 
     /**
@@ -345,16 +345,12 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function close() {
-        if (!empty($this->queryID))
-            mssql_free_result($this->queryID);
-        if ($this->_linkID && !mssql_close($this->_linkID)){
-            throw_exception($this->error());
+        if ($this->_linkID){
+            mssql_close($this->_linkID);
         }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     }
 
     /**

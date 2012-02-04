@@ -80,8 +80,8 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     public function free() {
-        mysqli_free_result($this->queryID);
-        $this->queryID = 0;
+        $this->queryID->free_result();
+        $this->queryID = null;
     }
 
     /**
@@ -356,19 +356,14 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      * 关闭数据库
      +----------------------------------------------------------
-     * @static
      * @access public
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function close() {
-        if (!empty($this->queryID))
-            $this->queryID->free_result();
-        if ($this->_linkID && !$this->_linkID->close()){
-            throw_exception($this->error());
+        if ($this->_linkID){
+            $this->_linkID->close();
         }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     }
 
     /**

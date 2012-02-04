@@ -487,8 +487,7 @@ class DbPdo extends Db{
      +----------------------------------------------------------
      */
     public function getLastInsertId() {
-         switch($this->dbType)
-         {
+         switch($this->dbType) {
             case 'PGSQL':
             case 'SQLITE':
             case 'MSSQL':

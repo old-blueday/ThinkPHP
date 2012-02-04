@@ -1018,8 +1018,12 @@ class Db {
      +----------------------------------------------------------
      */
     public function __destruct() {
+        // 释放查询
+        if ($this->queryID){
+            $this->free();
+        }
         // 关闭连接
-        // $this->close();
+        $this->close();
     }
 
     // 关闭数据库 由驱动类定义
