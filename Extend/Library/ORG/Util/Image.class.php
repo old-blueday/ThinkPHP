@@ -229,8 +229,6 @@ class Image {
             if ('jpg' == $type || 'jpeg' == $type)
                 imageinterlace($thumbImg, $interlace);
 
-            //$gray=ImageColorAllocate($thumbImg,255,0,0);
-            //ImageString($thumbImg,2,5,5,"ThinkPHP",$gray);
             // 生成图片
             $imageFun = 'image' . ($type == 'jpg' ? 'jpeg' : $type);
             $imageFun($thumbImg, $thumbname);
@@ -426,52 +424,6 @@ class Image {
 
     /**
       +----------------------------------------------------------
-     * 生成高级图像验证码
-      +----------------------------------------------------------
-     * @static
-     * @access public
-      +----------------------------------------------------------
-     * @param string $type 图像格式
-     * @param string $width  宽度
-     * @param string $height  高度
-      +----------------------------------------------------------
-     * @return string
-      +----------------------------------------------------------
-     */
-    static function showAdvVerify($type='png', $width=180, $height=40, $verifyName='verifyCode') {
-        $rand = range('a', 'z');
-        shuffle($rand);
-        $verifyCode = array_slice($rand, 0, 10);
-        $letter = implode(" ", $verifyCode);
-        $_SESSION[$verifyName] = $verifyCode;
-        $im = imagecreate($width, $height);
-        $r = array(225, 255, 255, 223);
-        $g = array(225, 236, 237, 255);
-        $b = array(225, 236, 166, 125);
-        $key = mt_rand(0, 3);
-        $backColor = imagecolorallocate($im, $r[$key], $g[$key], $b[$key]);
-        $borderColor = imagecolorallocate($im, 100, 100, 100);                    //边框色
-        imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
-        imagerectangle($im, 0, 0, $width - 1, $height - 1, $borderColor);
-        $numberColor = imagecolorallocate($im, 255, rand(0, 100), rand(0, 100));
-        $stringColor = imagecolorallocate($im, rand(0, 100), rand(0, 100), 255);
-        // 添加干扰
-        /*
-          for($i=0;$i<10;$i++){
-          $fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
-          imagearc($im,mt_rand(-10,$width),mt_rand(-10,$height),mt_rand(30,300),mt_rand(20,200),55,44,$fontcolor);
-          }
-          for($i=0;$i<255;$i++){
-          $fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
-          imagesetpixel($im,mt_rand(0,$width),mt_rand(0,$height),$fontcolor);
-          } */
-        imagestring($im, 5, 5, 1, "0 1 2 3 4 5 6 7 8 9", $numberColor);
-        imagestring($im, 5, 5, 20, $letter, $stringColor);
-        Image::output($im, $type);
-    }
-
-    /**
-      +----------------------------------------------------------
      * 生成UPC-A条形码
       +----------------------------------------------------------
      * @static
@@ -553,7 +505,6 @@ class Image {
     }
 
     static function output($im, $type='png', $filename='') {
-        ob_clean(); //防止出现'图像因其本身有错无法显示'的问题
         header("Content-type: image/" . $type);
         $ImageFun = 'image' . $type;
         if (empty($filename)) {
