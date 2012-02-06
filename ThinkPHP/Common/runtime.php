@@ -17,8 +17,8 @@
  */
 if (!defined('THINK_PATH')) exit();
 //  版本信息
-define('THINK_VERSION', '3.0RC1');
-define('THINK_RELEASE', '20120129');
+define('THINK_VERSION', '3.0RC2');
+define('THINK_RELEASE', '20120206');
 
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
