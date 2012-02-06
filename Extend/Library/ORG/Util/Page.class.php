@@ -46,7 +46,7 @@ class Page {
     public function __construct($totalRows,$listRows='',$parameter='') {
         $this->totalRows = $totalRows;
         $this->parameter = $parameter;
-        $this->varPage = C('VAR_PAGE') ? C('VAR_PAGE') : 'page' ;
+        $this->varPage = C('VAR_PAGE') ? C('VAR_PAGE') : 'p' ;
         if(!empty($listRows)) {
             $this->listRows = intval($listRows);
         }
