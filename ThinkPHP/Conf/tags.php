@@ -13,9 +13,9 @@
 // 系统默认的核心行为扩展列表文件
 return array(
     'app_init'=>array(
-        'ReadHtmlCache', // 读取静态缓存
     ),
     'app_begin'=>array(
+        'ReadHtmlCache', // 读取静态缓存
         'CheckTemplate', // 模板检测
     ),
     'route_check'=>array(
