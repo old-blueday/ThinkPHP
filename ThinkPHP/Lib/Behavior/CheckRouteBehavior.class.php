@@ -39,7 +39,7 @@ class CheckRouteBehavior extends Behavior {
             $rules = array_keys($routes);
             foreach ($rules as $rule){
                 if(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { // 正则路由
-                    return $this->parseRegex($matches,$routes[$rule],$regx);
+                    return $return = $this->parseRegex($matches,$routes[$rule],$regx);
                 }elseif(substr_count($regx,'/') >= substr_count($rule,'/')){ // 规则路由
                     $m1 = explode('/',$regx);
                     $m2 = explode('/',$rule);
@@ -64,7 +64,7 @@ class CheckRouteBehavior extends Behavior {
                             break;
                         }
                     }
-                    if($match)  return $this->parseRule($rule,$routes[$rule],$regx);
+                    if($match)  return $return = $this->parseRule($rule,$routes[$rule],$regx);
                 }
             }
         }
