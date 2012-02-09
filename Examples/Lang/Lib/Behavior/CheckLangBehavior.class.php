@@ -25,7 +25,7 @@ class CheckLangBehavior extends Behavior {
         );
 
     // 行为扩展的执行入口必须是run
-    public function run(&$params=''){
+    public function run(&$params){
         // 开启静态缓存
         $this->checkLanguage();
     }
