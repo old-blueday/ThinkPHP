@@ -334,7 +334,7 @@ class PublicAction extends Action {
         $p = new Page($count, 5);
         $p->setConfig('header', '条评论');
         //分页查询数据
-        $comments = $CommList->where('recordId=' . $id)->order("cTimez")->limit($p->firstRow . ',' . $p->listRows)->select();
+        $comments = $CommList->where('recordId=' . $id)->order("cTime")->limit($p->firstRow . ',' . $p->listRows)->select();
         //模板变量赋值
         $this->assign("comments", $comments);
         $page = $p->show();
