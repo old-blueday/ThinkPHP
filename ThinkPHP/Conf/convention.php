@@ -44,6 +44,7 @@ return  array(
     /* 默认设定 */
     'DEFAULT_APP'           => '@',     // 默认项目名称，@表示当前项目
     'DEFAULT_LANG'          => 'zh-cn', // 默认语言
+    'DEFAULT_THEME'    => '',	// 默认模板主题名称
     'DEFAULT_GROUP'         => 'Home',  // 默认分组
     'DEFAULT_MODULE'        => 'Index', // 默认模块名称
     'DEFAULT_ACTION'        => 'index', // 默认操作名称
@@ -105,6 +106,9 @@ return  array(
     'TMPL_ACTION_ERROR'     => THINK_PATH.'Tpl/dispatch_jump.tpl', // 默认错误跳转对应的模板文件
     'TMPL_ACTION_SUCCESS'   => THINK_PATH.'Tpl/dispatch_jump.tpl', // 默认成功跳转对应的模板文件
     'TMPL_EXCEPTION_FILE'   => THINK_PATH.'Tpl/think_exception.tpl',// 异常页面的模板文件
+    'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
+    'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
+    'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
 
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
@@ -120,4 +124,6 @@ return  array(
     'VAR_AJAX_SUBMIT'       => 'ajax',  // 默认的AJAX提交变量
     'VAR_PATHINFO'          => 's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATHINFO_DEPR
     'VAR_URL_PARAMS'      => '_URL_', // PATHINFO URL参数变量
+    'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
+
 );

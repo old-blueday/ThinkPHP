@@ -16,7 +16,6 @@ return array(
     ),
     'app_begin'=>array(
         'ReadHtmlCache', // 读取静态缓存
-        'CheckTemplate', // 模板检测
     ),
     'route_check'=>array(
         'CheckRoute', // 路由检测
