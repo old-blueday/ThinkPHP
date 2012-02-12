@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP
+// | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2006-2012 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -9,18 +9,25 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
+
+/**
+ +-------------------------------
+ * Html标签库驱动
+ +-------------------------------
+ */
 class TagLibHtml extends TagLib{
     // 标签定义
     protected $tags   =  array(
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'editor'=>array('attr'=>'id,name,style,width,height,type','close'=>1),
-        'select'=>array('attr'=>'name,options,values,output,multiple,id,size,first,change,selected,dblclick','close'=>0),
-        'grid'=>array('attr'=>'id,pk,style,action,actionlist,show,datasource','close'=>0),
-        'list'=>array('attr'=>'id,pk,style,action,actionlist,show,datasource,checkbox','close'=>0),
-        'imagebtn'=>array('attr'=>'id,name,value,type,style,click','close'=>0),
-        'checkbox'=>array('attr'=>'name,checkboxes,checked,separator','close'=>0),
-        'radio'=>array('attr'=>'name,radios,checked,separator','close'=>0)
+        'editor'       => array('attr'=>'id,name,style,width,height,type','close'=>1),
+        'select'      => array('attr'=>'name,options,values,output,multiple,id,size,first,change,selected,dblclick','close'=>0),
+        'grid'          => array('attr'=>'id,pk,style,action,actionlist,show,datasource','close'=>0),
+        'list'           => array('attr'=>'id,pk,style,action,actionlist,show,datasource,checkbox','close'=>0),
+        'imagebtn'  => array('attr'=>'id,name,value,type,style,click','close'=>0),
+        'checkbox'  => array('attr'=>'name,checkboxes,checked,separator','close'=>0),
+        'radio'        => array('attr'=>'name,radios,checked,separator','close'=>0)
         );
+
     /**
      +----------------------------------------------------------
      * editor标签解析 插入可视化编辑器
@@ -33,8 +40,7 @@ class TagLibHtml extends TagLib{
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _editor($attr,$content)
-    {
+    public function _editor($attr,$content) {
         $tag        =	$this->parseXmlAttr($attr,'editor');
         $id			=	!empty($tag['id'])?$tag['id']: '_editor';
         $name   	=	$tag['name'];
@@ -81,8 +87,7 @@ class TagLibHtml extends TagLib{
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _imageBtn($attr)
-    {
+    public function _imageBtn($attr) {
         $tag        = $this->parseXmlAttr($attr,'imageBtn');
         $name       = $tag['name'];                //名称
         $value      = $tag['value'];                //文字
@@ -112,8 +117,7 @@ class TagLibHtml extends TagLib{
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _imgLink($attr)
-    {
+    public function _imgLink($attr) {
         $tag        = $this->parseXmlAttr($attr,'imgLink');
         $name       = $tag['name'];                //名称
         $alt        = $tag['alt'];                //文字
@@ -141,8 +145,7 @@ class TagLibHtml extends TagLib{
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _select($attr)
-    {
+    public function _select($attr) {
         $tag        = $this->parseXmlAttr($attr,'select');
         $name       = $tag['name'];
         $options    = $tag['options'];
@@ -204,8 +207,7 @@ class TagLibHtml extends TagLib{
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _checkbox($attr)
-    {
+    public function _checkbox($attr) {
         $tag        = $this->parseXmlAttr($attr,'checkbox');
         $name       = $tag['name'];
         $checkboxes = $tag['checkboxes'];
@@ -236,8 +238,7 @@ class TagLibHtml extends TagLib{
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _radio($attr)
-    {
+    public function _radio($attr) {
         $tag        = $this->parseXmlAttr($attr,'radio');
         $name       = $tag['name'];
         $radios     = $tag['radios'];
@@ -270,8 +271,7 @@ class TagLibHtml extends TagLib{
      * @return string
      +----------------------------------------------------------
      */
-    public function _grid($attr)
-    {
+    public function _grid($attr) {
         $tag        = $this->parseXmlAttr($attr,'grid');
         $id         = $tag['id'];                       //表格ID
         $datasource = $tag['datasource'];               //列表显示的数据源VoList名称
@@ -417,8 +417,7 @@ class TagLibHtml extends TagLib{
      * @return string
      +----------------------------------------------------------
      */
-    public function _list($attr)
-    {
+    public function _list($attr) {
         $tag        = $this->parseXmlAttr($attr,'list');
         $id         = $tag['id'];                       //表格ID
         $datasource = $tag['datasource'];               //列表显示的数据源VoList名称
