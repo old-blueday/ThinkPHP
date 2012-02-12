@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006-2012 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -11,15 +11,9 @@
 // $Id$
 
 /**
- +------------------------------------------------------------------------------
+ +-------------------------------
  * Sqlsrv数据库驱动类 
- +------------------------------------------------------------------------------
- * @category   Think
- * @package  Think
- * @subpackage  Db
- * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
- +------------------------------------------------------------------------------
+ +-------------------------------
  */
 class DbSqlsrv extends Db{
     protected $selectSql  =     'SELECT T1.* FROM (SELECT ROW_NUMBER() OVER (%ORDER%) AS ROW_NUMBER, thinkphp.* FROM (SELECT %DISTINCT% %FIELD% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%) AS thinkphp) AS T1 WHERE %LIMIT%';
