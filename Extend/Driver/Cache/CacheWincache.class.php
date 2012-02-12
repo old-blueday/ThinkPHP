@@ -12,10 +12,10 @@
 
 /**
  +----------------------------
- * Xcache缓存驱动类
+ * WinCache 缓存驱动类
  +----------------------------
  */
-class CacheXcache extends Cache {
+class CacheWincache extends Cache {
 
     /**
      +----------------------------------------------------------
@@ -25,8 +25,8 @@ class CacheXcache extends Cache {
      +----------------------------------------------------------
      */
     public function __construct($options='') {
-        if ( !function_exists('xcache_info') ) {
-            throw_exception(L('_NOT_SUPPERT_').':Xcache');
+        if ( !function_exists('wincache_ucache_info') ) {
+            throw_exception(L('_NOT_SUPPERT_').':WinCache');
         }
         if(!empty($options)) {
             $this->options =  $options;
@@ -48,10 +48,7 @@ class CacheXcache extends Cache {
      */
     public function get($name) {
         N('cache_read',1);
-        if (xcache_isset($name)) {
-            return xcache_get($name);
-        }
-        return false;
+        return wincache_ucache_exists($name)? wincache_ucache_get($name) : false;
     }
 
     /**
@@ -70,9 +67,9 @@ class CacheXcache extends Cache {
     public function set($name, $value,$expire=null) {
         N('cache_write',1);
         if(is_null($expire)) {
-            $expire = $this->options['expire'] ;
+            $expire  =  $this->options['expire'];
         }
-        if(xcache_set($name, $value, $expire)) {
+        if(wincache_ucache_set($name, $value, $expire)) {
             if($this->options['length']>0) {
                 // 记录缓存队列
                 $this->queue($name);
@@ -94,7 +91,7 @@ class CacheXcache extends Cache {
      +----------------------------------------------------------
      */
     public function rm($name) {
-        return xcache_unset($name);
+        return wincache_ucache_delete($name);
     }
 
 }
