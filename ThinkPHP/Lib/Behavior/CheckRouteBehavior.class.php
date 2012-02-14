@@ -24,11 +24,11 @@ class CheckRouteBehavior extends Behavior {
 
     // 行为扩展的执行入口必须是run
     public function run(&$return){
-        // 优先检测是否存在PATH_INFO，更能为普通检测所用
+        // 优先检测是否存在PATH_INFO
         $regx = trim($_SERVER['PATH_INFO'],'/');
-        if(empty($regx)) return $return = true;// 为true才可以跳过判断
+        if(empty($regx)) return $return = true;
         // 是否开启路由使用
-        if(!C('URL_ROUTER_ON')) return $return = false;// 即时return，以免继续执行
+        if(!C('URL_ROUTER_ON')) return $return = false;
         // 路由定义文件优先于config中的配置定义
         $routes = C('URL_ROUTE_RULES');
         // 路由处理
@@ -36,39 +36,55 @@ class CheckRouteBehavior extends Behavior {
             $depr = C('URL_PATHINFO_DEPR');
             // 分隔符替换 确保路由定义使用统一的分隔符
             $regx = str_replace($depr,'/',$regx);
-            $rules = array_keys($routes);
-            foreach ($rules as $rule){
+            foreach ($routes as $rule=>$route){
                 if(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { // 正则路由
-                    return $return = $this->parseRegex($matches,$routes[$rule],$regx);
-                }elseif(substr_count($regx,'/') >= substr_count($rule,'/')){ // 规则路由
-                    $m1 = explode('/',$regx);
-                    $m2 = explode('/',$rule);
-                    $match = true; // 是否匹配
-                    foreach ($m2 as $key=>$val){
-                        if(':' == substr($val,0,1)) {// 动态变量
-                            if(strpos($val,'\\')) {
-                                $type = substr($val,-1);
-                                if('d'==$type && !is_numeric($m1[$key])) {
-                                    $match = false;
-                                    break;
-                                }
-                            }elseif(strpos($val,'^')){
-                                $array   =  explode('|',substr(strstr($val,'^'),1));
-                                if(in_array($m1[$key],$array)) {
-                                    $match = false;
-                                    break;
-                                }
+                    return $return = $this->parseRegex($matches,$route,$regx);
+                }else{ // 规则路由
+                    $len1=   substr_count($regx,'/');
+                    $len2 =  substr_count($rule,'/');
+                    if($len1>=$len2) {
+                        if('$' == substr($rule,-1,1)) {// 完整匹配
+                            if($len1 != $len2) {
+                                continue;
+                            }else{
+                                $rule =  substr($rule,0,-1);
                             }
-                        }elseif(0 !== strcasecmp($val,$m1[$key])){
-                            $match = false;
-                            break;
                         }
+                        $match  =  $this->checkUrlMatch($regx,$rule);
+                        if($match)  return $return = $this->parseRule($rule,$route,$regx);
                     }
-                    if($match)  return $return = $this->parseRule($rule,$routes[$rule],$regx);
                 }
             }
         }
         $return = false;
+    }
+
+    // 检测URL和规则路由是否匹配
+    private function checkUrlMatch($regx,$rule) {
+        $m1 = explode('/',$regx);
+        $m2 = explode('/',$rule);
+        $match = true; // 是否匹配
+        foreach ($m2 as $key=>$val){
+            if(':' == substr($val,0,1)) {// 动态变量
+                if(strpos($val,'\\')) {
+                    $type = substr($val,-1);
+                    if('d'==$type && !is_numeric($m1[$key])) {
+                        $match = false;
+                        break;
+                    }
+                }elseif(strpos($val,'^')){
+                    $array   =  explode('|',substr(strstr($val,'^'),1));
+                    if(in_array($m1[$key],$array)) {
+                        $match = false;
+                        break;
+                    }
+                }
+            }elseif(0 !== strcasecmp($val,$m1[$key])){
+                $match = false;
+                break;
+            }
+        }
+        return $match;
     }
 
     // 解析规范的路由地址
@@ -117,7 +133,7 @@ class CheckRouteBehavior extends Behavior {
             if(0===strpos($item,':')) { // 动态变量获取
                 if($pos = strpos($item,'^') ) {
                     $var  =  substr($item,1,$pos-1);
-                }elseif($pos = strpos($item,'\\')){
+                }elseif(strpos($item,'\\')){
                     $var  =  substr($item,1,-2);
                 }else{
                     $var  =  substr($item,1);
