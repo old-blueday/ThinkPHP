@@ -262,7 +262,7 @@ function redirect($url, $time=0, $msg='') {
 }
 
 // 全局缓存设置和读取
-function S($name, $value='', $expire=0, $type='',$options=null) {
+function S($name, $value='', $expire=null, $type='',$options=null) {
     static $_cache = array();
     //取得缓存对象实例
     $cache = Cache::getInstance($type,$options);
