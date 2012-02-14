@@ -41,7 +41,7 @@ class CheckRestRouteBehavior extends Behavior {
         // 路由处理
         if(!empty($routes)) {
             $depr = C('URL_PATHINFO_DEPR');
-            foreach ($routes as $rule=>$route){
+            foreach ($routes as $key=>$route){
                 // 定义格式： array('路由规则或者正则','路由地址','路由参数','提交类型','资源类型')
                 if(isset($route[3]) && strtolower($_SERVER['REQUEST_METHOD']) != strtolower($route[3])) {
                     continue; // 如果设置了提交类型则过滤
@@ -51,20 +51,52 @@ class CheckRestRouteBehavior extends Behavior {
                 }
                 if(0===strpos($route[0],'/') && preg_match($route[0],$regx,$matches)) { // 正则路由
                     return self::parseRegex($matches,$route,$regx);
-                }elseif(substr_count($regx,'/') >= substr_count($route[0],'/')){ // 规则路由
-                    // 进一步匹配规则
-                    $match1 = explode('/',$regx);
-                    $match2 = explode('/',$route[0]);
-                    $match = true; // 是否匹配
-                    foreach ($match2 as $key=>$val){
-                        if(':' != substr($val,0,1) && $match2[$key] != $match1[$key])
-                            $match = false;
+                }else{ // 规则路由
+                    $len1=   substr_count($regx,'/');
+                    $len2 =  substr_count($route[0],'/');
+                    if($len1>=$len2) {
+                        if('$' == substr($route[0],-1,1)) {// 完整匹配
+                            if($len1 != $len2) {
+                                continue;
+                            }else{
+                                $route[0] =  substr($route[0],0,-1);
+                            }
+                        }
+                        $match  =  self::checkUrlMatch($regx,$route[0]);
+                        if($match)  return $return = self::parseRule($route,$regx);
                     }
-                    if($match)  return self::parseRule($route,$regx);
                 }
             }
         }
         $return  =  false;
+    }
+
+    // 检测URL和规则路由是否匹配
+    static private function checkUrlMatch($regx,$rule) {
+        $m1 = explode('/',$regx);
+        $m2 = explode('/',$rule);
+        $match = true; // 是否匹配
+        foreach ($m2 as $key=>$val){
+            if(':' == substr($val,0,1)) {// 动态变量
+                if(strpos($val,'\\')) {
+                    $type = substr($val,-1);
+                    if('d'==$type && !is_numeric($m1[$key])) {
+                        $match = false;
+                        break;
+                    }
+                }elseif(strpos($val,'^')){
+                    $array   =  explode('|',substr(strstr($val,'^'),1));
+                    if(in_array($m1[$key],$array)) {
+                        $match = false;
+                        break;
+                    }
+                }
+            }elseif(0 !== strcasecmp($val,$m1[$key])){
+                $match = false;
+                break;
+            }
+        }
+        return $match;
     }
 
     static private function parseUrl($url) {
@@ -107,7 +139,14 @@ class CheckRestRouteBehavior extends Behavior {
         $rule =  explode('/',$route[0]);
         foreach ($rule as $item){
             if(0===strpos($item,':')) { // 动态变量获取
-                $matches[substr($item,1)] = array_shift($paths);
+                if($pos = strpos($item,'^') ) {
+                    $var  =  substr($item,1,$pos-1);
+                }elseif(strpos($item,'\\')){
+                    $var  =  substr($item,1,-2);
+                }else{
+                    $var  =  substr($item,1);
+                }
+                $matches[$var] = array_shift($paths);
             }else{ // 过滤URL中的静态变量
                 array_shift($paths);
             }
