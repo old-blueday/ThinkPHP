@@ -130,7 +130,9 @@ class CacheDb extends Cache {
         }else {
             $crc  =  '';
         }
-        $expire =  !empty($expire)? $expire : $this->options['expire'];
+        if(is_null($expire)) {
+            $expire  =  $this->options['expire'];
+        }
         $expire	=	($expire==0)?0: (time()+$expire) ;//缓存有效期为0表示永久缓存
         $result  =  $this->db->query('select `cachekey` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
         if(!empty($result) ) {

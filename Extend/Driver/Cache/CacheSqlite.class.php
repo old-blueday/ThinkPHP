@@ -101,7 +101,9 @@ class CacheSqlite extends Cache {
         $expire =  !empty($expireTime)? $expireTime : C('DATA_CACHE_TIME');
         $name  = sqlite_escape_string($name);
         $value = sqlite_escape_string(serialize($value));
-        $expire =  !empty($expire)? $expire : $this->options['expire'];
+        if(is_null($expire)) {
+            $expire  =  $this->options['expire'];
+        }
         $expire	=	($expire==0)?0: (time()+$expire) ;//缓存有效期为0表示永久缓存
         if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
             //数据压缩
