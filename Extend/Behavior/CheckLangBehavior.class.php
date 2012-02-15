@@ -71,9 +71,9 @@ class CheckLangBehavior extends Behavior {
         $group = '';
         // 读取当前分组公共语言包
         if (defined('GROUP_NAME')){
+            if (is_file(LANG_PATH.LANG_SET.'/'.GROUP_NAME.'.php'))
+                L(include LANG_PATH.LANG_SET.'/'.GROUP_NAME.'.php');
             $group = GROUP_NAME.C('TMPL_FILE_DEPR');
-            if (is_file(LANG_PATH.LANG_SET.'/'.$group.'lang.php'))
-                L(include LANG_PATH.LANG_SET.'/'.$group.'lang.php');
         }
         // 读取当前模块语言包
         if (is_file(LANG_PATH.LANG_SET.'/'.$group.strtolower(MODULE_NAME).'.php'))
