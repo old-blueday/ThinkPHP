@@ -52,22 +52,24 @@ class App {
         }
 
         /* 获取模板主题名称 */
-        $templateSet =  C('DEFAULT_THEME');
-        if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
-            $t = C('VAR_TEMPLATE');
-            if (isset($_GET[$t])){
-                $templateSet = $_GET[$t];
-            }elseif(cookie('think_template')){
-                $templateSet = cookie('think_template');
+        if(!defined('THEME_NAME')) {
+            $templateSet =  C('DEFAULT_THEME');
+            if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
+                $t = C('VAR_TEMPLATE');
+                if (isset($_GET[$t])){
+                    $templateSet = $_GET[$t];
+                }elseif(cookie('think_template')){
+                    $templateSet = cookie('think_template');
+                }
+                // 主题不存在时仍改回使用默认主题
+                if(!is_dir(TMPL_PATH.$templateSet))
+                    $templateSet = C('DEFAULT_THEME');
+                cookie('think_template',$templateSet);
             }
-            // 主题不存在时仍改回使用默认主题
-            if(!is_dir(TMPL_PATH.$templateSet))
-                $templateSet = C('DEFAULT_THEME');
-            cookie('think_template',$templateSet);
+            /* 模板相关目录常量 */
+            define('THEME_NAME',   $templateSet);                  // 当前模板主题名称
         }
 
-        /* 模板相关目录常量 */
-        define('THEME_NAME',   $templateSet);                  // 当前模板主题名称
         $group   =  defined('GROUP_NAME')?GROUP_NAME.'/':'';
         define('THEME_PATH',   TMPL_PATH.$group.(THEME_NAME?THEME_NAME.'/':''));
         define('APP_TMPL_PATH',__ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').basename(TMPL_PATH).'/'.$group.(THEME_NAME?THEME_NAME.'/':''));
