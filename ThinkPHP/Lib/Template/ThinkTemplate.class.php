@@ -392,6 +392,10 @@ class  ThinkTemplate {
             $closeTag = isset($val['close'])?$val['close']:true;
             foreach ($tags as $tag){
                 $parseTag = !$hide? $tagLib.':'.$tag: $tag;// 实际要解析的标签名称
+                if(!method_exists($tLib,'_'.$tag)) {
+                    // 别名可以无需定义解析方法
+                    $tag  =  $name;
+                }
                 $n1 = empty($val['attr'])?'(\s*?)':'\s(.*?)';
                 if (!$closeTag){
                     $patterns = '/'.$begin.$parseTag.$n1.'\/(\s*?)'.$end.'/eis';
