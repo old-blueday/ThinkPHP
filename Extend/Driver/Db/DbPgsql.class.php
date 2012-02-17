@@ -279,7 +279,7 @@ class DbPgsql extends Db{
                 'notnull' => (bool) ($val['Null'] == 't'?1:0), // 't' is 'not null'
                 'default' => $val['Default'],
                 'primary' => (strtolower($val['Key']) == 't'),
-                'autoinc' => (strtolower($val['Extra']) == "nextval('{$tableName}_id_seq'::regclass)"),
+                'autoinc' => (strtolower($val['Default']) == "nextval('{$tableName}_id_seq'::regclass)"),
                 );
             }
         }
