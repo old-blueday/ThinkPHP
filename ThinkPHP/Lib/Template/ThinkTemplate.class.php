@@ -68,7 +68,6 @@ class  ThinkTemplate {
         $this->config['tmpl_begin']         =  $this->stripPreg(C('TMPL_L_DELIM'));
         $this->config['tmpl_end']           =  $this->stripPreg(C('TMPL_R_DELIM'));
         $this->config['default_tmpl']       =  C('TEMPLATE_NAME');
-        $this->config['tag_level']            =  C('TAG_NESTED_LEVEL');
         $this->config['layout_item']        = C('TMPL_LAYOUT_ITEM');
     }
 
