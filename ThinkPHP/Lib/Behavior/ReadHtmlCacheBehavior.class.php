@@ -27,7 +27,7 @@ class ReadHtmlCacheBehavior extends Behavior {
     public function run(&$params){
         // 开启静态缓存
         if(C('HTML_CACHE_ON'))  {
-            if($cacheTime = $this->requireHtmlCache() && $this->checkHTMLCache(HTML_FILE_NAME,$cacheTime)) { //静态页面有效
+            if(($cacheTime = $this->requireHtmlCache()) && $this->checkHTMLCache(HTML_FILE_NAME,$cacheTime)) { //静态页面有效
                 // 读取静态页面输出
                 readfile(HTML_FILE_NAME);
                 exit();
