@@ -79,13 +79,14 @@ class DbMongo extends Db{
      +----------------------------------------------------------
      * @param string $collection  collection
      * @param string $db  db
+     * @param boolean $master 是否主服务器
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function switchCollection($collection,$db=''){
+    public function switchCollection($collection,$db='',$master=true){
         // 当前没有连接 则首先进行数据库连接
-        if ( !$this->_linkID ) $this->initConnect(false);
+        if ( !$this->_linkID ) $this->initConnect($master);
         try{
             if(!empty($db)) { // 传人Db则切换数据库
                 // 当前MongoDb对象
@@ -416,7 +417,7 @@ class DbMongo extends Db{
      */
     public function select($options=array()) {
         if(isset($options['table'])) {
-            $this->switchCollection($options['table']);
+            $this->switchCollection($options['table'],'',false);
         }
         $cache  =  isset($options['cache'])?$options['cache']:false;
         if($cache) { // 查询缓存检测
@@ -496,7 +497,7 @@ class DbMongo extends Db{
      */
     public function find($options=array()){
         if(isset($options['table'])) {
-            $this->switchCollection($options['table']);
+            $this->switchCollection($options['table'],'',false);
         }
         $cache  =  isset($options['cache'])?$options['cache']:false;
         if($cache) { // 查询缓存检测
@@ -543,7 +544,7 @@ class DbMongo extends Db{
      */
     public function count($options=array()){
         if(isset($options['table'])) {
-            $this->switchCollection($options['table']);
+            $this->switchCollection($options['table'],'',false);
         }
         $this->model  =   $options['model'];
         N('db_query',1);
@@ -579,7 +580,7 @@ class DbMongo extends Db{
      */
     public function getFields($collection=''){
         if(!empty($collection) && $collection != $this->_collectionName) {
-            $this->switchCollection($collection);
+            $this->switchCollection($collection,'',false);
         }
         N('db_query',1);
         if($this->debug) {
