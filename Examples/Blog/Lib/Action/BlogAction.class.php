@@ -181,23 +181,21 @@ Class BlogAction extends PublicAction {
 
     public function index() {
         $Blog = D("BlogView");
-        $count = $Blog->where("status=1")->count();
+        $count = $Blog->where("Blog.status=1")->count();
         $mode = "normal";
         if (isset($_REQUEST["mode"])) {
             $mode = $_REQUEST["mode"];
         }
         if ($mode == "list") {
-            $listRows = 45;
-            //$fields	= 'id,title,categoryId,category,cTime,readCount,commentCount';
+            $listRows = 25;
         } else {
             $listRows = 8;
-            //$fields	= 'id,title,categoryId,cTime,readCount,commentCount,content,tags';
         }
         import("@.ORG.Page");
         $p = new Page($count, $listRows);
         $p->setConfig("header", "篇日志");
         $this->assign("mode", $mode);
-        $list = $Blog->order("cTime desc")->limit($p->firstRow . ',' . $p->listRows)->select();
+        $list = $Blog->order("cTime desc")->limit($p->firstRow . ',' . $p->listRows)->select();dump($list);
         $page = $p->show();
         $this->assign("list", $list);
         $this->assign("page", $page);

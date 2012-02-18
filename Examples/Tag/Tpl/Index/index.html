@@ -9,7 +9,7 @@
     <body>
         <div class="main">
             <h2>ThinkPHP示例之自定义标签：定义查询数据库的标签</h2>
-            3.0中TagLib自定义路径的功能，会自动识别<code><tagLib name="article" /></code>中的标签名<br />
+            3.0中TagLib自定义路径的功能，会自动识别<code>&lt;tagLib name="article" /&gt;</code>中的标签名<br />
             不会去加载项目下的Lib下TagLib目录里对应的TagLib标签名.class.php文件，只会去系统标签库目录（框架目录）<br/>
             Lib\Think\Template\TagLib\下寻找，需要用户自定义位置，用conf下别名定义路径，或者指定项目的自动加载路径。<br/>
             本示例定义一个查询数据库的标签，可以使模板直接按条件查找指定的数据库并列表显示，本例仅是展示自定义标签的方便之处，可以进一步扩充和完善,打造属于自已的标签体系。<br />
