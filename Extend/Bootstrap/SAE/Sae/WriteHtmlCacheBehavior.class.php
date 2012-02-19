@@ -28,6 +28,7 @@ class WriteHtmlCacheBehavior extends Behavior {
             $kv = Think::instance('SaeKVClient');
             if (!$kv->init())
                 halt('您没有初始化KVDB，请在SAE平台进行初始化');
+            trace('[SAE]生成静态文件',HTML_FILE_NAME);
             $kv->set(HTML_FILE_NAME,time().$content);
         }
     }
