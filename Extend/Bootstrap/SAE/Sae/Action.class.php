@@ -136,7 +136,7 @@ abstract class Action {
         if(!$kv->init()) halt('您没有初始化KVDB，请在SAE平台进行初始化');
         $htmlpath   = !empty($htmlpath)?$htmlpath:HTML_PATH;
         $htmlfile = $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
-        trace('[SAE]生成静态文件',$htmlfile);
+        trace('[SAE]静态缓存',$htmlfile);
         $kv->set($htmlfile,$content);//[sae] 注意buildHtml生成的静态数据没有记录生成时间
         return $content;
     }
