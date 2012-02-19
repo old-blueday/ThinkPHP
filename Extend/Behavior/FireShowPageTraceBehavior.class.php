@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: luofei614 <www.3g4k.com>
 // +----------------------------------------------------------------------
-// $Id: ShowPageTraceBehavior.class.php 2702 2012-02-02 12:35:01Z liu21st $
+// $Id$
 
 /**
  +------------------------------------------------------------------------------
@@ -25,6 +25,10 @@
  * );
  * </code>
  * 再将此文件放到项目的Behavior文件夹中即可
+ * 如果trace信息没有正常输出，请查看您的日志。
+ * firePHP，是通过http headers和firebug通讯的，所以要保证在输出trace信息之前不能有
+ * headers输出，你可以在入口文件第一个加入代码 ob_start(); 或者配置output_buffering
+ *
  */
 class FireShowPageTraceBehavior extends Behavior {
     // 行为参数定义
@@ -74,11 +78,11 @@ class FireShowPageTraceBehavior extends Behavior {
         foreach(trace() as $key=>$value){
             $fire[]=array($key,$value);
         }
-        try {
-            ob_start();
+        if(headers_sent($filename, $linenum)){
+            $fileInfo=!empty($filename)?"（在{$filename}文件的第{$linenum}行）":'';
+            Log::record("已经有Http Header信息头输出{$fileInfo}，请在你的入口文件加入ob_start() 或通过配置output_buffering，已确保headers不被提前输出");
+        }else{
             fb(array('页面Trace信息',$fire),FirePHP::TABLE);
-        } catch (Exception $exc) {
-            //pass
         }
 
         
