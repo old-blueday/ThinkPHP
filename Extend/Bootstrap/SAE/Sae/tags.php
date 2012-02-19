@@ -12,9 +12,11 @@
 
 // 系统默认的核心行为扩展列表文件
 //[sae]定义别名，让在SAE下时，调试模式也加载对应文件。
-alias_import('ParseTemplateBehavior',THINK_PATH.'Sae/ParseTemplateBehavior.class.php');
-alias_import('ReadHtmlCacheBehavior',THINK_PATH.'Sae/ReadHtmlCacheBehavior.class.php');
-alias_import('WriteHtmlCacheBehavior',THINK_PATH.'Sae/WriteHtmlCacheBehavior.class.php');
+alias_import(array(
+    'ParseTemplateBehavior'=>THINK_PATH.'Sae/ParseTemplateBehavior.class.php',
+    'ReadHtmlCacheBehavior'=>THINK_PATH.'Sae/ReadHtmlCacheBehavior.class.php',
+    'WriteHtmlCacheBehavior'=>THINK_PATH.'Sae/WriteHtmlCacheBehavior.class.php'
+));
 return array(
     'app_init'=>array(
     ),
