@@ -84,8 +84,19 @@ class Dispatcher {
             }
         }
         // 分析PATHINFO信息
-        tag('path_info');
-
+        if(empty($_SERVER['PATH_INFO'])) {
+            $types   =  explode(',',C('URL_PATHINFO_FETCH'));
+            foreach ($types as $type){
+                if(0===strpos($type,':')) {// 支持函数判断
+                    $fun  =  substr($type,1);
+                    $SERVER['PATH_INFO'] =   $fun();
+                    break;
+                }elseif(!empty($_SERVER[$type])) {
+                    $SERVER['PATH_INFO'] =   $SERVER[$type];
+                    break;
+                }
+            }
+        }
         $depr = C('URL_PATHINFO_DEPR');
         if(!empty($_SERVER['PATH_INFO'])) {
             if(C('URL_HTML_SUFFIX')) {
