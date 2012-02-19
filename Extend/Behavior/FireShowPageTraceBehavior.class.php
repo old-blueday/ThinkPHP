@@ -33,12 +33,12 @@
 class FireShowPageTraceBehavior extends Behavior {
     // 行为参数定义
     protected $options   =  array(
-        'SHOW_PAGE_TRACE'        => true,   // 显示页面Trace信息
+        'FIRE_SHOW_PAGE_TRACE'        => true,   // 显示页面Trace信息
     );
 
     // 行为扩展的执行入口必须是run
     public function run(&$params){
-        if(C('SHOW_PAGE_TRACE')) {
+        if(C('FIRE_SHOW_PAGE_TRACE')) {
             $this->showTrace();
         }
     }
