@@ -4,7 +4,7 @@
 // +----------------------------------------------------------------------
 // | Author: luofei614<www.3g4k.com>
 // +----------------------------------------------------------------------
-// $Id: config.php 647 2012-01-17 09:05:10Z luofei614@126.com $
+// $Id: config.php 869 2012-02-20 13:57:43Z luofei614@126.com $
 $appConfig=  include APP_PATH.'Conf/config.php';
 return array(
     'db_host'=>isset($appConfig['DB_HOST'])?$appConfig['DB_HOST']:'localhost',

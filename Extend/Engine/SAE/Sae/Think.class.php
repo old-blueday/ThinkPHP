@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: Think.class.php 2704 2012-02-03 05:44:08Z liu21st $
+// $Id: Think.class.php 869 2012-02-20 13:57:43Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @package  Think
  * @subpackage  Core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id: Think.class.php 2704 2012-02-03 05:44:08Z liu21st $
+ * @version   $Id: Think.class.php 869 2012-02-20 13:57:43Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class Think {
@@ -78,7 +78,7 @@ class Think {
         if(is_file(CONF_PATH.'config.php'))
             C(include CONF_PATH.'config.php');
         //[sae]惯例配置
-        C(include THINK_PATH . 'Sae/convention_sae.php');
+        C(include SAE_PATH.'convention_sae.php');
         //[sae]专有配置
         if (is_file(CONF_PATH . 'config_sae.php'))
             C(include CONF_PATH . 'config_sae.php');
@@ -90,7 +90,7 @@ class Think {
             if(isset($mode['extends'])) {
                 C('extends',is_array($mode['extends'])?$mode['extends']:include $mode['extends']);
             }else{ //[sae] 默认加载系统行为扩展定义
-                C('extends', include THINK_PATH . 'Sae/tags.php');
+                C('extends', include SAE_PATH.'tags.php');
             }
         }
 
@@ -108,12 +108,12 @@ class Think {
             $list   =  $mode['core'];
         }else{
             $list  =  array(
-                THINK_PATH . 'Sae/functions.php', //[sae] 标准模式函数库
-                THINK_PATH.'Sae/sae_functions.php',//[sae]新增sae专用函数
-                THINK_PATH.'Sae/Log.class.php',    // 日志处理类
+                SAE_PATH.'functions.php', //[sae] 标准模式函数库
+                SAE_PATH.'sae_functions.php',//[sae]新增sae专用函数
+                SAE_PATH.'Log.class.php',    // 日志处理类
                 CORE_PATH.'Core/Dispatcher.class.php', // URL调度类
                 CORE_PATH.'Core/App.class.php',   // 应用程序类
-                THINK_PATH.'Sae/Action.class.php', //[sae] 控制器类
+                SAE_PATH.'Action.class.php', //[sae] 控制器类
                 CORE_PATH.'Core/View.class.php',  // 视图类
             );
         }

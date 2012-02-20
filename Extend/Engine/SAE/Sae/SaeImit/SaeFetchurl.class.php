@@ -3,7 +3,7 @@
  * SAE数据抓取服务
  *
  * @author  zhiyong
- * @version $Id: SaeFetchurl.class.php 607 2012-01-15 03:06:18Z luofei614@126.com $
+ * @version $Id: SaeFetchurl.class.php 869 2012-02-20 13:57:43Z luofei614@126.com $
  * @package sae
  *
  */
@@ -49,7 +49,7 @@
  *  - errno: 606 	请求的URI，服务器不可达。
  *
  * @author  zhiyong
- * @version $Id: SaeFetchurl.class.php 607 2012-01-15 03:06:18Z luofei614@126.com $
+ * @version $Id: SaeFetchurl.class.php 869 2012-02-20 13:57:43Z luofei614@126.com $
  * @package sae
  *
  */

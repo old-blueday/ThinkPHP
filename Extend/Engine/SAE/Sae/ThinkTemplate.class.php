@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: ThinkTemplate.class.php 2740 2012-02-17 08:16:42Z liu21st $
+// $Id: ThinkTemplate.class.php 869 2012-02-20 13:57:43Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -20,7 +20,7 @@
  * @package  Think
  * @subpackage  Template
  * @author liu21st <liu21st@gmail.com>
- * @version  $Id: ThinkTemplate.class.php 2740 2012-02-17 08:16:42Z liu21st $
+ * @version  $Id: ThinkTemplate.class.php 869 2012-02-20 13:57:43Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class  ThinkTemplate {

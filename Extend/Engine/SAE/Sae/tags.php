@@ -8,20 +8,20 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: tags.php 2726 2012-02-11 13:34:24Z liu21st $
+// $Id: tags.php 869 2012-02-20 13:57:43Z luofei614@126.com $
 
 // 系统默认的核心行为扩展列表文件
 //[sae]定义别名，让在SAE下时，调试模式也加载对应文件。
 alias_import(array(
-    'ParseTemplateBehavior'=>THINK_PATH.'Sae/ParseTemplateBehavior.class.php',
-    'ReadHtmlCacheBehavior'=>THINK_PATH.'Sae/ReadHtmlCacheBehavior.class.php',
-    'WriteHtmlCacheBehavior'=>THINK_PATH.'Sae/WriteHtmlCacheBehavior.class.php'
+    'ParseTemplateBehavior'=>SAE_PATH.'ParseTemplateBehavior.class.php',
+    'ReadHtmlCacheBehavior'=>SAE_PATH.'ReadHtmlCacheBehavior.class.php',
+    'WriteHtmlCacheBehavior'=>SAE_PATH.'WriteHtmlCacheBehavior.class.php'
 ));
 return array(
     'app_init'=>array(
     ),
     'app_begin'=>array(
-        'ReadHtmlCache'=>THINK_PATH.'Sae/ReadHtmlCacheBehavior.class.php', // 读取静态缓存
+        'ReadHtmlCache'=>SAE_PATH.'ReadHtmlCacheBehavior.class.php', // 读取静态缓存
     ),
     'route_check'=>array(
         'CheckRoute', // 路由检测
@@ -35,12 +35,12 @@ return array(
         'LocationTemplate', // 自动定位模板文件
     ),
     'view_parse'=>array(
-        'ParseTemplate'=>THINK_PATH.'Sae/ParseTemplateBehavior.class.php', //[sae] 模板解析 支持PHP、内置模板引擎和第三方模板引擎
+        'ParseTemplate'=>SAE_PATH.'ParseTemplateBehavior.class.php', //[sae] 模板解析 支持PHP、内置模板引擎和第三方模板引擎
     ),
     'view_filter'=>array(
         'ContentReplace', // 模板输出替换
         'TokenBuild',   // 表单令牌
-        'WriteHtmlCache'=>THINK_PATH.'Sae/WriteHtmlCacheBehavior.class.php', // 写入静态缓存
+        'WriteHtmlCache'=>SAE_PATH.'WriteHtmlCacheBehavior.class.php', // 写入静态缓存
         'ShowRuntime', // 运行时间显示
     ),
     'view_end'=>array(

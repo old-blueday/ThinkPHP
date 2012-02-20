@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: runtime.php 869 2012-02-20 13:57:43Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -78,10 +78,10 @@ if(!defined('CACHE_PATH')) define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); // 项
 // 加载运行时所需要的文件 并负责自动目录生成
 function load_runtime_file() {
     //[sae] 加载系统基础函数库
-    require THINK_PATH.'Sae/common.php';
+    require SAE_PATH.'common.php';
     //[sae] 读取核心编译文件列表
     $list = array(
-        THINK_PATH.'Sae/Think.class.php',
+        SAE_PATH.'Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',  // 异常处理类
         CORE_PATH.'Core/Behavior.class.php',
     );
@@ -90,7 +90,7 @@ function load_runtime_file() {
         if(is_file($file))  require_cache($file);
     }
     //[sae] 加载系统类库别名定义
-    alias_import(include THINK_PATH.'Sae/alias.php');
+    alias_import(include SAE_PATH.'alias.php');
     //[sae]在sae下不对目录结构进行检查
     if(APP_DEBUG){
         //[sae] 调试模式切换删除编译缓存
@@ -106,7 +106,7 @@ function build_runtime_cache($append='') {
     $defs = get_defined_constants(TRUE);
     $content    =  '$GLOBALS[\'_beginTime\'] = microtime(TRUE);';
     //[sae]编译SaeMC核心
-    $content.=compile(THINK_PATH.'Sae/SaeMC.class.php');
+    $content.=compile(SAE_PATH.'SaeMC.class.php');
     if(defined('RUNTIME_DEF_FILE')) { //[sae] 编译后的常量文件外部引入
         SaeMC::set(RUNTIME_DEF_FILE, '<?php '.array_define($defs['user']));
         $content  .=  'SaeMC::include_file(\''.RUNTIME_DEF_FILE.'\');';
@@ -115,8 +115,8 @@ function build_runtime_cache($append='') {
     }
     //[sae] 读取核心编译文件列表
     $list = array(
-        THINK_PATH.'Sae/common.php',
-        THINK_PATH.'Sae/Think.class.php',
+        SAE_PATH.'common.php',
+        SAE_PATH.'Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',
         CORE_PATH.'Core/Behavior.class.php',
     );
@@ -128,7 +128,7 @@ function build_runtime_cache($append='') {
         $content .= build_tags_cache();
     }
     //[sae] 编译SAE的alias
-    $alias = include THINK_PATH.'Sae/alias.php';
+    $alias = include SAE_PATH.'alias.php';
     $content .= 'alias_import('.var_export($alias,true).');';
     // 编译框架默认语言包和配置参数
     $content .= $append."\nL(".var_export(L(),true).");C(".var_export(C(),true).');G(\'loadTime\');Think::Start();';

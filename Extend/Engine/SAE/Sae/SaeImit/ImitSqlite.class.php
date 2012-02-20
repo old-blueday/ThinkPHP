@@ -4,7 +4,7 @@
 // +----------------------------------------------------------------------
 // | Author: luofei614<www.3g4k.com>
 // +----------------------------------------------------------------------
-// $Id: ImitSqlite.class.php 607 2012-01-15 03:06:18Z luofei614@126.com $
+// $Id: ImitSqlite.class.php 869 2012-02-20 13:57:43Z luofei614@126.com $
 class ImitSqlite extends SQLite3{
     function __construct()
     {
