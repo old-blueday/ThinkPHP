@@ -89,10 +89,10 @@ class Dispatcher {
             foreach ($types as $type){
                 if(0===strpos($type,':')) {// 支持函数判断
                     $fun  =  substr($type,1);
-                    $SERVER['PATH_INFO'] =   $fun();
+                    $_SERVER['PATH_INFO'] =   $fun();
                     break;
                 }elseif(!empty($_SERVER[$type])) {
-                    $SERVER['PATH_INFO'] =   $SERVER[$type];
+                    $_SERVER['PATH_INFO'] =   $_SERVER[$type];
                     break;
                 }
             }
