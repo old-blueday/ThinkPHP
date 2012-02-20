@@ -88,11 +88,11 @@ class Dispatcher {
             $types   =  explode(',',C('URL_PATHINFO_FETCH'));
             foreach ($types as $type){
                 if(0===strpos($type,':')) {// 支持函数判断
-                    $fun  =  substr($type,1);
-                    $_SERVER['PATH_INFO'] =   $fun();
+                    $_SERVER['PATH_INFO'] =   call_user_func(substr($type,1));
                     break;
                 }elseif(!empty($_SERVER[$type])) {
-                    $_SERVER['PATH_INFO'] =   $_SERVER[$type];
+                    $_SERVER['PATH_INFO'] = (0 === strpos($_SERVER[$type],$_SERVER['SCRIPT_NAME']))?
+                        substr($_SERVER[$type], strlen($_SERVER['SCRIPT_NAME']))   :  $_SERVER[$type];
                     break;
                 }
             }
