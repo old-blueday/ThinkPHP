@@ -61,7 +61,7 @@ if(!IS_CLI) {
 if(!defined('CORE_PATH')) define('CORE_PATH',THINK_PATH.'Lib/'); // 系统核心类库目录
 if(!defined('EXTEND_PATH')) define('EXTEND_PATH',THINK_PATH.'Extend/'); // 系统扩展目录
 if(!defined('MODE_PATH')) define('MODE_PATH',EXTEND_PATH.'Mode/'); // 模式扩展目录
-if(!defined('ENGINE_PATH')) define('MODE_PATH',EXTEND_PATH.'Engine/'); // 引擎扩展目录
+if(!defined('ENGINE_PATH')) define('ENGINE_PATH',EXTEND_PATH.'Engine/'); // 引擎扩展目录
 if(!defined('VENDOR_PATH')) define('VENDOR_PATH',EXTEND_PATH.'Vendor/'); // 第三方类库目录
 if(!defined('LIBRARY_PATH')) define('LIBRARY_PATH',EXTEND_PATH.'Library/'); // 扩展类库目录
 if(!defined('COMMON_PATH')) define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
