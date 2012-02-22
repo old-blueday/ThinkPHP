@@ -418,10 +418,8 @@ class DbMysqli extends Db{
      */
     protected function parseKey(&$key) {
         $key   =  trim($key);
-        if( false !== strpos($key,' ') || false !== strpos($key,',') || false !== strpos($key,'*') ||  false !== strpos($key,'(') || false !== strpos($key,'.') || false !== strpos($key,'`')) {
-            //如果包含* 或者 使用了sql方法 则不作处理
-        }else{
-            $key = '`'.$key.'`';
+        if(!preg_match('/[,\-\+\*\(\)`.\s]/',$key)) {
+           $key = '`'.$key.'`';
         }
         return $key;
     }
