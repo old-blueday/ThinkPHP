@@ -423,7 +423,7 @@ class DbMysql extends Db{
      */
     protected function parseKey(&$key) {
         $key   =  trim($key);
-        if(!preg_match('/[,\-\+\*\(\)`.\s]/',$key)) {
+        if(!preg_match('/[,\'\*\(\)`.\s]/',$key)) {
            $key = '`'.$key.'`';
         }
         return $key;
