@@ -274,7 +274,7 @@ class Model {
      +----------------------------------------------------------
      */
     public function delete($options=array()) {
-        if(empty($options) && empty($this->options)) {
+        if(empty($options) && empty($this->options['where'])) {
             // 如果删除条件为空 则删除当前数据对象所对应的记录
             if(!empty($this->data) && isset($this->data[$this->getPk()]))
                 return $this->delete($this->data[$this->getPk()]);

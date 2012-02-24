@@ -892,8 +892,7 @@ class Db {
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function delete($options=array())
-    {
+    public function delete($options=array()) {
         $sql   = 'DELETE FROM '
             .$this->parseTable($options['table'])
             .$this->parseWhere(isset($options['where'])?$options['where']:'')
