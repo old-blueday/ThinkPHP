@@ -1525,7 +1525,10 @@ class Model {
      +----------------------------------------------------------
      */
     public function field($field,$except=false){
-        if($except) {// 字段排除
+        if(true === $field) {// 获取全部字段
+            $fields   =  $this->getDbFields();
+            $field =  $fields?$fields:'*';
+        }elseif($except) {// 字段排除
             if(is_string($field)) {
                 $field =  explode(',',$field);
             }
