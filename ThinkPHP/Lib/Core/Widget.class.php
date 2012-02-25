@@ -63,7 +63,7 @@ abstract class Widget {
             if(!file_exists_case($templateFile))
                 throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
         }
-        $template   =  $this->template?$this->template:strtolower(C('TMPL_ENGINE_TYPE')?C('TMPL_ENGINE_TYPE'):'php');
+        $template   =  strtolower($this->template?$this->template:(C('TMPL_ENGINE_TYPE')?C('TMPL_ENGINE_TYPE'):'php'));
         if('php' == $template) {
             // 使用PHP模板
             if(!empty($var)) extract($var, EXTR_OVERWRITE);
