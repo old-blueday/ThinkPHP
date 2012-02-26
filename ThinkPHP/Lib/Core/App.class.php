@@ -89,11 +89,13 @@ class App {
     static public function exec() {
         // 安全检测
         if(!preg_match('/^[A-Za-z_0-9]+$/',MODULE_NAME)){
-            throw_exception(L('_MODULE_NOT_EXIST_'));
+            $module =  false;
+        }else{
+            //创建Action控制器实例
+            $group =  defined('GROUP_NAME') ? GROUP_NAME.'/' : '';
+            $module  =  A($group.MODULE_NAME);
         }
-        //创建Action控制器实例
-        $group =  defined('GROUP_NAME') ? GROUP_NAME.'/' : '';
-        $module  =  A($group.MODULE_NAME);
+
         if(!$module) {
             if(function_exists('__hack_module')) {
                 // hack 方式定义扩展模块 返回Action对象
