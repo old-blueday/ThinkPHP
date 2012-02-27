@@ -48,7 +48,7 @@ class DbSqlsrv extends Db{
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))	$config  =  $this->config;
             $host = $config['hostname'].($config['hostport']?",{$config['hostport']}":'');
-            $connectInfo  =  array('Database'=>$config['dababase'],'UID'=>$config['username'],'PWD'=>$config['password']);
+            $connectInfo  =  array('Database'=>$config['database'],'UID'=>$config['username'],'PWD'=>$config['password']);
             $this->linkID[$linkNum] = sqlsrv_connect( $host, $connectInfo);
             if ( !$this->linkID[$linkNum] )  throw_exception($this->error());
             // 标记连接成功
@@ -93,7 +93,7 @@ class DbSqlsrv extends Db{
         N('db_query',1);
         // 记录开始执行时间
         G('queryStartTime');
-        $this->queryID = sqlsrv_query($this->_linkID,$str);
+        $this->queryID = sqlsrv_query($this->_linkID,$str,array(), array( "Scrollable" => SQLSRV_CURSOR_KEYSET));
         $this->debug();
         if ( false === $this->queryID ) {
             $this->error();
@@ -126,7 +126,7 @@ class DbSqlsrv extends Db{
         N('db_write',1);
         // 记录开始执行时间
         G('queryStartTime');
-        $this->queryID=	sqlsrv_query($this->_linkID,$str);
+        $this->queryID=	sqlsrv_query($this->_linkID,$str,array(), array( "Scrollable" => SQLSRV_CURSOR_KEYSET));
         $this->debug();
         if ( false === $this->queryID ) {
             $this->error();
