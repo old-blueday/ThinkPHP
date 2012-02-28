@@ -12,7 +12,8 @@
 
 /**
  +-------------------------------------
- * Memcache缓存驱动类
+ * CacheRedis缓存驱动类
+ * 要求安装phpredis扩展：https://github.com/owlient/phpredis
  +-------------------------------------
  */
 class CacheRedis extends Cache {
