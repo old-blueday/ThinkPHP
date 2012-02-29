@@ -16,6 +16,8 @@
  +------------------------------------------------------------------------------
  */
 if (!defined('THINK_PATH')) exit();
+if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
+
 //  版本信息
 define('THINK_VERSION', '3.0RC2');
 define('THINK_RELEASE', '20120207');
