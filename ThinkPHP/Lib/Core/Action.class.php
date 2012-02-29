@@ -293,20 +293,20 @@ abstract class Action {
         $result['info'] =  $info;
         $result['data'] = $data;
         //扩展ajax返回数据, 在Action中定义function ajaxAssign(&$result){} 方法 扩展ajax返回数据。
-        if(method_exists($this,"ajaxAssign")) 
+        if(method_exists($this,'ajaxAssign')) 
             $this->ajaxAssign($result);
         if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
         if(strtoupper($type)=='JSON') {
             // 返回JSON数据格式到客户端 包含状态信息
-            header("Content-Type:text/html; charset=utf-8");
+            header('Content-Type:text/html; charset=utf-8');
             exit(json_encode($result));
         }elseif(strtoupper($type)=='XML'){
             // 返回xml格式数据
-            header("Content-Type:text/xml; charset=utf-8");
+            header('Content-Type:text/xml; charset=utf-8');
             exit(xml_encode($result));
         }elseif(strtoupper($type)=='EVAL'){
             // 返回可执行的js脚本
-            header("Content-Type:text/html; charset=utf-8");
+            header('Content-Type:text/html; charset=utf-8');
             exit($data);
         }else{
             // TODO 增加其它格式
@@ -362,14 +362,14 @@ abstract class Action {
         if($status) { //发送成功信息
             $this->assign('message',$message);// 提示信息
             // 成功操作后默认停留1秒
-            if(!$this->view->get('waitSecond'))    $this->assign('waitSecond',"1");
+            if(!$this->view->get('waitSecond'))    $this->assign('waitSecond','1');
             // 默认操作成功自动返回操作前页面
             if(!$this->view->get('jumpUrl')) $this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
             $this->display(C('TMPL_ACTION_SUCCESS'));
         }else{
             $this->assign('error',$message);// 提示信息
             //发生错误时候默认停留3秒
-            if(!$this->view->get('waitSecond'))    $this->assign('waitSecond',"3");
+            if(!$this->view->get('waitSecond'))    $this->assign('waitSecond','3');
             // 默认发生错误的话自动返回上页
             if(!$this->view->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
             $this->display(C('TMPL_ACTION_ERROR'));

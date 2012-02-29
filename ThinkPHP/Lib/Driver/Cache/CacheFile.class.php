@@ -47,7 +47,7 @@ class CacheFile extends Cache {
         $this->options['temp'] = !empty($options['temp'])?$options['temp']:C('DATA_CACHE_PATH');
         $this->options['expire'] = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         $this->options['length']  =  isset($options['length'])?$options['length']:0;
-        if(substr($this->options['temp'], -1) != "/")    $this->options['temp'] .= "/";
+        if(substr($this->options['temp'], -1) != '/')    $this->options['temp'] .= '/';
         $this->connected = is_dir($this->options['temp']) && is_writeable($this->options['temp']);
         $this->init();
     }

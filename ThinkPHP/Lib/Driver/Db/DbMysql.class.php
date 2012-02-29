@@ -70,7 +70,7 @@ class DbMysql extends Db{
                 throw_exception(mysql_error());
             }
             $dbVersion = mysql_get_server_info($this->linkID[$linkNum]);
-            if ($dbVersion >= "4.1") {
+            if ($dbVersion >= '4.1') {
                 //使用UTF8存取数据库 需要mysql 4.1.0以上支持
                 mysql_query("SET NAMES '".C('DB_CHARSET')."'", $this->linkID[$linkNum]);
             }

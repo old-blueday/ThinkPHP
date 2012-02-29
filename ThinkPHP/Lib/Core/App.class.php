@@ -106,7 +106,7 @@ class App {
                 }
             }else{
                 // 是否定义Empty模块
-                $module = A("Empty");
+                $module = A('Empty');
                 if(!$module){
                     $msg =  L('_MODULE_NOT_EXIST_').MODULE_NAME;
                     if(APP_DEBUG) {

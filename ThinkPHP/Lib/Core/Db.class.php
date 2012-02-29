@@ -311,7 +311,7 @@ class Db {
         // 记录操作结束时间
         if ( $this->debug ) {
             G('queryEndTime');
-            Log::record($this->queryStr." [ RunTime:".G('queryStartTime','queryEndTime',6)."s ]",Log::SQL);
+            Log::record($this->queryStr.' [ RunTime:'.G('queryStartTime','queryEndTime',6).'s ]',Log::SQL);
         }
     }
 
@@ -480,7 +480,7 @@ class Db {
                 $operate    =   ' AND ';
             }
             foreach ($where as $key=>$val){
-                $whereStr .= "( ";
+                $whereStr .= '( ';
                 if(0===strpos($key,'_')) {
                     // 解析特殊条件表达式
                     $whereStr   .= $this->parseThinkWhere($key,$val);
@@ -567,9 +567,9 @@ class Db {
             //对字符串类型字段采用模糊匹配
             if(C('DB_LIKE_FIELDS') && preg_match('/('.C('DB_LIKE_FIELDS').')/i',$key)) {
                 $val  =  '%'.$val.'%';
-                $whereStr .= $key." LIKE ".$this->parseValue($val);
+                $whereStr .= $key.' LIKE '.$this->parseValue($val);
             }else {
-                $whereStr .= $key." = ".$this->parseValue($val);
+                $whereStr .= $key.' = '.$this->parseValue($val);
             }
         }
         return $whereStr;

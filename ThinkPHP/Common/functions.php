@@ -34,12 +34,12 @@ function halt($error) {
             $e['function'] = $trace[0]['function'];
             $e['line'] = $trace[0]['line'];
             $traceInfo = '';
-            $time = date("y-m-d H:i:m");
+            $time = date('y-m-d H:i:m');
             foreach ($trace as $t) {
                 $traceInfo .= '[' . $time . '] ' . $t['file'] . ' (' . $t['line'] . ') ';
                 $traceInfo .= $t['class'] . $t['type'] . $t['function'] . '(';
                 $traceInfo .= implode(', ', $t['args']);
-                $traceInfo .=")<br/>";
+                $traceInfo .=')<br/>';
             }
             $e['trace'] = $traceInfo;
         } else {
@@ -78,7 +78,7 @@ function dump($var, $echo=true, $label=null, $strict=true) {
     if (!$strict) {
         if (ini_get('html_errors')) {
             $output = print_r($var, true);
-            $output = "<pre>" . $label . htmlspecialchars($output, ENT_QUOTES) . "</pre>";
+            $output = '<pre>' . $label . htmlspecialchars($output, ENT_QUOTES) . '</pre>';
         } else {
             $output = $label . print_r($var, true);
         }
@@ -87,7 +87,7 @@ function dump($var, $echo=true, $label=null, $strict=true) {
         var_dump($var);
         $output = ob_get_clean();
         if (!extension_loaded('xdebug')) {
-            $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
+            $output = preg_replace("/\]\=\>\n(\s+)/m", '] => ', $output);
             $output = '<pre>' . $label . htmlspecialchars($output, ENT_QUOTES) . '</pre>';
         }
     }
@@ -247,7 +247,7 @@ function redirect($url, $time=0, $msg='') {
     if (!headers_sent()) {
         // redirect
         if (0 === $time) {
-            header("Location: " . $url);
+            header('Location: ' . $url);
         } else {
             header("refresh:{$time};url={$url}");
             echo($msg);
@@ -354,7 +354,7 @@ function to_guid_string($mix) {
 }
 
 // xml编码
-function xml_encode($data, $encoding='utf-8', $root="think") {
+function xml_encode($data, $encoding='utf-8', $root='think') {
     $xml = '<?xml version="1.0" encoding="' . $encoding . '"?>';
     $xml.= '<' . $root . '>';
     $xml.= data_to_xml($data);
@@ -379,8 +379,8 @@ function session($name,$value='') {
     $prefix   =  C('SESSION_PREFIX');
     if(is_array($name)) { // session初始化 在session_start 之前调用
         if(isset($name['prefix'])) C('SESSION_PREFIX',$name['prefix']);
-        if(isset($_REQUEST[C("VAR_SESSION_ID")])){
-            session_id($_REQUEST[C("VAR_SESSION_ID")]);
+        if(isset($_REQUEST[C('VAR_SESSION_ID')])){
+            session_id($_REQUEST[C('VAR_SESSION_ID')]);
         }elseif(isset($name['id'])) {
             session_id($name['id']);
         }

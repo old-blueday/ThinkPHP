@@ -73,7 +73,7 @@ class ThinkException extends Exception {
         $this->line = $trace[0]['line'];
         $file   =   file($this->file);
         $traceInfo='';
-        $time = date("y-m-d H:i:m");
+        $time = date('y-m-d H:i:m');
         foreach($trace as $t) {
             $traceInfo .= '['.$time.'] '.$t['file'].' ('.$t['line'].') ';
             $traceInfo .= $t['class'].$t['type'].$t['function'].'(';

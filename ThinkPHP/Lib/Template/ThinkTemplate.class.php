@@ -157,7 +157,7 @@ class  ThinkTemplate {
         if(C('TMPL_STRIP_SPACE')) {
             /* 去除html空格与换行 */
             $find     = array("~>\s+<~","~>(\s+\n|\r)~");
-            $replace  = array("><",">");
+            $replace  = array('><','>');
             $tmplContent = preg_replace($find, $replace, $tmplContent);
         }
         // 优化生成的php代码

@@ -32,17 +32,17 @@ define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 
 // 项目名称
-if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
+defined('APP_NAME') or define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
 
 if(!IS_CLI) {
     // 当前文件名
     if(!defined('_PHP_FILE_')) {
         if(IS_CGI) {
             //CGI/FASTCGI模式下
-            $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
-            define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
+            $_temp  = explode('.php',$_SERVER['PHP_SELF']);
+            define('_PHP_FILE_',  rtrim(str_replace($_SERVER['HTTP_HOST'],'',$_temp[0].'.php'),'/'));
         }else {
-            define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+            define('_PHP_FILE_',    rtrim($_SERVER['SCRIPT_NAME'],'/'));
         }
     }
     if(!defined('__ROOT__')) {
@@ -63,22 +63,22 @@ if(!IS_CLI) {
 }
 
 // 路径设置 可在入口文件中重新定义 所有路径常量都必须以/ 结尾
-if(!defined('CORE_PATH')) define('CORE_PATH',THINK_PATH.'Lib/'); // 系统核心类库目录
-if(!defined('EXTEND_PATH')) define('EXTEND_PATH',THINK_PATH.'Extend/'); // 系统扩展目录
-if(!defined('MODE_PATH')) define('MODE_PATH',EXTEND_PATH.'Mode/'); // 模式扩展目录
-if(!defined('ENGINE_PATH')) define('ENGINE_PATH',EXTEND_PATH.'Engine/'); // 引擎扩展目录
-if(!defined('VENDOR_PATH')) define('VENDOR_PATH',EXTEND_PATH.'Vendor/'); // 第三方类库目录
-if(!defined('LIBRARY_PATH')) define('LIBRARY_PATH',EXTEND_PATH.'Library/'); // 扩展类库目录
-if(!defined('COMMON_PATH')) define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
-if(!defined('LIB_PATH')) define('LIB_PATH',    APP_PATH.'Lib/'); // 项目类库目录
-if(!defined('CONF_PATH')) define('CONF_PATH',  APP_PATH.'Conf/'); // 项目配置目录
-if(!defined('LANG_PATH')) define('LANG_PATH', APP_PATH.'Lang/'); // 项目语言包目录
-if(!defined('TMPL_PATH')) define('TMPL_PATH',APP_PATH.'Tpl/'); // 项目模板目录
-if(!defined('HTML_PATH')) define('HTML_PATH',APP_PATH.'Html/'); // 项目静态目录
-if(!defined('LOG_PATH')) define('LOG_PATH',  RUNTIME_PATH.'Logs/'); // 项目日志目录
-if(!defined('TEMP_PATH')) define('TEMP_PATH', RUNTIME_PATH.'Temp/'); // 项目缓存目录
-if(!defined('DATA_PATH')) define('DATA_PATH', RUNTIME_PATH.'Data/'); // 项目数据目录
-if(!defined('CACHE_PATH')) define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); // 项目模板缓存目录
+defined('CORE_PATH') or define('CORE_PATH',THINK_PATH.'Lib/'); // 系统核心类库目录
+defined('EXTEND_PATH') or define('EXTEND_PATH',THINK_PATH.'Extend/'); // 系统扩展目录
+defined('MODE_PATH') or define('MODE_PATH',EXTEND_PATH.'Mode/'); // 模式扩展目录
+defined('ENGINE_PATH') or define('ENGINE_PATH',EXTEND_PATH.'Engine/'); // 引擎扩展目录
+defined('VENDOR_PATH') or define('VENDOR_PATH',EXTEND_PATH.'Vendor/'); // 第三方类库目录
+defined('LIBRARY_PATH') or define('LIBRARY_PATH',EXTEND_PATH.'Library/'); // 扩展类库目录
+defined('COMMON_PATH') or define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
+defined('LIB_PATH') or define('LIB_PATH',    APP_PATH.'Lib/'); // 项目类库目录
+defined('CONF_PATH') or define('CONF_PATH',  APP_PATH.'Conf/'); // 项目配置目录
+defined('LANG_PATH') or define('LANG_PATH', APP_PATH.'Lang/'); // 项目语言包目录
+defined('TMPL_PATH') or define('TMPL_PATH',APP_PATH.'Tpl/'); // 项目模板目录
+defined('HTML_PATH') or define('HTML_PATH',APP_PATH.'Html/'); // 项目静态目录
+defined('LOG_PATH') or define('LOG_PATH',  RUNTIME_PATH.'Logs/'); // 项目日志目录
+defined('TEMP_PATH') or define('TEMP_PATH', RUNTIME_PATH.'Temp/'); // 项目缓存目录
+defined('DATA_PATH') or define('DATA_PATH', RUNTIME_PATH.'Data/'); // 项目数据目录
+defined('CACHE_PATH') or define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); // 项目模板缓存目录
 
 // 加载运行时所需要的文件 并负责自动目录生成
 function load_runtime_file() {
@@ -115,7 +115,7 @@ function check_runtime() {
     if(!is_dir(RUNTIME_PATH)) {
         mkdir(RUNTIME_PATH);
     }elseif(!is_writeable(RUNTIME_PATH)) {
-        header("Content-Type:text/html; charset=utf-8");
+        header('Content-Type:text/html; charset=utf-8');
         exit('目录 [ '.RUNTIME_PATH.' ] 不可写！');
     }
     mkdir(CACHE_PATH);  // 模板缓存目录
@@ -195,10 +195,10 @@ function build_app_dir() {
             if(!is_dir($dir))  mk_dir($dir,0777);
         }
         // 目录安全写入
-        if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
+        defined('BUILD_DIR_SECURE') or define('BUILD_DIR_SECURE',false);
         if(BUILD_DIR_SECURE) {
-            if(!defined('DIR_SECURE_FILENAME')) define('DIR_SECURE_FILENAME','index.html');
-            if(!defined('DIR_SECURE_CONTENT')) define('DIR_SECURE_CONTENT',' ');
+            defined('DIR_SECURE_FILENAME') or define('DIR_SECURE_FILENAME','index.html');
+            defined('DIR_SECURE_CONTENT') or define('DIR_SECURE_CONTENT',' ');
             // 自动写入目录安全文件
             $content = DIR_SECURE_CONTENT;
             $a = explode(',', DIR_SECURE_FILENAME);
@@ -214,7 +214,7 @@ function build_app_dir() {
         if(!is_file(LIB_PATH.'Action/IndexAction.class.php'))
             build_first_action();
     }else{
-        header("Content-Type:text/html; charset=utf-8");
+        header('Content-Type:text/html; charset=utf-8');
         exit('项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~');
     }
 }
