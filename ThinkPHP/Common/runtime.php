@@ -222,3 +222,7 @@ function build_first_action() {
 
 // 加载运行时所需文件
 load_runtime_file();
+// 记录加载文件时间
+G('loadTime');
+// 执行入口
+Think::Start();
