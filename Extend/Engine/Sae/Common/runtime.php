@@ -16,6 +16,7 @@
  +------------------------------------------------------------------------------
  */
 if (!defined('THINK_PATH')) exit();
+if (version_compare(PHP_VERSION, '5.2.0', '<')) die('require PHP > 5.2.0 !');
 //  版本信息
 define('THINK_VERSION', '3.0RC2');
 define('THINK_RELEASE', '20120207');
@@ -30,15 +31,16 @@ define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 
+defined('APP_NAME') or  define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
 if(!IS_CLI) {
     // 当前文件名
     if(!defined('_PHP_FILE_')) {
         if(IS_CGI) {
             //CGI/FASTCGI模式下
-            $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
-            define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
+            $_temp  = explode('.php',$_SERVER['PHP_SELF']);
+            define('_PHP_FILE_',  rtrim(str_replace($_SERVER['HTTP_HOST'],'',$_temp[0].'.php'),'/'));
         }else {
-            define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+            define('_PHP_FILE_',    rtrim($_SERVER['SCRIPT_NAME'],'/'));
         }
     }
     if(!defined('__ROOT__')) {
@@ -59,21 +61,21 @@ if(!IS_CLI) {
 }
 
 // 路径设置 可在入口文件中重新定义 所有路径常量都必须以/ 结尾
-if(!defined('CORE_PATH')) define('CORE_PATH',THINK_PATH.'Lib/'); // 系统核心类库目录
-if(!defined('EXTEND_PATH')) define('EXTEND_PATH',THINK_PATH.'Extend/'); // 系统扩展目录
-if(!defined('MODE_PATH')) define('MODE_PATH',EXTEND_PATH.'Mode/'); // 系统模式目录
-if(!defined('VENDOR_PATH')) define('VENDOR_PATH',EXTEND_PATH.'Vendor/'); // 第三方类库目录
-if(!defined('LIBRARY_PATH')) define('LIBRARY_PATH',EXTEND_PATH.'Library/'); // 扩展类库目录
-if(!defined('COMMON_PATH')) define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
-if(!defined('LIB_PATH')) define('LIB_PATH',    APP_PATH.'Lib/'); // 项目类库目录
-if(!defined('CONF_PATH')) define('CONF_PATH',  APP_PATH.'Conf/'); // 项目配置目录
-if(!defined('LANG_PATH')) define('LANG_PATH', APP_PATH.'Lang/'); // 项目语言包目录
-if(!defined('TMPL_PATH')) define('TMPL_PATH',APP_PATH.'Tpl/'); // 项目模板目录
-if(!defined('HTML_PATH')) define('HTML_PATH',$_SERVER['HTTP_APPVERSION'].'/html/'); //[sae] 项目静态目录,静态文件会存到KVDB
-if(!defined('LOG_PATH')) define('LOG_PATH',  RUNTIME_PATH.'Logs/'); // 项目日志目录
-if(!defined('TEMP_PATH')) define('TEMP_PATH', RUNTIME_PATH.'Temp/'); // 项目缓存目录
-if(!defined('DATA_PATH')) define('DATA_PATH', RUNTIME_PATH.'Data/'); // 项目数据目录
-if(!defined('CACHE_PATH')) define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); // 项目模板缓存目录
+defined('CORE_PATH') or define('CORE_PATH',THINK_PATH.'Lib/'); // 系统核心类库目录
+defined('EXTEND_PATH') or define('EXTEND_PATH',THINK_PATH.'Extend/'); // 系统扩展目录
+defined('MODE_PATH') or define('MODE_PATH',EXTEND_PATH.'Mode/'); // 系统模式目录
+defined('VENDOR_PATH') or define('VENDOR_PATH',EXTEND_PATH.'Vendor/'); // 第三方类库目录
+defined('LIBRARY_PATH') or define('LIBRARY_PATH',EXTEND_PATH.'Library/'); // 扩展类库目录
+defined('COMMON_PATH') or define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
+defined('LIB_PATH') or define('LIB_PATH',    APP_PATH.'Lib/'); // 项目类库目录
+defined('CONF_PATH') or define('CONF_PATH',  APP_PATH.'Conf/'); // 项目配置目录
+defined('LANG_PATH') or define('LANG_PATH', APP_PATH.'Lang/'); // 项目语言包目录
+defined('TMPL_PATH') or define('TMPL_PATH',APP_PATH.'Tpl/'); // 项目模板目录
+defined('HTML_PATH') or define('HTML_PATH',$_SERVER['HTTP_APPVERSION'].'/html/'); //[sae] 项目静态目录,静态文件会存到KVDB
+defined('LOG_PATH') or define('LOG_PATH',  RUNTIME_PATH.'Logs/'); // 项目日志目录
+defined('TEMP_PATH') or define('TEMP_PATH', RUNTIME_PATH.'Temp/'); // 项目缓存目录
+defined('DATA_PATH') or define('DATA_PATH', RUNTIME_PATH.'Data/'); // 项目数据目录
+defined('CACHE_PATH') or define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); // 项目模板缓存目录
 
 // 加载运行时所需要的文件 并负责自动目录生成
 function load_runtime_file() {
@@ -150,3 +152,7 @@ function build_tags_cache() {
 //[sae]下，不需要生成目录结构函数
 // 加载运行时所需文件
 load_runtime_file();
+// 记录加载文件时间
+G('loadTime');
+// 执行入口
+Think::Start();

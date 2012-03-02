@@ -128,7 +128,7 @@ function import($class, $baseUrl = '', $ext='.class.php') {
         return true;
     else
         $_file[$class . $baseUrl] = true;
-    $class_strut = explode("/", $class);
+    $class_strut = explode('/', $class);
     if (empty($baseUrl)) {
         if ('@' == $class_strut[0] || APP_NAME == $class_strut[0]) {
             //加载当前项目应用类库
@@ -145,8 +145,8 @@ function import($class, $baseUrl = '', $ext='.class.php') {
             $baseUrl = APP_PATH . '../' . $class_strut[0] . '/'.basename(LIB_PATH).'/';
         }
     }
-    if (substr($baseUrl, -1) != "/")
-        $baseUrl .= "/";
+    if (substr($baseUrl, -1) != '/')
+        $baseUrl .= '/';
     $classfile = $baseUrl . $class . $ext;
     if (!class_exists(basename($class),false)) {
         // 如果类不存在 则导入类库文件
@@ -178,8 +178,8 @@ function load($name, $baseUrl='', $ext='.php') {
             $baseUrl = EXTEND_PATH . 'Function/';
         }
     }
-    if (substr($baseUrl, -1) != "/")
-        $baseUrl .= "/";
+    if (substr($baseUrl, -1) != '/')
+        $baseUrl .= '/';
     require_cache($baseUrl . $name . $ext);
 }
 
@@ -468,7 +468,7 @@ function strip_whitespace($content) {
                 case T_END_HEREDOC:
                     $stripStr .= "THINK;\n";
                     for($k = $i+1; $k < $j; $k++) {
-                        if(is_string($tokens[$k]) && $tokens[$k] == ";") {
+                        if(is_string($tokens[$k]) && $tokens[$k] == ';') {
                             $i = $k;
                             break;
                         } else if($tokens[$k][0] == T_CLOSE_TAG) {

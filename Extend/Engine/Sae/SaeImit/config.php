@@ -14,6 +14,6 @@ return array(
     'db_charset'=>isset($appConfig['DB_CHARSET'])?$appConfig['DB_CHARSET']:'utf8',
     'storage_url'=>trim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/',
     'storage_dir'=>'./',
-    'debug_file'=>APP_PATH."Runtime/Logs/sae_debug.log"
+    'debug_file'=>APP_PATH.'Runtime/Logs/sae_debug.log'
      
 );

@@ -85,7 +85,7 @@ if (!class_exists('SaeMC')) {
     register_shutdown_function(array('SaeMC', 'error'));
     //[sae] 初始化memcache
     if (!(SaeMC::$handler = @(memcache_init()))) {
-        header("Content-Type:text/html; charset=utf-8");
+        header('Content-Type:text/html; charset=utf-8');
         exit('<div style=\'font-weight:bold;float:left;width:430px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>您的Memcache还没有初始化，请登录SAE平台进行初始化~</div>');
     }
 }
