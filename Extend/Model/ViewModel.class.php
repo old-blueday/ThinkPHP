@@ -154,7 +154,7 @@ class ViewModel extends Model {
      +----------------------------------------------------------
      */
     protected function checkOrder($order='') {
-         if(!empty($order)) {
+         if(is_string($order) && !empty($order)) {
             $orders = explode(',',$order);
             $_order = array();
             foreach ($orders as $order){

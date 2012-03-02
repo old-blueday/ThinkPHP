@@ -354,7 +354,7 @@ abstract class RestAction {
         foreach($type as $key=>$val){
             $array   =  explode(',',$val);
             foreach($array as $k=>$v){
-                if(stristr($_SERVER["HTTP_ACCEPT"], $v)) {
+                if(stristr($_SERVER['HTTP_ACCEPT'], $v)) {
                     return $key;
                 }
             }
