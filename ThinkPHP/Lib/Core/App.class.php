@@ -122,6 +122,8 @@ class App {
         }
         //获取当前操作名
         $action = ACTION_NAME;
+        // 获取操作方法名标签
+        tag('action_name',$action);
         if (method_exists($module,'_before_'.$action)) {
             // 执行前置操作
             call_user_func(array(&$module,'_before_'.$action));
