@@ -269,6 +269,9 @@ function A($name) {
     if(strpos($name,'://')) {// 指定项目
         $name   =  str_replace('://','/Action/',$name);
     }else{
+        if(defined('GROUP_NAME') && false === strpos($name,'/')) {
+            $name = C('DEFAULT_GROUP').'/'.$name;
+        }
         $name   =  '@/Action/'.$name;
     }
     import($name.'Action');
