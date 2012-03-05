@@ -23,18 +23,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- 表的结构 `thinik_ser`
---
-
-CREATE TABLE IF NOT EXISTS `thinik_ser` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `info` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- 表的结构 `think_access`
 --
 
