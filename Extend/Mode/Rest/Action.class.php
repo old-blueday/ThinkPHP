@@ -44,19 +44,11 @@ abstract class Action {
         $this->view       = Think::instance('View');
 
         if(!defined('__EXT__')) define('__EXT__','');
-        // 资源类型检测
-        if(''==__EXT__) { // 自动检测资源类型
-            $this->_type   =  $this->getAcceptType();
-        }elseif(false === stripos(C('REST_CONTENT_TYPE_LIST'),__EXT__)) {
-            // 资源类型非法 则用默认资源类型访问
+        if(''== __EXT__ || false === stripos(C('REST_CONTENT_TYPE_LIST'),__EXT__)) {
+            // 资源类型没有指定或者非法 则用默认资源类型访问
             $this->_type   =  C('REST_DEFAULT_TYPE');
         }else{
-            // 检测实际资源类型
-            if($this->getAcceptType() == __EXT__) {
-                $this->_type   =  __EXT__;
-            }else{
-                $this->_type   =  C('REST_DEFAULT_TYPE');
-            }
+            $this->_type   =  __EXT__;
         }
 
         // 请求方式检测
@@ -260,7 +252,7 @@ abstract class Action {
      */
     protected function encodeData($data,$type='') {
         if(empty($data))  return '';
-        if(empty($type)) $type =  C('REST_DEFAULT_TYPE');
+        if(empty($type)) $type =  $this->_type;
         if('json' == $type) {
             // 返回JSON数据格式到客户端 包含状态信息
             $data = json_encode($data);
@@ -333,39 +325,4 @@ abstract class Action {
         }
     }
 
-    /**
-     +----------------------------------------------------------
-     * 获取当前请求的Accept头信息
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    protected function getAcceptType(){
-        $type = array(
-            'html'=>'text/html,application/xhtml+xml,*/*',
-            'xml'=>'application/xml,text/xml,application/x-xml',
-            'json'=>'application/json,text/x-json,application/jsonrequest,text/json',
-            'js'=>'text/javascript,application/javascript,application/x-javascript',
-            'css'=>'text/css',
-            'rss'=>'application/rss+xml',
-            'yaml'=>'application/x-yaml,text/yaml',
-            'atom'=>'application/atom+xml',
-            'pdf'=>'application/pdf',
-            'text'=>'text/plain',
-            'png'=>'image/png',
-            'jpg'=>'image/jpg,image/jpeg,image/pjpeg',
-            'gif'=>'image/gif',
-            'csv'=>'text/csv'
-        );
-        
-        foreach($type as $key=>$val){
-            $array   =  explode(',',$val);
-            foreach($array as $k=>$v){
-                if(stristr($_SERVER["HTTP_ACCEPT"], $v)) {
-                    return $key;
-                }
-            }
-        }
-        return false;
-    }
 }

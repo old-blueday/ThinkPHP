@@ -99,6 +99,7 @@ class Dispatcher {
         }
         $depr = C('URL_PATHINFO_DEPR');
         if(!empty($_SERVER['PATH_INFO'])) {
+            tag('path_info');
             if(C('URL_HTML_SUFFIX')) {
                 $_SERVER['PATH_INFO'] = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/i', '', $_SERVER['PATH_INFO']);
             }

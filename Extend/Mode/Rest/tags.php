@@ -13,7 +13,7 @@
 // Rest 系统行为扩展列表文件
 return array(
     'app_begin'=>array(
-        'CheckTemplate', // 模板检测
+        'ReadHtmlCache', // 读取静态缓存
     ),
     'route_check'=>array(
         'CheckRestRoute', // 路由检测
@@ -30,6 +30,7 @@ return array(
     'view_filter'=>array(
         'ContentReplace', // 模板输出替换
         'TokenBuild',   // 表单令牌
+        'WriteHtmlCache', // 写入静态缓存
         'ShowRuntime', // 运行时间显示
     ),
     'path_info'=>array(
