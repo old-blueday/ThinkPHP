@@ -290,16 +290,7 @@ class SaeStorage extends SaeObject {
             $this->errno = -101;
             return false;
         }
-        //文件地址
-        $filepath = $this->domainDir . $domain . "/" . $destFileName;
-        $this->mkdir(dirname($filepath));
-        if (!move_uploaded_file($srcFileName, auto_charset($filepath, 'utf-8', 'gbk'))) {
-            $this->errmsg = Imit_L('_SAE_STORAGE_SERVER_ERR_');
-            $this->errno = -12;
-            return false;
-        } else {
-            return true;
-        }
+		return $this->write($domain,$destFileName,file_get_contents($srcFileName));
     }
 
     public function write($domain, $destFileName, $content, $size=-1, $attr=array(), $compress=false) {
@@ -327,14 +318,14 @@ class SaeStorage extends SaeObject {
     //创建目录，无限层次。传递一个文件的
     private function mkdir($dir) {
         static $_dir; // 记录需要建立的目录
-        if (!file_exists($dir)) {
+        if (!is_dir($dir)) {
             if (empty($_dir))
                 $_dir = $dir;
-            if (!file_exists(dirname($dir))) {
+            if (!is_dir(dirname($dir))) {
                 $this->mkdir(dirname($dir));
             } else {
                 mkdir($dir);
-                if (!file_exists($_dir)) {
+                if (!is_dir($_dir)) {
                     $this->mkdir($_dir);
                 } else {
                     $_dir = "";
