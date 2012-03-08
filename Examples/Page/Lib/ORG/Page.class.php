@@ -29,6 +29,8 @@ class Page {
     protected $coolPages   ;
     // 分页显示定制
     protected $config  =	array('header'=>'条记录','prev'=>'上一页','next'=>'下一页','first'=>'第一页','last'=>'最后一页','theme'=>' %totalRow% %header% %nowPage%/%totalPage% 页 %upPage% %downPage% %first%  %prePage%  %linkPage%  %nextPage% %end%');
+    // 默认分页变量名
+    protected $varPage;
 
     /**
      +----------------------------------------------------------
@@ -44,6 +46,7 @@ class Page {
     public function __construct($totalRows,$listRows='',$parameter='') {
         $this->totalRows = $totalRows;
         $this->parameter = $parameter;
+        $this->varPage = C('VAR_PAGE') ? C('VAR_PAGE') : 'p' ;
         if(!empty($listRows)) {
             $this->listRows = intval($listRows);
         }
@@ -71,7 +74,7 @@ class Page {
      */
     public function show() {
         if(0 == $this->totalRows) return '';
-        $p = C('VAR_PAGE');
+        $p = $this->varPage;
         $nowCoolPage      = ceil($this->nowPage/$this->rollPage);
         $url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?").$this->parameter;
         $parse = parse_url($url);
