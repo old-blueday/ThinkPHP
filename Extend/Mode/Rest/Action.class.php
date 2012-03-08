@@ -43,7 +43,7 @@ abstract class Action {
         //实例化视图类
         $this->view       = Think::instance('View');
 
-        if(!defined('__EXT__')) define('__EXT__','');
+        defined('__EXT__') or define('__EXT__','');
         if(''== __EXT__ || false === stripos(C('REST_CONTENT_TYPE_LIST'),__EXT__)) {
             // 资源类型没有指定或者非法 则用默认资源类型访问
             $this->_type   =  C('REST_DEFAULT_TYPE');
@@ -232,8 +232,6 @@ abstract class Action {
      +----------------------------------------------------------
      */
     protected function response($data,$type='',$code=200) {
-        // 保存日志
-        if(C('LOG_RECORD')) Log::save();
         $this->sendHttpStatus($code);
         exit($this->encodeData($data,strtolower($type)));
     }
@@ -325,4 +323,17 @@ abstract class Action {
         }
     }
 
+   /**
+     +----------------------------------------------------------
+     * 析构方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __destruct() {
+        // 保存日志
+        if(C('LOG_RECORD')) Log::save();
+        // 执行后续操作
+        tag('action_end');
+    }
 }
