@@ -80,6 +80,9 @@ defined('TEMP_PATH') or define('TEMP_PATH', RUNTIME_PATH.'Temp/'); // 项目缓�
 defined('DATA_PATH') or define('DATA_PATH', RUNTIME_PATH.'Data/'); // 项目数据目录
 defined('CACHE_PATH') or define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); // 项目模板缓存目录
 
+// 为了方便导入第三方类库 设置Vendor目录到include_path
+set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
+
 // 加载运行时所需要的文件 并负责自动目录生成
 function load_runtime_file() {
     // 加载系统基础函数库
@@ -136,6 +139,7 @@ function build_runtime_cache($append='') {
     }else{
         $content  .= array_define($defs['user']);
     }
+    $content    .= 'set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);';
     // 读取核心编译文件列表
     $list = array(
         THINK_PATH.'Common/common.php',
