@@ -486,7 +486,7 @@ class Db {
                     $whereStr   .= $this->parseThinkWhere($key,$val);
                 }else{
                     // 查询字段的安全过滤
-                    if(!preg_match('/^[A-Z_\|\&\-.a-z0-9]+$/',trim($key))){
+                    if(!preg_match('/^[A-Z_\|\&\-.a-z0-9\(\)\,]+$/',trim($key))){
                         throw_exception(L('_EXPRESS_ERROR_').':'.$key);
                     }
                     // 多条件支持
