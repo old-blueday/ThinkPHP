@@ -1224,7 +1224,7 @@ class Model {
         static $_db = array();
         if(!isset($_db[$linkNum])) {
             // 创建一个新的实例
-            if(!empty($config) && false === strpos($config,'/')) { // 支持读取配置参数
+            if(!empty($config) && is_string($config) && false === strpos($config,'/')) { // 支持读取配置参数
                 $config  =  C($config);
             }
             $_db[$linkNum]            =    Db::getInstance($config);
