@@ -80,8 +80,8 @@ function require_cache($filename) {
         if (is_file($sae_filename)) {
             require $sae_filename;
             $_importFiles[$filename] = true;
-        }elseif(isset($sae_files[strtolower (basename($filename))])){
-            require $sae_files[strtolower (basename($filename))];
+        }elseif(isset($sae_files[basename($filename)])){
+            require $sae_files[basename($filename)];
             $_importFiles[$filename] = true;
         }elseif (file_exists_case($filename)) {
             require $filename;
@@ -265,7 +265,7 @@ function M($name='', $tablePrefix='',$connection='') {
 
 /**
   +----------------------------------------------------------
- * A函数用于实例化Action 格式：项目://分组/操作
+ * A函数用于实例化Action 格式：[项目://][分组/]模块
   +----------------------------------------------------------
  * @param string name Action资源地址
   +----------------------------------------------------------
@@ -512,12 +512,12 @@ function array_define($array,$check=true) {
     $content = "\n";
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
-        if($check)   $content .= 'if(!defined(\'' . $key . '\')) ';
+        if($check)   $content .= 'defined(\'' . $key . '\') or ';
         if (is_int($val) || is_float($val)) {
-            $content .= "define('" . $key . "'," . $val . ");";
+            $content .= "define('" . $key . "'," . $val . ');';
         } elseif (is_bool($val)) {
             $val = ($val) ? 'true' : 'false';
-            $content .= "define('" . $key . "'," . $val . ");";
+            $content .= "define('" . $key . "'," . $val . ');';
         } elseif (is_string($val)) {
             $content .= "define('" . $key . "','" . addslashes($val) . "');";
         }

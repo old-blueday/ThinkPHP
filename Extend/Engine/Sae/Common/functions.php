@@ -39,7 +39,7 @@ function halt($error) {
                 $traceInfo .= '[' . $time . '] ' . $t['file'] . ' (' . $t['line'] . ') ';
                 $traceInfo .= $t['class'] . $t['type'] . $t['function'] . '(';
                 $traceInfo .= implode(', ', $t['args']);
-                $traceInfo .=")<br/>";
+                $traceInfo .=')<br/>';
             }
             $e['trace'] = $traceInfo;
         } else {
@@ -87,7 +87,7 @@ function dump($var, $echo=true, $label=null, $strict=true) {
         var_dump($var);
         $output = ob_get_clean();
         if (!extension_loaded('xdebug')) {
-            $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
+            $output = preg_replace("/\]\=\>\n(\s+)/m", '] => ', $output);
             $output = '<pre>' . $label . htmlspecialchars($output, ENT_QUOTES) . '</pre>';
         }
     }
@@ -198,9 +198,13 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
                 $var[C('VAR_MODULE')] =  parse_name($var[C('VAR_MODULE')]);
             }
             if(C('APP_GROUP_LIST')) {
-                $group   = !empty($path)?array_pop($path):GROUP_NAME;
-                if($group != C('DEFAULT_GROUP')) {
+                if(!empty($path)) {
+                    $group   =  array_pop($path);
                     $var[C('VAR_GROUP')]  =   $group;
+                }else{
+                    if(GROUP_NAME != C('DEFAULT_GROUP')) {
+                        $var[C('VAR_GROUP')]  =   GROUP_NAME;
+                    }
                 }
             }
         }

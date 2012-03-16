@@ -18,8 +18,8 @@
 if (!defined('THINK_PATH')) exit();
 if (version_compare(PHP_VERSION, '5.2.0', '<')) die('require PHP > 5.2.0 !');
 //  版本信息
-define('THINK_VERSION', '3.0RC2');
-define('THINK_RELEASE', '20120207');
+define('THINK_VERSION', '3.0');
+define('THINK_RELEASE', '20120313');
 
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
@@ -31,6 +31,7 @@ define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 
+// 项目名称
 defined('APP_NAME') or  define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
 if(!IS_CLI) {
     // 当前文件名
@@ -63,7 +64,8 @@ if(!IS_CLI) {
 // 路径设置 可在入口文件中重新定义 所有路径常量都必须以/ 结尾
 defined('CORE_PATH') or define('CORE_PATH',THINK_PATH.'Lib/'); // 系统核心类库目录
 defined('EXTEND_PATH') or define('EXTEND_PATH',THINK_PATH.'Extend/'); // 系统扩展目录
-defined('MODE_PATH') or define('MODE_PATH',EXTEND_PATH.'Mode/'); // 系统模式目录
+defined('MODE_PATH') or define('MODE_PATH',EXTEND_PATH.'Mode/'); // 模式扩展目录
+defined('ENGINE_PATH') or define('ENGINE_PATH',EXTEND_PATH.'Engine/'); // 引擎扩展目录// 系统模式目录
 defined('VENDOR_PATH') or define('VENDOR_PATH',EXTEND_PATH.'Vendor/'); // 第三方类库目录
 defined('LIBRARY_PATH') or define('LIBRARY_PATH',EXTEND_PATH.'Library/'); // 扩展类库目录
 defined('COMMON_PATH') or define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
@@ -76,6 +78,9 @@ defined('LOG_PATH') or define('LOG_PATH',  RUNTIME_PATH.'Logs/'); // 项目日�
 defined('TEMP_PATH') or define('TEMP_PATH', RUNTIME_PATH.'Temp/'); // 项目缓存目录
 defined('DATA_PATH') or define('DATA_PATH', RUNTIME_PATH.'Data/'); // 项目数据目录
 defined('CACHE_PATH') or define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); // 项目模板缓存目录
+
+// 为了方便导入第三方类库 设置Vendor目录到include_path
+set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
 
 // 加载运行时所需要的文件 并负责自动目录生成
 function load_runtime_file() {
@@ -115,6 +120,7 @@ function build_runtime_cache($append='') {
     }else{
         $content  .= array_define($defs['user']);
     }
+    $content    .= 'set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);';
     //[sae] 读取核心编译文件列表
     $list = array(
         SAE_PATH.'Common/common.php',
