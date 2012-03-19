@@ -266,7 +266,7 @@ class PublicAction extends Action {
         // Ajax方式附件上传提示信息设置
         // 默认使用mootools opacity效果
         //alert($info);
-        $show = '<script language="JavaScript" src="' . WEB_PUBLIC_PATH . '/Js/mootools.js"></script><script language="JavaScript" type="text/javascript">' . "\n";
+        $show = '<script language="JavaScript" src="' . __ROOT__.'/Public/Js/mootools.js"></script><script language="JavaScript" type="text/javascript">' . "\n";
         $show .= ' var parDoc = window.parent.document;';
         $show .= ' var result = parDoc.getElementById("' . $info['uploadResult'] . '");';
         if (isset($info['uploadFormId'])) {
