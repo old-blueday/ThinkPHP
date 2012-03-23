@@ -20,7 +20,7 @@ if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
 
 //  版本信息
 define('THINK_VERSION', '3.0');
-define('THINK_RELEASE', '20120313');
+define('THINK_RELEASE', '20120323');
 
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
