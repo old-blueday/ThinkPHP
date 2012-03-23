@@ -163,7 +163,7 @@ class CheckRouteBehavior extends Behavior {
             $var   =   array_merge($matches,$var);
             // 解析剩余的URL参数
             if($paths) {
-                preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]=\'\\2\';', implode('/',$paths));
+                preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]=strip_tags(\'\\2\');', implode('/',$paths));
             }
             // 解析路由自动传人参数
             if(is_array($route) && isset($route[1])) {
@@ -196,7 +196,7 @@ class CheckRouteBehavior extends Behavior {
             // 解析剩余的URL参数
             $regx =  substr_replace($regx,'',0,strlen($matches[0]));
             if($regx) {
-                preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]=\'\\2\';', $regx);
+                preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]=strip_tags(\'\\2\');', $regx);
             }
             // 解析路由自动传人参数
             if(is_array($route) && isset($route[1])) {
