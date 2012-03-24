@@ -422,7 +422,7 @@ class UploadFile {//类定义开始
         if($this->autoSub) {
             // 使用子目录保存文件
             $filename['savename'] = $saveName;
-            $saveName = $this->getSubName($filename).'/'.$saveName;
+            $saveName = $this->getSubName($filename).$saveName;
         }
         return $saveName;
     }
@@ -441,7 +441,7 @@ class UploadFile {//类定义开始
     private function getSubName($file) {
         switch($this->subType) {
             case 'date':
-                $dir   =  date($this->dateFormat,time());
+                $dir   =  date($this->dateFormat,time()).'/';
                 break;
             case 'hash':
             default:
