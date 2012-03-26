@@ -512,7 +512,7 @@ class DbMongo extends Db{
         $query  =  $this->parseWhere($options['where']);
         $fields    = $this->parseField($options['field']);
         if($this->debug) {
-            $this->queryStr = $this->_dbName.'.'.$this->_collectionName.'.fineOne(';
+            $this->queryStr = $this->_dbName.'.'.$this->_collectionName.'.findOne(';
             $this->queryStr .= $query?json_encode($query):'{}';
             $this->queryStr .= $fields?','.json_encode($fields):'';
             $this->queryStr .= ')';
