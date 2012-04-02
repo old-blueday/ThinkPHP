@@ -1,5 +1,4 @@
 <?php
-
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
@@ -319,7 +318,7 @@ class Image {
     static function buildImageVerify($length=4, $mode=1, $type='png', $width=48, $height=22, $verifyName='verify') {
         import('ORG.Util.String');
         $randval = String::randString($length, $mode);
-        $_SESSION[$verifyName] = md5($randval);
+        session($verifyName, md5($randval));
         $width = ($length * 10 + 10) > $width ? $length * 10 + 10 : $width;
         if ($type != 'gif' && function_exists('imagecreatetruecolor')) {
             $im = imagecreatetruecolor($width, $height);
@@ -354,7 +353,7 @@ class Image {
         import('ORG.Util.String');
         $code = String::randString($length, 4);
         $width = ($length * 45) > $width ? $length * 45 : $width;
-        $_SESSION[$verifyName] = md5($code);
+        session($verifyName, md5($code));
         $im = imagecreatetruecolor($width, $height);
         $borderColor = imagecolorallocate($im, 100, 100, 100);                    //边框色
         $bkcolor = imagecolorallocate($im, 250, 250, 250);
