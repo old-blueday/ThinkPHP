@@ -39,12 +39,13 @@ class ReadHtmlCacheBehavior extends Behavior {
     static private function requireHtmlCache() {
         // 分析当前的静态规则
          $htmls = C('HTML_CACHE_RULES'); // 读取静态规则
-         $htmls = array_change_key_case($htmls,CASE_LOWER);
          if(!empty($htmls)) {
-            // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
+            $htmls = array_change_key_case($htmls);
+            // 静态规则文件定义格式 actionName=>array('静态规则','缓存时间','附加规则')
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
             // 检测静态规则
             $moduleName = strtolower(MODULE_NAME);
+            $actionName = strtolower(ACTION_NAME);
             if(isset($htmls[$moduleName.':'.ACTION_NAME])) {
                 $html   =   $htmls[$moduleName.':'.ACTION_NAME];   // 某个模块的操作的静态规则
             }elseif(isset($htmls[$moduleName.':'])){// 某个模块的静态规则
