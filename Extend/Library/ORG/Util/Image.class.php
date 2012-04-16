@@ -204,6 +204,9 @@ class Image {
 
             // 载入原图
             $createFun = 'ImageCreateFrom' . ($type == 'jpg' ? 'jpeg' : $type);
+            if(!function_exists($createFun)) {
+                return false;
+            }
             $srcImg = $createFun($image);
 
             //创建缩略图
