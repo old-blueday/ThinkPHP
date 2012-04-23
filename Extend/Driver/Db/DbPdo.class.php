@@ -302,16 +302,17 @@ class DbPdo extends Db{
         $info   =   array();
         if($result) {
             foreach ($result as $key => $val) {
-                $val['Name'] = isset($val['name'])?$val['name']:$val['Name'];
-                $val['Type'] = isset($val['type'])?$val['type']: $val['Type'];
-                $name= strtolower(isset($val['Field'])?$val['Field']:$val['Name']);
+                $val = array_change_key_case($val);
+                $val['name'] = isset($val['name'])?$val['name']:"";
+                $val['type'] = isset($val['type'])?$val['type']:"";
+                $name= strtolower(isset($val['field'])?$val['field']:$val['name']);
                 $info[$name] = array(
                     'name'    => $name ,
-                    'type'    => $val['Type'],
-                    'notnull' => (bool)(((isset($val['Null'])) && ($val['Null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
-                    'default' => isset($val['Default'])? $val['Default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
-                    'primary' => isset($val['Key'])?strtolower($val['Key']) == 'pri':(isset($val['pk'])?$val['pk']:false),
-                    'autoinc' => isset($val['Extra'])?strtolower($val['Extra']) == 'auto_increment':(isset($val['Key'])?$val['Key']:false),
+                    'type'    => $val['type'],
+                    'notnull' => (bool)(((isset($val['null'])) && ($val['null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
+                    'default' => isset($val['default'])? $val['default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
+                    'primary' => isset($val['dey'])?strtolower($val['dey']) == 'pri':(isset($val['pk'])?$val['pk']:false),
+                    'autoinc' => isset($val['extra'])?strtolower($val['extra']) == 'auto_increment':(isset($val['key'])?$val['key']:false),
                 );
             }
         }
