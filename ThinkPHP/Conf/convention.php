@@ -23,7 +23,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-if (!defined('THINK_PATH')) exit();
+!defined('THINK_PATH') && exit();
 return  array(
     /* 项目设定 */
     'APP_STATUS'            => 'debug',  // 应用调试模式状态 调试模式开启后有效 默认为debug 可扩展 并自动加载对应的配置文件
@@ -67,6 +67,7 @@ return  array(
     'DB_DEPLOY_TYPE'        => 0, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
     'DB_RW_SEPARATE'        => false,       // 数据库读写是否分离 主从式有效
     'DB_MASTER_NUM'         => 1, // 读写分离后 主服务器数量
+    'DB_SLAVE_NO'           => '', // 指定从服务器序号
     'DB_SQL_BUILD_CACHE'    => false, // 数据库查询的SQL创建缓存
     'DB_SQL_BUILD_QUEUE'    => 'file',   // SQL缓存队列的缓存方式 支持 file xcache和apc
     'DB_SQL_BUILD_LENGTH'   => 20, // SQL缓存的队列长度
@@ -127,5 +128,6 @@ return  array(
     'VAR_PATHINFO'          => 's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATHINFO_DEPR
     'VAR_URL_PARAMS'      => '_URL_', // PATHINFO URL参数变量
     'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
+    'VAR_FILTERS'           =>  '',     // 全局系统变量的默认过滤方法 多个用逗号分割
 
 );

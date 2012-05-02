@@ -15,7 +15,7 @@
  * ThinkPHP 运行时文件 编译后不再加载
  +------------------------------------------------------------------------------
  */
-if (!defined('THINK_PATH')) exit();
+!defined('THINK_PATH') && exit();
 if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
 
 //  版本信息
@@ -176,7 +176,7 @@ function build_tags_cache() {
 // 创建项目目录结构
 function build_app_dir() {
     // 没有创建项目目录的话自动创建
-    if(!is_dir(APP_PATH)) mk_dir(APP_PATH,0777);
+    if(!is_dir(APP_PATH)) mkdir(APP_PATH,0777,true);
     if(is_writeable(APP_PATH)) {
         $dirs  = array(
             LIB_PATH,
@@ -196,22 +196,11 @@ function build_app_dir() {
             LIB_PATH.'Widget/',
             );
         foreach ($dirs as $dir){
-            if(!is_dir($dir))  mk_dir($dir,0777);
+            if(!is_dir($dir))  mkdir($dir,0777,true);
         }
-        // 目录安全写入
-        defined('BUILD_DIR_SECURE') or define('BUILD_DIR_SECURE',false);
-        if(BUILD_DIR_SECURE) {
-            defined('DIR_SECURE_FILENAME') or define('DIR_SECURE_FILENAME','index.html');
-            defined('DIR_SECURE_CONTENT') or define('DIR_SECURE_CONTENT',' ');
-            // 自动写入目录安全文件
-            $content = DIR_SECURE_CONTENT;
-            $a = explode(',', DIR_SECURE_FILENAME);
-            foreach ($a as $filename){
-                foreach ($dirs as $dir)
-                    file_put_contents($dir.$filename,$content);
-            }
-        }
-        // 写入配置文件
+        // 写入目录安全文件
+        build_dir_secure($dirs);
+        // 写入初始配置文件
         if(!is_file(CONF_PATH.'config.php'))
             file_put_contents(CONF_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
         // 写入测试Action
@@ -227,6 +216,22 @@ function build_app_dir() {
 function build_first_action() {
     $content = file_get_contents(THINK_PATH.'Tpl/default_index.tpl');
     file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
+}
+
+// 生成目录安全文件
+function build_dir_secure($dirs='') {
+    // 目录安全写入
+    if(defined('BUILD_DIR_SECURE') && BUILD_DIR_SECURE) {
+        defined('DIR_SECURE_FILENAME') or define('DIR_SECURE_FILENAME','index.html');
+        defined('DIR_SECURE_CONTENT') or define('DIR_SECURE_CONTENT',' ');
+        // 自动写入目录安全文件
+        $content = DIR_SECURE_CONTENT;
+        $files = explode(',', DIR_SECURE_FILENAME);
+        foreach ($files as $filename){
+            foreach ($dirs as $dir)
+                file_put_contents($dir.$filename,$content);
+        }
+    }
 }
 
 // 加载运行时所需文件

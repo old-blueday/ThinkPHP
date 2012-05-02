@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+!defined('THINK_PATH') && exit();
 /**
  +------------------------------------------------------------------------------
  * 系统行为扩展 页面Trace显示输出
@@ -40,13 +41,11 @@ class ShowPageTraceBehavior extends Behavior {
         $log  =   Log::$log;
         $files =  get_included_files();
         $trace   =  array(
-            '请求时间'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']),
-            '当前页面'=>  __SELF__,
-            '请求协议'=>  $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'],
+            '请求信息'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']).' '.$_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' : '.__SELF__,
             '运行信息'=>  $this->showTime(),
-            '会话ID'    =>  session_id(),
-            '日志记录'=>  count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录',
-            '加载文件'=>  count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)),
+            '会话信息'    =>  'SESSION_ID:'.session_id(),
+            '日志信息'=>  count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录',
+            '文件文件'=>  count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)),
             );
 
         // 读取项目定义的Trace文件

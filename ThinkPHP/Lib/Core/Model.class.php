@@ -57,10 +57,13 @@ class Model {
     protected $_validate       = array();  // 自动验证定义
     protected $_auto           = array();  // 自动完成定义
     protected $_map           = array();  // 字段映射定义
+    protected $_scope          = array();  // 命名范围定义
     // 是否自动检测数据表字段信息
     protected $autoCheckFields   =   true;
     // 是否批处理验证
     protected $patchValidate   =  false;
+    // 链操作方法列表
+    protected $methods = array('table','where','order','limit','page','alias','having','group','lock','distinct','auto','filter','validate');
 
     /**
      +----------------------------------------------------------
@@ -118,12 +121,17 @@ class Model {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
                 $db   =  $this->dbName?$this->dbName:C('DB_NAME');
-                $this->fields = F('_fields/'.$db.'.'.$this->name);
-                if(!$this->fields)   $this->flush();
-            }else{
-                // 每次都会读取数据表信息
-                $this->flush();
+                $fields = F('_fields/'.$db.'.'.$this->name);
+                if($fields) {
+                    $version    =   C('DB_FIELD_VERISON');
+                    if(empty($version) || $fields['_version']== $version) {
+                        $this->fields   =   $fields;
+                        return ;
+                    }
+                }
             }
+            // 每次都会读取数据表信息
+            $this->flush();
         }
     }
 
@@ -154,7 +162,8 @@ class Model {
             }
         }
         // 记录字段类型信息
-        if(C('DB_FIELDTYPE_CHECK'))   $this->fields['_type'] =  $type;
+        $this->fields['_type'] =  $type;
+        if(C('DB_FIELD_VERISON')) $this->fields['_version'] =   C('DB_FIELD_VERISON');
 
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE')){
@@ -265,7 +274,7 @@ class Model {
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('table','where','order','limit','page','alias','having','group','lock','distinct'),true)) {
+        if(in_array(strtolower($method),$this->methods,true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -283,6 +292,8 @@ class Model {
             $name   =   parse_name(substr($method,10));
             $where[$name] =$args[0];
             return $this->where($where)->getField($args[1]);
+        }elseif(isset($this->_scope[$method])){// 命名范围的单独调用支持
+            return $this->scope($method,$args[0]);
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             return;
@@ -308,11 +319,16 @@ class Model {
             foreach ($data as $key=>$val){
                 if(!in_array($key,$this->fields,true)){
                     unset($data[$key]);
-                }elseif(C('DB_FIELDTYPE_CHECK') && is_scalar($val)) {
+                }elseif(is_scalar($val)) {
                     // 字段类型检查
                     $this->_parseType($data,$key);
                 }
             }
+        }
+        // 安全过滤
+        if(!empty($this->options['filter'])) {
+            $data = array_map($this->options['filter'],$data);
+            unset($this->options['filter']);
         }
         $this->_before_write($data);
         return $data;
@@ -363,6 +379,7 @@ class Model {
                 $this->_after_insert($data,$options);
                 return $insertId;
             }
+            $this->_after_insert($data,$options);
         }
         return $result;
     }
@@ -607,16 +624,15 @@ class Model {
         // 记录操作的模型名称
         $options['model'] =  $this->name;
         // 字段类型验证
-        if(C('DB_FIELDTYPE_CHECK')) {
-            if(isset($options['where']) && is_array($options['where'])) {
-                // 对数组查询条件进行字段类型检查
-                foreach ($options['where'] as $key=>$val){
-                    if(in_array($key,$this->fields,true) && is_scalar($val)){
-                        $this->_parseType($options['where'],$key);
-                    }
+        if(isset($options['where']) && is_array($options['where'])) {
+            // 对数组查询条件进行字段类型检查
+            foreach ($options['where'] as $key=>$val){
+                if(in_array($key,$this->fields,true) && is_scalar($val)){
+                    $this->_parseType($options['where'],$key);
                 }
             }
         }
+
         // 表达式过滤
         $this->_options_filter($options);
         return $options;
@@ -847,6 +863,26 @@ class Model {
         // 状态
         $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
 
+        // 检测提交字段的合法性
+        if(isset($this->options['field'])) { // $this->field('field1,field2...')->create()
+            $fields =   $this->options['field'];
+            unset($this->options['field']);
+        }elseif($type == self::MODEL_INSERT && isset($this->insert_fields)) {
+            $fields =   $this->insert_fields;
+        }elseif($type == self::MODEL_UPDATE && isset($this->update_fields)) {
+            $fields =   $this->update_fields;
+        }
+        if(isset($fields)) {
+            if(is_string($fields)) {
+                $fields =   explode(',',$fields);
+            }
+            foreach ($data as $key=>$val){
+                if(!in_array($key,$fields)) {
+                    unset($data[$key]);
+                }
+            }
+        }
+
         // 数据自动验证
         if(!$this->autoValidation($data,$type)) return false;
 
@@ -858,25 +894,22 @@ class Model {
 
         // 验证完成生成数据对象
         if($this->autoCheckFields) { // 开启字段检测 则过滤非法字段数据
-            $vo   =  array();
-            foreach ($this->fields as $key=>$name){
-                if(substr($key,0,1)=='_') continue;
-                $val = isset($data[$name])?$data[$name]:null;
-                //保证赋值有效
-                if(!is_null($val)){
-                    $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
+            $fields =   $this->getDbFields();
+            foreach ($data as $key=>$val){
+                if(!in_array($key,$fields)) {
+                    unset($data[$key]);
+                }elseif(MAGIC_QUOTES_GPC && is_string($val)){
+                    $data[$key] =   stripslashes($val);
                 }
             }
-        }else{
-            $vo   =  $data;
         }
 
         // 创建完成对数据进行自动处理
-        $this->autoOperation($vo,$type);
+        $this->autoOperation($data,$type);
         // 赋值当前数据对象
-        $this->data =   $vo;
+        $this->data =   $data;
         // 返回创建的数据以供其他调用
-        return $vo;
+        return $data;
      }
 
     // 自动表单令牌验证
@@ -944,9 +977,15 @@ class Model {
      +----------------------------------------------------------
      */
     private function autoOperation(&$data,$type) {
+        if(!empty($this->options['auto'])) {
+            $_auto   =   $this->options['auto'];
+            unset($this->options['auto']);
+        }elseif(!empty($this->_auto)){
+            $_auto   =   $this->_auto;
+        }
         // 自动填充
-        if(!empty($this->_auto)) {
-            foreach ($this->_auto as $auto){
+        if(isset($_auto)) {
+            foreach ($_auto as $auto){
                 // 填充因子定义格式
                 // array('field','填充内容','填充条件','附加规则',[额外参数])
                 if(empty($auto[2])) $auto[2] = self::MODEL_INSERT; // 默认为新增的时候自动填充
@@ -991,12 +1030,18 @@ class Model {
      +----------------------------------------------------------
      */
     protected function autoValidation($data,$type) {
+        if(!empty($this->options['validate'])) {
+            $_validate   =   $this->options['validate'];
+            unset($this->options['validate']);
+        }elseif(!empty($this->_validate)){
+            $_validate   =   $this->_validate;
+        }
         // 属性验证
-        if(!empty($this->_validate)) { // 如果设置了数据自动验证则进行数据验证
+        if(isset($_validate)) { // 如果设置了数据自动验证则进行数据验证
             if($this->patchValidate) { // 重置验证错误信息
                 $this->error = array();
             }
-            foreach($this->_validate as $key=>$val) {
+            foreach($_validate as $key=>$val) {
                 // 验证因子定义格式
                 // array(field,rule,message,condition,type,when,params)
                 // 判断是否需要执行验证
@@ -1072,7 +1117,16 @@ class Model {
             case 'function':// 使用函数进行验证
             case 'callback':// 调用方法进行验证
                 $args = isset($val[6])?(array)$val[6]:array();
-                array_unshift($args,$data[$val[0]]);
+                if(is_string($val[0]) && strpos($val[0], ','))
+                    $val[0] = explode(',', $val[0]);
+                if(is_array($val[0])){
+                    // 支持多个字段验证
+                    foreach($val[0] as $field)
+                        $_data[$field] = $data[$field];
+                    array_unshift($args, $_data);
+                }else{
+                    array_unshift($args, $data[$val[0]]);
+                }
                 if('function'==$val[4]) {
                     return call_user_func_array($val[1], $args);
                 }else{
@@ -1120,7 +1174,12 @@ class Model {
                 $range   = is_array($rule)?$rule:explode(',',$rule);
                 return in_array($value ,$range);
             case 'between': // 验证是否在某个范围
-                list($min,$max)   =  explode(',',$rule);
+                if (is_array($rule)){
+                    $min    =    $rule[0];
+                    $max    =    $rule[1];
+                }else{
+                    list($min,$max)   =  explode(',',$rule);
+                }
                 return $value>=$min && $value<=$max;
             case 'equal': // 验证是否等于某个值
                 return $value == $rule;
@@ -1408,6 +1467,7 @@ class Model {
     public function getDbFields(){
         if($this->fields) {
             $fields   =  $this->fields;
+            unset($fields['_autoinc'],$fields['_pk'],$fields['_type'],$fields['_version']);
             unset($fields['_autoinc'],$fields['_pk'],$fields['_type']);
             return $fields;
         }
@@ -1425,7 +1485,10 @@ class Model {
      * @return Model
      +----------------------------------------------------------
      */
-    public function data($data){
+    public function data($data=''){
+        if('' === $data && !empty($this->data)) {
+            return $this->data;
+        }
         if(is_object($data)){
             $data   =   get_object_vars($data);
         }elseif(is_string($data)){
@@ -1536,6 +1599,46 @@ class Model {
             $field =  $fields?array_diff($fields,$field):$field;
         }
         $this->options['field']   =   $field;
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 调用命名范围
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $scope 命名范围名称 支持多个 和直接定义
+     * @param array $args 参数
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function scope($scope='',$args=NULL){
+        if('' === $scope) {
+            if(isset($this->_scope['default'])) {
+                // 默认的命名范围
+                $options    =   $this->_scope['default'];
+            }else{
+                return $this;
+            }
+        }elseif(is_string($scope)){ // 支持多个命名范围调用 用逗号分割
+            $scopes    =   explode(',',$scope);
+            $options    =   array();
+            foreach ($scopes as $name){
+                if(!isset($this->_scope[$name])) continue;
+                $options    =   array_merge($options,$this->_scope[$name]);
+            }
+            if(!empty($args) && is_array($args)) {
+                $options    =   array_merge($options,$args);
+            }
+        }elseif(is_array($scope)){ // 直接传入命名范围定义
+            $options    =   $scope;
+        }
+        
+        if(is_array($options) && !empty($options)){
+            $this->options  =   array_merge($this->options,array_change_key_case($options));
+        }
         return $this;
     }
 

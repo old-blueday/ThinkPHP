@@ -36,20 +36,6 @@ class  ThinkTemplate {
 
     /**
      +----------------------------------------------------------
-     * 取得模板实例对象
-     * 静态方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return ThinkTemplate
-     +----------------------------------------------------------
-     */
-    static public function  getInstance() {
-        return get_instance_of(__CLASS__);
-    }
-
-    /**
-     +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
      * @access public
@@ -129,7 +115,7 @@ class  ThinkTemplate {
         $tmplContent = $this->compiler($tmplContent);
         // 检测分组目录
         if(!is_dir($this->config['cache_path']))
-            mk_dir($this->config['cache_path']);
+            mkdir($this->config['cache_path'],0777,true);
         //重写Cache文件
         if( false === file_put_contents($tmplCacheFile,trim($tmplContent)))
             throw_exception(L('_CACHE_WRITE_ERROR_').':'.$tmplCacheFile);
@@ -151,7 +137,7 @@ class  ThinkTemplate {
         //模板解析
         $tmplContent = $this->parse($tmplContent);
         // 还原被替换的Literal标签
-        $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
+        $tmplContent = preg_replace('/<!--###literal(\d+)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
         // 添加安全代码
         $tmplContent  =  '<?php if (!defined(\'THINK_PATH\')) exit();?>'.$tmplContent;
         if(C('TMPL_STRIP_SPACE')) {
@@ -182,13 +168,13 @@ class  ThinkTemplate {
         if(empty($content)) return '';
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
-        // 首先替换literal标签内容
-        $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
-
         // 检查include语法
         $content  = $this->parseInclude($content);
         // 检查PHP语法
         $content    =  $this->parsePhp($content);
+
+        // 首先替换literal标签内容
+        $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
 
         // 获取需要引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
@@ -618,12 +604,17 @@ class  ThinkTemplate {
                 case 'COOKIE':
                     if(isset($vars[3])) {
                         $parseStr = '$_COOKIE[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('COOKIE_PREFIX')){
+                        $parseStr = '$_COOKIE[\''.C('COOKIE_PREFIX').$vars[2].'\']';
                     }else{
                         $parseStr = '$_COOKIE[\''.$vars[2].'\']';
-                    }break;
+                    }
+                    break;
                 case 'SESSION':
                     if(isset($vars[3])) {
                         $parseStr = '$_SESSION[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('SESSION_PREFIX')){
+                        $parseStr = '$_SESSION[\''.C('SESSION_PREFIX').'\'][\''.$vars[2].'\']';
                     }else{
                         $parseStr = '$_SESSION[\''.$vars[2].'\']';
                     }

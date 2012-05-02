@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-if (!defined('THINK_PATH')) exit();
+!defined('THINK_PATH') && exit();
 // 系统别名定义文件
 return array(
     'Model'         => CORE_PATH.'Core/Model.class.php',

@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+!defined('THINK_PATH') && exit();
 /**
  +------------------------------------------------------------------------------
  * 文件类型缓存类
@@ -107,7 +108,7 @@ class CacheFile extends Cache {
                 $dir	.=	$name{$i}.'/';
             }
             if(!is_dir($this->options['temp'].$dir)) {
-                mk_dir($this->options['temp'].$dir);
+                mkdir($this->options['temp'].$dir,0777,true);
             }
             $filename	=	$dir.$this->prefix.$name.'.php';
         }else{

@@ -42,6 +42,14 @@ class App {
         // URL调度
         Dispatcher::dispatch();
 
+        // 定义当前请求的系统常量
+        define('NOW_TIME',$_SERVER['REQUEST_TIME']);
+        define('IS_GET',    $_SERVER['REQUEST_METHOD']=='GET' ? true : false);
+        define('IS_POST',   $_SERVER['REQUEST_METHOD']=='POST' ? true : false);
+        define('IS_PUT',    $_SERVER['REQUEST_METHOD']=='PUT' ? true : false);
+        define('IS_DELETE', $_SERVER['REQUEST_METHOD']=='DELETE' ? true : false);
+        define('IS_AJAX',   ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest')) || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? true : false);
+
         if(defined('GROUP_NAME')) {
             // 加载分组配置文件
             if(is_file(CONF_PATH.GROUP_NAME.'/config.php'))
@@ -49,6 +57,16 @@ class App {
             // 加载分组函数文件
             if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
                 include COMMON_PATH.GROUP_NAME.'/function.php';
+        }
+
+        // 系统变量安全过滤
+        if(C('VAR_FILTERS')) {
+            $filters    =   explode(',',C('VAR_FILTERS'));
+            foreach($filters as $filter){
+                // 全局参数过滤
+                $_POST  =   array_map($filter,$_POST);
+                $_GET   =   array_map($filter,$_GET);
+            }
         }
 
         /* 获取模板主题名称 */
@@ -88,7 +106,7 @@ class App {
      */
     static public function exec() {
         // 安全检测
-        if(!preg_match('/^[A-Za-z_0-9]+$/',MODULE_NAME)){
+        if(!preg_match('/^[A-Za-z]\w+$/',MODULE_NAME)){
             $module =  false;
         }else{
             //创建Action控制器实例
@@ -124,12 +142,50 @@ class App {
         $action = ACTION_NAME;
         // 获取操作方法名标签
         tag('action_name',$action);
+        if(!preg_match('/^[A-Za-z]\w+$/',$action)){
+            // 非法操作 引导到__call方法处理
+            call_user_func(array(&$module,'__call'),$action);
+            return ;
+        }
         if (method_exists($module,'_before_'.$action)) {
             // 执行前置操作
             call_user_func(array(&$module,'_before_'.$action));
         }
         //执行当前操作
-        call_user_func(array(&$module,$action));
+        switch($_SERVER['REQUEST_METHOD']) {
+            case 'POST':
+                $vars    =  $_POST;
+                break;
+            case 'PUT':
+                parse_str(file_get_contents('php://input'), $vars);
+                break;
+            default:
+                $vars  =  $_GET;
+        }
+        try{
+            //执行当前操作
+            $method=new ReflectionMethod($module, $action);
+            if($method->getNumberOfParameters()>0){
+                $params =  $method->getParameters();
+                foreach ($params as $param){
+                    $name = $param->getName();
+                    if(isset($vars[$name])) {
+                        $args[]  =  $vars[$name];
+                    }elseif($param->isDefaultValueAvailable()){
+                        $args[] = $param->getDefaultValue();
+                    }else{
+                        throw_exception(L('_PARAM_ERROR_').':'.$name);
+                    }
+                }
+                $method->invokeArgs($module,$args);
+            }else{
+                $method->invoke($module);
+            }
+        } catch (ReflectionException $e) { 
+            // 操作方法不存在 引导到__call方法处理
+            $method = new ReflectionMethod($module,'__call');
+            $method->invokeArgs($module,array($action));
+        }
         if (method_exists($module,'_after_'.$action)) {
             //  执行后缀操作
             call_user_func(array(&$module,'_after_'.$action));

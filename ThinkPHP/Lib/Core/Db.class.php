@@ -62,19 +62,6 @@ class Db {
 
     /**
      +----------------------------------------------------------
-     * 架构函数
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $config 数据库配置数组
-     +----------------------------------------------------------
-     */
-    public function __construct($config=''){
-        return $this->factory($config);
-    }
-
-    /**
-     +----------------------------------------------------------
      * 取得数据库类实例
      +----------------------------------------------------------
      * @static
@@ -126,7 +113,7 @@ class Db {
             if(APP_DEBUG)  $db->debug    = true;
         }else {
             // 类没有定义
-            throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
+            throw_exception(L('_NO_DB_DRIVER_').': ' . $class);
         }
         return $db;
     }
@@ -524,8 +511,20 @@ class Db {
         $whereStr = '';
         if(is_array($val)) {
             if(is_string($val[0])) {
-                if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
+                if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT)$/i',$val[0])) { // 比较运算
                     $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                }elseif(preg_match('/^(NOTLIKE|LIKE)$/i',$val[0])){// 模糊查找
+                    if(is_array($val[1])) {
+                        $likeLogic  =   isset($val[2])?strtoupper($val[2]):'OR';
+                        $likeStr    =   $this->comparison[strtolower($val[0])];
+                        $like   =   array();
+                        foreach ($val[1] as $item){
+                            $like[] = $key.' '.$likeStr.' '.$this->parseValue($item);
+                        }
+                        $whereStr .= '('.implode(' '.$likeLogic.' ',$like).')';
+                    }else{
+                        $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                    }
                 }elseif('exp'==strtolower($val[0])){ // 使用表达式
                     $whereStr .= ' ('.$key.' '.$val[1].') ';
                 }elseif(preg_match('/IN/i',$val[0])){ // IN 运算

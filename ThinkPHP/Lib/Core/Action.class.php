@@ -152,7 +152,7 @@ abstract class Action {
         $htmlfile =  $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
         if(!is_dir(dirname($htmlfile)))
             // 如果静态目录不存在 则创建
-            mk_dir(dirname($htmlfile));
+            mkdir(dirname($htmlfile),0777,true);
         if(false === file_put_contents($htmlfile,$content))
             throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile);
         return $content;
@@ -237,6 +237,22 @@ abstract class Action {
                 case '_get':      $input =& $_GET;break;
                 case '_post':$input =& $_POST;break;
                 case '_put': parse_str(file_get_contents('php://input'), $input);break;
+                case '_param':  
+                    switch($_SERVER['REQUEST_METHOD']) {
+                        case 'POST':
+                            $input    =  $_POST;
+                            break;
+                        case 'PUT':
+                            parse_str(file_get_contents('php://input'), $input);
+                            break;
+                        default:
+                            $input  =  $_GET;
+                    }
+                    if(C('VAR_URL_PARAMS')){
+                        $params = $_GET[C('VAR_URL_PARAMS')];
+                        $input  =   array_merge($input,$params);
+                    }
+                    break;
                 case '_request': $input =& $_REQUEST;break;
                 case '_session': $input =& $_SESSION;break;
                 case '_cookie':  $input =& $_COOKIE;break;
@@ -247,8 +263,15 @@ abstract class Action {
             }
             if(isset($input[$args[0]])) { // 取值操作
                 $data	 =	 $input[$args[0]];
-                $fun  =  $args[1]?$args[1]:C('DEFAULT_FILTER');
-                $data	 =	 $fun($data); // 参数过滤
+                $filters  =  isset($args[1])?$args[1]:C('DEFAULT_FILTER');
+                if($filters) {// 2012/3/23 增加多方法过滤支持
+                    $filters    =   explode(',',$filters);
+                    foreach($filters as $filter){
+                        if(function_exists($filter)) {
+                            $data   =   is_array($data)?array_map($filter,$data):$filter($data); // 参数过滤
+                        }
+                    }
+                }
             }else{ // 变量默认值
                 $data	 =	 isset($args[2])?$args[2]:NULL;
             }

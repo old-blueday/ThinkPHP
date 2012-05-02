@@ -35,6 +35,7 @@ return array(
     '_DATA_TYPE_INVALID_'=>'非法数据对象！',
     '_OPERATION_WRONG_'=>'操作出现错误',
     '_NOT_LOAD_DB_'=>'无法加载数据库',
+    '_NO_DB_DRIVER_'=>'无法加载数据库驱动',
     '_NOT_SUPPORT_DB_'=>'系统暂时不支持数据库',
     '_NO_DB_CONFIG_'=>'没有定义数据库配置',
     '_NOT_SUPPERT_'=>'系统不支持',

@@ -94,7 +94,7 @@ class TagLib {
      */
     public function __construct() {
         $this->tagLib  = strtolower(substr(get_class($this),6));
-        $this->tpl       = Think::instance('ThinkTemplate');//ThinkTemplate::getInstance();
+        $this->tpl       = Think::instance('ThinkTemplate');
     }
 
     /**
@@ -224,8 +224,24 @@ class TagLib {
                 case 'SERVER':    $parseStr = '$_SERVER[\''.$vars[2].'\']';break;
                 case 'GET':         $parseStr = '$_GET[\''.$vars[2].'\']';break;
                 case 'POST':       $parseStr = '$_POST[\''.$vars[2].'\']';break;
-                case 'COOKIE':    $parseStr = '$_COOKIE[\''.$vars[2].'\']';break;
-                case 'SESSION':   $parseStr = '$_SESSION[\''.$vars[2].'\']';break;
+                case 'COOKIE':
+                    if(isset($vars[3])) {
+                        $parseStr = '$_COOKIE[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('COOKIE_PREFIX')){
+                        $parseStr = '$_COOKIE[\''.C('COOKIE_PREFIX').$vars[2].'\']';
+                    }else{
+                        $parseStr = '$_COOKIE[\''.$vars[2].'\']';
+                    }
+                    break;
+                case 'SESSION':
+                    if(isset($vars[3])) {
+                        $parseStr = '$_SESSION[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('SESSION_PREFIX')){
+                        $parseStr = '$_SESSION[\''.C('SESSION_PREFIX').'\'][\''.$vars[2].'\']';
+                    }else{
+                        $parseStr = '$_SESSION[\''.$vars[2].'\']';
+                    }
+                    break;
                 case 'ENV':         $parseStr = '$_ENV[\''.$vars[2].'\']';break;
                 case 'REQUEST':  $parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
                 case 'CONST':     $parseStr = strtoupper($vars[2]);break;

@@ -34,7 +34,7 @@ class Think {
      * @return void
      +----------------------------------------------------------
      */
-    static public function Start() {
+    static public function start() {
         // 设定错误和异常处理
         set_error_handler(array('Think','appError'));
         set_exception_handler(array('Think','appException'));
@@ -182,7 +182,8 @@ class Think {
                 return ;
             }
         }elseif(substr($class,-5)=='Model'){ // 加载模型
-            if(require_cache(LIB_PATH.'Model/'.$class.'.class.php')
+            if((defined('GROUP_NAME') && require_cache(LIB_PATH.'Model/'.GROUP_NAME.'/'.$class.'.class.php'))
+                || require_cache(LIB_PATH.'Model/'.$class.'.class.php')
                 || require_cache(EXTEND_PATH.'Model/'.$class.'.class.php') ) {
                 return ;
             }
