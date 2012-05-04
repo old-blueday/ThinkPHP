@@ -136,9 +136,11 @@ function layout($layout) {
     if(false !== $layout) {
         // 开启布局
         C('LAYOUT_ON',true);
-        if(is_string($layout)) {
+        if(is_string($layout)) { // 设置新的布局模板
             C('LAYOUT_NAME',$layout);
         }
+    }else{// 临时关闭布局
+        C('LAYOUT_ON',false);
     }
 }
 
