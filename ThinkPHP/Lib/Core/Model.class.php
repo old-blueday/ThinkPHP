@@ -803,6 +803,7 @@ class Model {
     public function getField($field,$sepa=null) {
         $options['field']    =  $field;
         $options =  $this->_parseOptions($options);
+        $field  =   trim($field);
         if(strpos($field,',')) { // 多字段
             $resultSet = $this->db->select($options);
             if(!empty($resultSet)) {
@@ -827,10 +828,17 @@ class Model {
                 return $cols;
             }
         }else{   // 查找一条记录
-            $options['limit'] = 1;
+            // 返回数据个数
+            if(true !== $sepa) {// 当sepa指定为true的时候 返回所有数据
+                $options['limit']   =   is_numeric($sepa)?$sepa:1;
+            }
             $result = $this->db->select($options);
             if(!empty($result)) {
-                return reset($result[0]);
+                if(1==$options['limit']) return reset($result[0]);
+                foreach ($result as $val){
+                    $array[]    =   $val[$field];
+                }
+                return $array;
             }
         }
         return null;
