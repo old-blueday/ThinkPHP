@@ -106,7 +106,7 @@ class App {
      */
     static public function exec() {
         // 安全检测
-        if(!preg_match('/^[A-Za-z]\w+$/',MODULE_NAME)){
+        if(!preg_match('/^[A-Za-z](\w)*$/',MODULE_NAME)){
             $module =  false;
         }else{
             //创建Action控制器实例
@@ -142,7 +142,7 @@ class App {
         $action = ACTION_NAME;
         // 获取操作方法名标签
         tag('action_name',$action);
-        if(!preg_match('/^[A-Za-z]\w+$/',$action)){
+        if(!preg_match('/^[A-Za-z](\w)*$/',$action)){
             // 非法操作 引导到__call方法处理
             call_user_func(array(&$module,'__call'),$action);
             return ;
