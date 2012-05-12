@@ -147,48 +147,60 @@ class App {
             call_user_func(array(&$module,'__call'),$action);
             return ;
         }
-        if (method_exists($module,'_before_'.$action)) {
-            // 执行前置操作
-            call_user_func(array(&$module,'_before_'.$action));
-        }
-        //执行当前操作
-        switch($_SERVER['REQUEST_METHOD']) {
-            case 'POST':
-                $vars    =  $_POST;
-                break;
-            case 'PUT':
-                parse_str(file_get_contents('php://input'), $vars);
-                break;
-            default:
-                $vars  =  $_GET;
-        }
         try{
             //执行当前操作
-            $method=new ReflectionMethod($module, $action);
-            if(C('URL_PARAM_BIND') && $method->getNumberOfParameters()>0){
-                $params =  $method->getParameters();
-                foreach ($params as $param){
-                    $name = $param->getName();
-                    if(isset($vars[$name])) {
-                        $args[]  =  $vars[$name];
-                    }elseif($param->isDefaultValueAvailable()){
-                        $args[] = $param->getDefaultValue();
-                    }else{
-                        throw_exception(L('_PARAM_ERROR_').':'.$name);
+            $method =   new ReflectionMethod($module, $action);
+            if($method->isPublic()) {
+                $class  =   new ReflectionClass($module);
+                // 前置操作
+                if($class->hasMethod('_before_'.$action)) {
+                    $before =   $class->getMethod('_before_'.$action);
+                    if($before->isPublic()) {
+                        $before->invoke($module);
                     }
                 }
-                $method->invokeArgs($module,$args);
+                // URL参数绑定检测
+                if(C('URL_PARAMS_BIND') && $method->getNumberOfParameters()>0){
+                    switch($_SERVER['REQUEST_METHOD']) {
+                        case 'POST':
+                            $vars    =  $_POST;
+                            break;
+                        case 'PUT':
+                            parse_str(file_get_contents('php://input'), $vars);
+                            break;
+                        default:
+                            $vars  =  $_GET;
+                    }
+                    $params =  $method->getParameters();
+                    foreach ($params as $param){
+                        $name = $param->getName();
+                        if(isset($vars[$name])) {
+                            $args[]  =  $vars[$name];
+                        }elseif($param->isDefaultValueAvailable()){
+                            $args[] = $param->getDefaultValue();
+                        }else{
+                            throw_exception(L('_PARAM_ERROR_').':'.$name);
+                        }
+                    }
+                    $method->invokeArgs($module,$args);
+                }else{
+                    $method->invoke($module);
+                }
+                // 后置操作
+                if($class->hasMethod('_after_'.$action)) {
+                    $after =   $class->getMethod('_after_'.$action);
+                    if($after->isPublic()) {
+                        $after->invoke($module);
+                    }
+                }
             }else{
-                $method->invoke($module);
+                // 操作方法不是Public 抛出异常
+                throw new ReflectionException();
             }
         } catch (ReflectionException $e) { 
-            // 操作方法不存在 引导到__call方法处理
+            // 方法调用发生异常后 引导到__call方法处理
             $method = new ReflectionMethod($module,'__call');
-            $method->invokeArgs($module,array($action));
-        }
-        if (method_exists($module,'_after_'.$action)) {
-            //  执行后缀操作
-            call_user_func(array(&$module,'_after_'.$action));
+            $method->invokeArgs($module,array($action,''));
         }
         return ;
     }
