@@ -134,12 +134,11 @@ class App {
         $action = ACTION_NAME;
         // 获取操作方法名标签
         tag('action_name',$action);
-        if(!preg_match('/^[A-Za-z](\w)*$/',$action)){
-            // 非法操作 引导到__call方法处理
-            call_user_func(array(&$module,'__call'),$action);
-            return ;
-        }
         try{
+            if(!preg_match('/^[A-Za-z](\w)*$/',$action)){
+                // 非法操作
+                throw new ReflectionException();
+            }
             //执行当前操作
             $method =   new ReflectionMethod($module, $action);
             if($method->isPublic()) {
