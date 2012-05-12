@@ -98,6 +98,21 @@ function dump($var, $echo=true, $label=null, $strict=true) {
         return $output;
 }
 
+// 404 处理
+function _404($msg='',$url='') {
+    APP_DEBUG && throw_exception($msg);
+    if($msg && C('LOG_EXCEPTION_RECORD')) Log::write($msg);
+    if(empty($url) && C('URL_404_REDIRECT')) {
+        $url    =   C('URL_404_REDIRECT');
+    }
+    if($url) {
+        redirect($url);
+    }else{
+        send_http_status(404);
+        exit;
+    }
+}
+
  // 区间调试开始
 function debug_start($label='') {
     $GLOBALS[$label]['_beginTime'] = microtime(TRUE);

@@ -126,15 +126,7 @@ class App {
                 // 是否定义Empty模块
                 $module = A('Empty');
                 if(!$module){
-                    $msg =  L('_MODULE_NOT_EXIST_').MODULE_NAME;
-                    if(APP_DEBUG) {
-                        // 模块不存在 抛出异常
-                        throw_exception($msg);
-                    }else{
-                        if(C('LOG_EXCEPTION_RECORD')) Log::write($msg);
-                        send_http_status(404);
-                        exit;
-                    }
+                    _404(L('_MODULE_NOT_EXIST_').':'.MODULE_NAME);
                 }
             }
         }

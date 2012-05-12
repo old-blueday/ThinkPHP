@@ -216,13 +216,8 @@ abstract class Action {
             }elseif(function_exists('__hack_action')) {
                 // hack 方式定义扩展操作
                 __hack_action();
-            }elseif(APP_DEBUG) {
-                // 抛出异常
-                throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }else{
-                if(C('LOG_EXCEPTION_RECORD')) Log::write(L('_ERROR_ACTION_').ACTION_NAME);
-                send_http_status(404);
-                exit;
+                _404(L('_ERROR_ACTION_').':'.ACTION_NAME);
             }
         }else{
             switch(strtolower($method)) {
