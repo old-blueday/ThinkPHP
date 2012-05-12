@@ -165,7 +165,7 @@ class App {
         try{
             //执行当前操作
             $method=new ReflectionMethod($module, $action);
-            if($method->getNumberOfParameters()>0){
+            if(C('URL_PARAM_BIND') && $method->getNumberOfParameters()>0){
                 $params =  $method->getParameters();
                 foreach ($params as $param){
                     $name = $param->getName();
