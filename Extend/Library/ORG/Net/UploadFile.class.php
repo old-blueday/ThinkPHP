@@ -274,7 +274,7 @@ class UploadFile {//类定义开始
         // 检查上传目录
         if(!is_dir($savePath)) {
             // 尝试创建目录
-            if(!mk_dir($savePath)){
+            if(!mkdir($savePath,0777,true)){
                 $this->error  =  '上传目录'.$savePath.'不存在';
                 return false;
             }
@@ -453,7 +453,7 @@ class UploadFile {//类定义开始
                 break;
         }
         if(!is_dir($file['savepath'].$dir)) {
-            mk_dir($file['savepath'].$dir);
+            mkdir($file['savepath'].$dir,0777,true);
         }
         return $dir;
     }

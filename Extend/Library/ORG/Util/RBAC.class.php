@@ -80,16 +80,14 @@ CREATE TABLE IF NOT EXISTS `think_role_user` (
 */
 class RBAC {
     // 认证方法
-    static public function authenticate($map,$model='')
-    {
+    static public function authenticate($map,$model='') {
         if(empty($model)) $model =  C('USER_AUTH_MODEL');
         //使用给定的Map进行认证
         return M($model)->where($map)->find();
     }
 
     //用于检测用户权限的方法,并保存到Session中
-    static function saveAccessList($authId=null)
-    {
+    static function saveAccessList($authId=null) {
         if(null===$authId)   $authId = $_SESSION[C('USER_AUTH_KEY')];
         // 如果使用普通权限模式，保存当前用户的访问权限列表
         // 对管理员开发所有权限
@@ -108,8 +106,7 @@ class RBAC {
 	}
 
     //检查当前操作是否需要认证
-    static function checkAccess()
-    {
+    static function checkAccess() {
         //如果项目要求认证，并且当前模块需要认证，则进行权限认证
         if( C('USER_AUTH_ON') ){
 			$_module	=	array();
@@ -164,8 +161,7 @@ class RBAC {
 	}
 
     //权限认证的过滤器方法
-    static public function AccessDecision($appName=APP_NAME)
-    {
+    static public function AccessDecision($appName=APP_NAME) {
         //检查是否需要认证
         if(RBAC::checkAccess()) {
             //存在认证识别号，则进行进一步的访问决策
@@ -209,8 +205,7 @@ class RBAC {
      * @access public
      +----------------------------------------------------------
      */
-    static public function getAccessList($authId)
-    {
+    static public function getAccessList($authId) {
         // Db方式权限数据
         $db     =   Db::getInstance(C('RBAC_DB_DSN'));
         $table = array('role'=>C('RBAC_ROLE_TABLE'),'user'=>C('RBAC_USER_TABLE'),'access'=>C('RBAC_ACCESS_TABLE'),'node'=>C('RBAC_NODE_TABLE'));
