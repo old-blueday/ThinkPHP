@@ -55,8 +55,8 @@ class SessionDb {//类定义开始
      +----------------------------------------------------------
      */
     public function open($savePath, $sessName) { 
-       $this->lifeTime = C('SESSION_EXPIRE');
-	   $this->sessionTable	 =	 C('SESSION_TABLE');
+       $this->lifeTime = C('SESSION_EXPIRE')?C('SESSION_EXPIRE'):ini_get('session.gc_maxlifetime');
+       $this->sessionTable  =   C('SESSION_TABLE')?C('SESSION_TABLE'):C("DB_PREFIX")."session";
        $hander = mysql_connect(C('DB_HOST'),C('DB_USER'),C('DB_PWD')); 
        $dbSel = mysql_select_db(C('DB_NAME'),$hander);
        if(!$hander || !$dbSel) 
