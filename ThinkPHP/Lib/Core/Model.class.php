@@ -1295,8 +1295,9 @@ class Model {
         if(''===$linkNum && $this->db) {
             return $this->db;
         }
+        static $_linkNum    =   array();
         static $_db = array();
-        if(!isset($_db[$linkNum])) {
+        if(!isset($_db[$linkNum]) || (isset($_db[$linkNum]) && $_linkNum[$linkNum]!=$config) ) {
             // 创建一个新的实例
             if(!empty($config) && is_string($config) && false === strpos($config,'/')) { // 支持读取配置参数
                 $config  =  C($config);
@@ -1313,6 +1314,8 @@ class Model {
                 $this->setProperty($name,$value);
             }
         }
+        // 记录连接信息
+        $_linkNum[$linkNum] =   $config;
         // 切换数据库连接
         $this->db   =    $_db[$linkNum];
         $this->_after_db();

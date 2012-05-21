@@ -63,18 +63,6 @@ class View {
             return false;
     }
 
-    /* 取得所有模板变量 */
-    public function getAllVar(){
-        return $this->tVar;
-    }
-
-    // 调试页面所有的模板变量
-    public function traceVar(){
-        foreach ($this->tVar as $name=>$val){
-            dump($val,1,'['.$name.']<br/>');
-        }
-    }
-
     /**
      +----------------------------------------------------------
      * 加载模板和页面输出 可以返回输出内容
