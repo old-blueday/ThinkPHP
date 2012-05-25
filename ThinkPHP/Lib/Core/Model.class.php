@@ -834,7 +834,7 @@ class Model {
             }
             $result = $this->db->select($options);
             if(!empty($result)) {
-                if(1==$options['limit']) return reset($result[0]);
+                if(true !== $sepa && 1==$options['limit']) return reset($result[0]);
                 foreach ($result as $val){
                     $array[]    =   $val[$field];
                 }
