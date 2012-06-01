@@ -675,22 +675,25 @@ class  ThinkTemplate {
         if(substr($tmplPublicName,0,1)=='$')
             //支持加载变量文件名
             $tmplPublicName = $this->get(substr($tmplPublicName,1));
-
-        if(false === strpos($tmplPublicName,$this->config['template_suffix'])) {
-            // 解析规则为 模板主题:模块:操作 不支持 跨项目和跨分组调用
-            $path   =  explode(':',$tmplPublicName);
-            $action = array_pop($path);
-            $module = !empty($path)?array_pop($path):MODULE_NAME;
-            if(!empty($path)) {// 设置模板主题
-                $path = dirname(THEME_PATH).'/'.array_pop($path).'/';
-            }else{
-                $path = THEME_PATH;
+        $array  =   explode(',',$tmplPublicName);
+        $parseStr   =   '';
+        foreach ($array as $tmplPublicName){
+            if(false === strpos($tmplPublicName,$this->config['template_suffix'])) {
+                // 解析规则为 模板主题:模块:操作 不支持 跨项目和跨分组调用
+                $path   =  explode(':',$tmplPublicName);
+                $action = array_pop($path);
+                $module = !empty($path)?array_pop($path):MODULE_NAME;
+                if(!empty($path)) {// 设置模板主题
+                    $path = dirname(THEME_PATH).'/'.array_pop($path).'/';
+                }else{
+                    $path = THEME_PATH;
+                }
+                $depr = defined('GROUP_NAME')?C('TMPL_FILE_DEPR'):'/';
+                $tmplPublicName  =  $path.$module.$depr.$action.$this->config['template_suffix'];
             }
-            $depr = defined('GROUP_NAME')?C('TMPL_FILE_DEPR'):'/';
-            $tmplPublicName  =  $path.$module.$depr.$action.$this->config['template_suffix'];
+            // 获取模板文件内容
+            $parseStr .= file_get_contents($tmplPublicName);
         }
-        // 获取模板文件内容
-        $parseStr = file_get_contents($tmplPublicName);
         foreach ($vars as $key=>$val) {
             $parseStr = str_replace('['.$key.']',$val,$parseStr);
         }
