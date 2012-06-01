@@ -1486,7 +1486,6 @@ class Model {
         if($this->fields) {
             $fields   =  $this->fields;
             unset($fields['_autoinc'],$fields['_pk'],$fields['_type'],$fields['_version']);
-            unset($fields['_autoinc'],$fields['_pk'],$fields['_type']);
             return $fields;
         }
         return false;

@@ -212,13 +212,12 @@ function alias_import($alias, $classfile='') {
 function D($name='') {
     if(empty($name)) return new Model;
     static $_model = array();
-    if(isset($_model[$name]))
-        return $_model[$name];
     if(strpos($name,'://')) {// 指定项目
         $name   =  str_replace('://','/Model/',$name);
     }else{
         $name   =  C('DEFAULT_APP').'/Model/'.$name;
     }
+    if(isset($_model[$name]))   return $_model[$name];
     import($name.'Model');
     $class   =   basename($name.'Model');
     if(class_exists($class)) {
