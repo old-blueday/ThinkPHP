@@ -306,15 +306,16 @@ function redirect($url, $time=0, $msg='') {
 // 缓存管理函数
 function cache($name,$value='',$expire=0) {
     static $cache  =   '';
-    if(empty($cache)) { // 自动初始化
-        $cache =   Cache::getInstance();
-    }
     if(is_array($name)) { // 缓存初始化
         $type   =   isset($name['type'])?$name['type']:C('DATA_CACHE_TYPE');
         unset($name['type']);
         $cache =   Cache::getInstance($type,$name);
         return $cache;
-    }elseif(''=== $value){ // 获取缓存值
+    }
+    if(empty($cache)) { // 自动初始化
+        $cache =   Cache::getInstance();
+    }
+    if(''=== $value){ // 获取缓存值
         // 获取缓存数据
         return $cache->get($name);
     }elseif(is_null($value)) { // 删除缓存
