@@ -8,10 +8,12 @@ return array(
 	'DB_PWD'=> SAE_MYSQL_PASS,         // 密码
 	'DB_PORT'=> SAE_MYSQL_PORT,        // 端口
 	'DB_RW_SEPARATE'=>true,
+            'DATA_CACHE_TYPE'=>'Memcache',//SAE下，缓存类型改为Memcache
         'DB_DEPLOY_TYPE'=> 1, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
         'SAE_SPECIALIZED_FILES'=>array(
             //SAE系统专属文件。
             'UploadFile.class.php'=>SAE_PATH.'Lib/Extend/Library/ORG/Net/UploadFile_sae.class.php',
-            'Image.class.php'=>SAE_PATH.'Lib/Extend/Library/ORG/Util/Image_sae.class.php'
+            'Image.class.php'=>SAE_PATH.'Lib/Extend/Library/ORG/Util/Image_sae.class.php',
+            'CacheMemcache.class.php'=>SAE_PATH.'Lib/Extend/Driver/Cache/CacheMemcache_sae.class.php'
          )
         );
