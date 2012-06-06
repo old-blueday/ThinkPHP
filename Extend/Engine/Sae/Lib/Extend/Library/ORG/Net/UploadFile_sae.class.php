@@ -456,7 +456,7 @@ class UploadFile {//类定义开始
                 break;
         }
         if (!is_dir($file['savepath'] . $dir)) {
-            mk_dir($file['savepath'] . $dir);
+            mkdir($file['savepath'] . $dir,0777,true);
         }
         return $dir;
     }

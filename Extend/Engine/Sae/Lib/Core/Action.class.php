@@ -100,6 +100,23 @@ abstract class Action {
 
     /**
      +----------------------------------------------------------
+     * 输出内容文本可以包括Html
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $content 输出内容
+     * @param string $charset 模板输出字符集
+     * @param string $contentType 输出类型
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    protected function show($content,$charset='',$contentType='') {
+        return $this->view->show($content,$charset,$contentType);
+    }
+
+    /**
+     +----------------------------------------------------------
      *  获取输出页面内容
      * 调用内置的模板引擎fetch方法，
      +----------------------------------------------------------
@@ -199,13 +216,8 @@ abstract class Action {
             }elseif(function_exists('__hack_action')) {
                 // hack 方式定义扩展操作
                 __hack_action();
-            }elseif(APP_DEBUG) {
-                // 抛出异常
-                throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }else{
-                if(C('LOG_EXCEPTION_RECORD')) Log::write(L('_ERROR_ACTION_').ACTION_NAME);
-                send_http_status(404);
-                exit;
+                _404(L('_ERROR_ACTION_').':'.ACTION_NAME);
             }
         }else{
             switch(strtolower($method)) {
@@ -220,6 +232,22 @@ abstract class Action {
                 case '_get':      $input =& $_GET;break;
                 case '_post':$input =& $_POST;break;
                 case '_put': parse_str(file_get_contents('php://input'), $input);break;
+                case '_param':  
+                    switch($_SERVER['REQUEST_METHOD']) {
+                        case 'POST':
+                            $input    =  $_POST;
+                            break;
+                        case 'PUT':
+                            parse_str(file_get_contents('php://input'), $input);
+                            break;
+                        default:
+                            $input  =  $_GET;
+                    }
+                    if(C('VAR_URL_PARAMS')){
+                        $params = $_GET[C('VAR_URL_PARAMS')];
+                        $input  =   array_merge($input,$params);
+                    }
+                    break;
                 case '_request': $input =& $_REQUEST;break;
                 case '_session': $input =& $_SESSION;break;
                 case '_cookie':  $input =& $_COOKIE;break;
@@ -229,9 +257,16 @@ abstract class Action {
                     throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             }
             if(isset($input[$args[0]])) { // 取值操作
-                $data	 =	 $input[$args[0]];
-                $fun  =  $args[1]?$args[1]:C('DEFAULT_FILTER');
-                $data	 =	 $fun($data); // 参数过滤
+                $data    =   $input[$args[0]];
+                $filters  =  isset($args[1])?$args[1]:C('DEFAULT_FILTER');
+                if($filters) {// 2012/3/23 增加多方法过滤支持
+                    $filters    =   explode(',',$filters);
+                    foreach($filters as $filter){
+                        if(function_exists($filter)) {
+                            $data   =   is_array($data)?array_map($filter,$data):$filter($data); // 参数过滤
+                        }
+                    }
+                }
             }else{ // 变量默认值
                 $data	 =	 isset($args[2])?$args[2]:NULL;
             }

@@ -34,19 +34,6 @@ class  ThinkTemplate {
     public $config  =  array();
     private   $literal = array();
 
-    /**
-     +----------------------------------------------------------
-     * 取得模板实例对象
-     * 静态方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return ThinkTemplate
-     +----------------------------------------------------------
-     */
-    static public function  getInstance() {
-        return get_instance_of(__CLASS__);
-    }
 
     /**
      +----------------------------------------------------------
@@ -146,7 +133,7 @@ class  ThinkTemplate {
         //模板解析
         $tmplContent = $this->parse($tmplContent);
         // 还原被替换的Literal标签
-        $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
+        $tmplContent = preg_replace('/<!--###literal(\d+)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
         // 添加安全代码
         $tmplContent  =  '<?php if (!defined(\'THINK_PATH\')) exit();?>'.$tmplContent;
         if(C('TMPL_STRIP_SPACE')) {
@@ -177,13 +164,12 @@ class  ThinkTemplate {
         if(empty($content)) return '';
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
-        // 首先替换literal标签内容
-        $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
-
         // 检查include语法
         $content  = $this->parseInclude($content);
         // 检查PHP语法
         $content    =  $this->parsePhp($content);
+        // 首先替换literal标签内容
+        $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
 
         // 获取需要引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
@@ -518,10 +504,10 @@ class  ThinkTemplate {
                     default:  // 自动判断数组或对象 只支持二维
                         $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
                 }
-            }elseif(false !==strpos($var,':')){
+            }elseif(false !==strpos($var,'::')){
                 //支持 {$var:property} 方式输出对象的属性
-                $vars = explode(':',$var);
-                $var  =  str_replace(':','->',$var);
+                $vars = explode('::',$var);
+                $var  =  str_replace('::','->',$var);
                 $name = "$".$var;
                 $var  = $vars[0];
             }elseif(false !== strpos($var,'[')) {
@@ -613,12 +599,17 @@ class  ThinkTemplate {
                 case 'COOKIE':
                     if(isset($vars[3])) {
                         $parseStr = '$_COOKIE[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('COOKIE_PREFIX')){
+                        $parseStr = '$_COOKIE[\''.C('COOKIE_PREFIX').$vars[2].'\']';
                     }else{
                         $parseStr = '$_COOKIE[\''.$vars[2].'\']';
-                    }break;
+                    }
+                    break;
                 case 'SESSION':
                     if(isset($vars[3])) {
                         $parseStr = '$_SESSION[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('SESSION_PREFIX')){
+                        $parseStr = '$_SESSION[\''.C('SESSION_PREFIX').'\'][\''.$vars[2].'\']';
                     }else{
                         $parseStr = '$_SESSION[\''.$vars[2].'\']';
                     }

@@ -9,7 +9,7 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
-
+!defined('THINK_PATH') && exit();
 /**
  +------------------------------------------------------------------------------
  * 系统行为扩展 静态缓存读取
@@ -28,7 +28,8 @@ class ReadHtmlCacheBehavior extends Behavior {
     public function run(&$params){
         // 开启静态缓存
         if(C('HTML_CACHE_ON'))  {
-            if(($cacheTime = $this->requireHtmlCache()) && $this->checkHTMLCache(HTML_FILE_NAME,$cacheTime)) { //静态页面有效
+             $cacheTime = $this->requireHtmlCache();
+            if( false !== $cacheTime && $this->checkHTMLCache(HTML_FILE_NAME,$cacheTime)) { //静态页面有效
                 //[sae] 读取静态页面输出
                 exit(self::$html_content);
             }
@@ -40,16 +41,18 @@ class ReadHtmlCacheBehavior extends Behavior {
         // 分析当前的静态规则
          $htmls = C('HTML_CACHE_RULES'); // 读取静态规则
          if(!empty($htmls)) {
+            $htmls = array_change_key_case($htmls);
             // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
             // 检测静态规则
             $moduleName = strtolower(MODULE_NAME);
-            if(isset($htmls[$moduleName.':'.ACTION_NAME])) {
-                $html   =   $htmls[$moduleName.':'.ACTION_NAME];   // 某个模块的操作的静态规则
+            $actionName = strtolower(ACTION_NAME);
+            if(isset($htmls[$moduleName.':'.$actionName])) {
+                $html   =   $htmls[$moduleName.':'.$actionName];   // 某个模块的操作的静态规则
             }elseif(isset($htmls[$moduleName.':'])){// 某个模块的静态规则
                 $html   =   $htmls[$moduleName.':'];
-            }elseif(isset($htmls[ACTION_NAME])){
-                $html   =   $htmls[ACTION_NAME]; // 所有操作的静态规则
+            }elseif(isset($htmls[$actionName])){
+                $html   =   $htmls[$actionName]; // 所有操作的静态规则
             }elseif(isset($htmls['*'])){
                 $html   =   $htmls['*']; // 全局静态规则
             }elseif(isset($htmls['empty:index']) && !class_exists(MODULE_NAME.'Action')){

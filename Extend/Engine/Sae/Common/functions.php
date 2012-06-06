@@ -98,6 +98,21 @@ function dump($var, $echo=true, $label=null, $strict=true) {
         return $output;
 }
 
+// 404 处理
+function _404($msg='',$url='') {
+    APP_DEBUG && throw_exception($msg);
+    if($msg && C('LOG_EXCEPTION_RECORD')) Log::write($msg);
+    if(empty($url) && C('URL_404_REDIRECT')) {
+        $url    =   C('URL_404_REDIRECT');
+    }
+    if($url) {
+        redirect($url);
+    }else{
+        send_http_status(404);
+        exit;
+    }
+}
+
  // 区间调试开始
 function debug_start($label='') {
     $GLOBALS[$label]['_beginTime'] = microtime(TRUE);
@@ -136,20 +151,28 @@ function layout($layout) {
     if(false !== $layout) {
         // 开启布局
         C('LAYOUT_ON',true);
-        if(is_string($layout)) {
+        if(is_string($layout)) { // 设置新的布局模板
             C('LAYOUT_NAME',$layout);
         }
+    }else{// 临时关闭布局
+        C('LAYOUT_ON',false);
     }
 }
 
+
 // URL组装 支持不同模式
-// 格式：U('[分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
-function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
+// 格式：U('[分组/模块/操作@域名]?参数','参数','伪静态后缀','是否跳转','显示域名')
+function U($url='',$vars='',$suffix=true,$redirect=false,$domain=false) {
     // 解析URL
     $info =  parse_url($url);
     $url   =  !empty($info['path'])?$info['path']:ACTION_NAME;
+    if(false !== strpos($url,'@')) { // 解析域名
+        list($url,$host)    =   explode('@',$info['path'], 2);
+    }
     // 解析子域名
-    if($domain===true){
+    if(isset($host)) {
+        $domain = $host.(strpos($host,'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
+    }elseif($domain===true){
         $domain = $_SERVER['HTTP_HOST'];
         if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
             $domain = $domain=='localhost'?'localhost':'www'.strstr($_SERVER['HTTP_HOST'],'.');
@@ -197,7 +220,7 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
             if(C('URL_CASE_INSENSITIVE')) {
                 $var[C('VAR_MODULE')] =  parse_name($var[C('VAR_MODULE')]);
             }
-            if(C('APP_GROUP_LIST')) {
+            if(!C('APP_SUB_DOMAIN_DEPLOY') && C('APP_GROUP_LIST')) {
                 if(!empty($path)) {
                     $group   =  array_pop($path);
                     $var[C('VAR_GROUP')]  =   $group;
@@ -206,19 +229,22 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
                         $var[C('VAR_GROUP')]  =   GROUP_NAME;
                     }
                 }
+                if(C('URL_CASE_INSENSITIVE') && isset($var[C('VAR_GROUP')])) {
+                    $var[C('VAR_GROUP')] =  strtolower($var[C('VAR_GROUP')]);
+                }
             }
         }
     }
 
     if(C('URL_MODEL') == 0) { // 普通模式URL转换
-        $url   =  __APP__.'?'.http_build_query($var);
+        $url   =  __APP__.'?'.http_build_query(array_reverse($var));
         if(!empty($vars)) {
             $vars = http_build_query($vars);
             $url   .= '&'.$vars;
         }
     }else{ // PATHINFO模式或者兼容URL模式
         if(isset($route)) {
-            $url   =  __APP__.'/'.$url;
+            $url   =  __APP__.'/'.rtrim($url,$depr);
         }else{
             $url   =  __APP__.'/'.implode($depr,array_reverse($var));
         }
@@ -228,18 +254,31 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         }
         if($suffix) {
             $suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
-            if($suffix) {
+            if(0 < strpos($suffix, '|')){
+                $suffix = strstr($suffix, '|', true);
+            }
+            if($suffix && $url[1]){
                 $url  .=  '.'.ltrim($suffix,'.');
             }
         }
     }
     if($domain) {
-        $url   =  'http://'.$domain.$url;
+        $url   =  (is_ssl()?'https://':'http://').$domain.$url;
     }
     if($redirect) // 直接跳转URL
         redirect($url);
     else
         return $url;
+}
+
+// 判断是否SSL协议
+function is_ssl() {
+    if(isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))){
+        return true;
+    }elseif(isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'] )) {
+        return true;
+    }
+    return false;
 }
 
 // URL重定向
@@ -264,6 +303,28 @@ function redirect($url, $time=0, $msg='') {
         exit($str);
     }
 }
+// 缓存管理函数
+// TODU，SAE下是否要设置DATA_CACHE_TYPE的默认值
+function cache($name,$value='',$expire=0) {
+    static $cache  =   '';
+    if(empty($cache)) { // 自动初始化
+        $cache =   Cache::getInstance();
+    }
+    if(is_array($name)) { // 缓存初始化
+        $type   =   isset($name['type'])?$name['type']:C('DATA_CACHE_TYPE');
+        unset($name['type']);
+        $cache =   Cache::getInstance($type,$name);
+        return $cache;
+    }elseif(''=== $value){ // 获取缓存值
+        // 获取缓存数据
+        return $cache->get($name);
+    }elseif(is_null($value)) { // 删除缓存
+        return $cache->rm($name);
+    }else { // 缓存数据
+        return $cache->set($name, $value, $expire);
+    }
+}
+
 
 // 全局缓存设置和读取
 //[sae] 在sae下S缓存固定用memcache实现。
