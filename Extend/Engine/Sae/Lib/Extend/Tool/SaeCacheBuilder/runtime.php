@@ -24,12 +24,13 @@ define('THINK_RELEASE', '20120323');
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
     //[sae]下不支持这个函数  
-    //@set_magic_quotes_runtime (0);
-    define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
+    @set_magic_quotes_runtime (0);
+    define('MAGIC_QUOTES_GPC',false);//[saebuilder] 常量值固定
 }
-define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
-define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
-define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
+//[saebuilder] 常量固定值
+define('IS_CGI',0);
+define('IS_WIN',0);
+define('IS_CLI',0);
 
 // 项目名称
 defined('APP_NAME') or  define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
@@ -41,7 +42,7 @@ if(!IS_CLI) {
             $_temp  = explode('.php',$_SERVER['PHP_SELF']);
             define('_PHP_FILE_',  rtrim(str_replace($_SERVER['HTTP_HOST'],'',$_temp[0].'.php'),'/'));
         }else {
-            define('_PHP_FILE_',    rtrim($_SERVER['SCRIPT_NAME'],'/'));
+            define('_PHP_FILE_',    '/'.trim($_SERVER['SCRIPT_NAME'],'/'));//[saebuilder] 前面加上斜杠与web一致
         }
     }
     if(!defined('__ROOT__')) {
@@ -88,7 +89,7 @@ function load_runtime_file() {
     require SAE_PATH.'Common/common.php';
     //[sae] 读取核心编译文件列表
     $list = array(
-        SAE_PATH.'Lib/Core/Think.class.php',
+        SAE_PATH.'Lib/Extend/Tool/SaeCacheBuilder/Think.class.php',//[saebuilder] 加载更改后的Think类
         CORE_PATH.'Core/ThinkException.class.php',  // 异常处理类
         CORE_PATH.'Core/Behavior.class.php',
     );
@@ -98,14 +99,87 @@ function load_runtime_file() {
     }
     //[sae] 加载系统类库别名定义
     alias_import(include SAE_PATH.'Conf/alias.php');
-    //[sae]在sae下不对目录结构进行检查
-    if(APP_DEBUG){
-        //[sae] 调试模式切换删除编译缓存
-        if(!SAE_RUNTIME && SaeMC::file_exists(RUNTIME_FILE)) SaeMC::unlink(RUNTIME_FILE) ;
+    if(!is_dir(LIB_PATH)) {
+        // 创建项目目录结构
+        build_app_dir();
+    }elseif(!is_dir(CACHE_PATH)){
+        // 检查缓存目录
+        check_runtime();
+    }
+    //[saebuilder] 去掉了删除缓存的操作
+}
+
+// 检查缓存目录(Runtime) 如果不存在则自动创建
+function check_runtime() {
+    if(!is_dir(RUNTIME_PATH)) {
+        mkdir(RUNTIME_PATH);
+    }elseif(!is_writeable(RUNTIME_PATH)) {
+        exit('RUNTIME_PATH not writeable');
+    }
+    mkdir(CACHE_PATH);  // 模板缓存目录
+    return true;
+}
+
+
+// 创建项目目录结构
+function build_app_dir() {
+    // 没有创建项目目录的话自动创建
+    if(!is_dir(APP_PATH)) mkdir(APP_PATH,0777,true);
+    if(is_writeable(APP_PATH)) {
+        $dirs  = array(
+            LIB_PATH,
+            RUNTIME_PATH,
+            CONF_PATH,
+            COMMON_PATH,
+            LANG_PATH,
+            CACHE_PATH,
+            TMPL_PATH,
+            TMPL_PATH.C('DEFAULT_THEME').'/',
+            LOG_PATH,
+            TEMP_PATH,
+            DATA_PATH,
+            LIB_PATH.'Model/',
+            LIB_PATH.'Action/',
+            LIB_PATH.'Behavior/',
+            LIB_PATH.'Widget/',
+            );
+        foreach ($dirs as $dir){
+            if(!is_dir($dir))  mkdir($dir,0777,true);
+        }
+        // 写入目录安全文件
+        build_dir_secure($dirs);
+        // 写入初始配置文件
+        if(!is_file(CONF_PATH.'config.php'))
+            file_put_contents(CONF_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
+        // 写入测试Action
+        if(!is_file(LIB_PATH.'Action/IndexAction.class.php'))
+            build_first_action();
+    }else{
+        exit('APP_PATH  not  writeable');
     }
 }
 
-//[sae]下，不需要生成检查runtime目录函数
+// 创建测试Action
+function build_first_action() {
+    $content = file_get_contents(THINK_PATH.'Tpl/default_index.tpl');
+    file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
+}
+
+// 生成目录安全文件
+function build_dir_secure($dirs='') {
+    // 目录安全写入
+    if(defined('BUILD_DIR_SECURE') && BUILD_DIR_SECURE) {
+        defined('DIR_SECURE_FILENAME') or define('DIR_SECURE_FILENAME','index.html');
+        defined('DIR_SECURE_CONTENT') or define('DIR_SECURE_CONTENT',' ');
+        // 自动写入目录安全文件
+        $content = DIR_SECURE_CONTENT;
+        $files = explode(',', DIR_SECURE_FILENAME);
+        foreach ($files as $filename){
+            foreach ($dirs as $dir)
+                file_put_contents($dir.$filename,$content);
+        }
+    }
+}
 
 // 创建编译缓存
 function build_runtime_cache($append='') {
@@ -115,7 +189,11 @@ function build_runtime_cache($append='') {
     //[sae]编译SaeMC核心
     $content.=compile(SAE_PATH.'Lib/Core/SaeMC.class.php');
     if(defined('RUNTIME_DEF_FILE')) { //[sae] 编译后的常量文件外部引入
-        SaeMC::set(RUNTIME_DEF_FILE, '<?php '.array_define($defs['user']));
+        //SaeMC::set(RUNTIME_DEF_FILE, '<?php '.array_define($defs['user']));
+        //[saebuilder] 生成常量文件
+        $defs['user']['APP_DEBUG']=false;//[saebuild] APP_DEBUG固定为false
+        file_put_contents(RUNTIME_DEF_FILE, '<?php '.array_define($defs['user']));
+        echo 'build runtime_def_file:'.RUNTIME_DEF_FILE.PHP_EOL;
         $content  .=  'SaeMC::include_file(\''.RUNTIME_DEF_FILE.'\');';
     }else{
         $content  .= array_define($defs['user']);
@@ -139,9 +217,18 @@ function build_runtime_cache($append='') {
     $alias = include SAE_PATH.'Conf/alias.php';
     $content .= 'alias_import('.var_export($alias,true).');';
     // 编译框架默认语言包和配置参数
-    $content .= $append."\nL(".var_export(L(),true).");C(".var_export(C(),true).');G(\'loadTime\');Think::Start();';
-    //[sae] 生成编译缓存文件
-    SaeMC::set(RUNTIME_FILE, strip_whitespace('<?php '.$content));
+    //[saebuilder] 处理配置项，将SAE常量原样输出
+    $content .= $append."\nL(".var_export(L(),true).");C(".preg_replace('/\'SAE_(.*?)\'/e', 'parse_sae_define("\\1")', var_export(C(),true)).');G(\'loadTime\');Think::Start();';
+    //[saebuilder] 生成缓存文件
+    //SaeMC::set(RUNTIME_FILE, strip_whitespace('<?php '.$content));
+    file_put_contents(RUNTIME_FILE, strip_whitespace('<?php '.$content));
+    echo 'build core file:'.RUNTIME_FILE.PHP_EOL;
+}
+//sae常量原返回处理
+function  parse_sae_define($define){
+    //将逗号，替换为连接形式
+    $define=str_replace(',', ".','.", $define);
+    return 'SAE_'.$define;
 }
 
 // 编译系统行为扩展类库

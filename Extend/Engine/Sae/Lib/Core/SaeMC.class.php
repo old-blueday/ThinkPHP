@@ -18,6 +18,10 @@ if (!class_exists('SaeMC')) {
 
         //设置文件内容
         static public function set($filename, $content) {
+            if(SAE_RUNTIME){
+                file_put_contents($filename, $content);
+                return ;
+            }
             $time=time();
             self::$handler->set($_SERVER['HTTP_APPVERSION'] . '/' . $filename, $time . $content, MEMCACHE_COMPRESSED, 0);
             self::$contents[$filename]=$content;
@@ -26,11 +30,14 @@ if (!class_exists('SaeMC')) {
 
         //载入文件
         static public function include_file($_filename,$_vars=null) {
-            self::$current_include_file = 'saemc://' . $_SERVER['HTTP_APPVERSION'] . '/' . $_filename;
-            $_content = isset(self::$contents[$_filename]) ? self::$contents[$_filename] : self::getValue($_filename, 'content');
             if(!is_null($_vars))
                 extract($_vars, EXTR_OVERWRITE);
-   
+            if(SAE_RUNTIME){
+                include $_filename;
+                return ;
+            }
+            self::$current_include_file = 'saemc://' . $_SERVER['HTTP_APPVERSION'] . '/' . $_filename;
+            $_content = isset(self::$contents[$_filename]) ? self::$contents[$_filename] : self::getValue($_filename, 'content');
             if (!$_content)
                 exit('<br /><b>SAE_Parse_error</b>: failed to open stream: No such file ' . self::$current_include_file);
             if (@(eval(' ?>' . $_content)) === false)
@@ -54,6 +61,9 @@ if (!class_exists('SaeMC')) {
 
         //获得文件修改时间
         static public function filemtime($filename) {
+            if(SAE_RUNTIME){
+                return filemtime($filename);
+            }
             if (!isset(self::$filemtimes[$filename]))
                 return self::getValue($filename, 'mtime');
             return self::$filemtimes[$filename];
@@ -61,6 +71,10 @@ if (!class_exists('SaeMC')) {
 
         //删除文件
         static public function unlink($filename) {
+            if(SAE_RUNTIME){
+                unlink($filename);//在SAE上会参数报错，方便开发者找到错误
+                return ;
+            }
             if (isset(self::$contents[$filename]))
                 unset(self::$contents[$filename]);
             if (isset(self::$filemtimes[$filename]))
@@ -69,6 +83,9 @@ if (!class_exists('SaeMC')) {
         }
 
         static public function file_exists($filename) {
+            if(SAE_RUNTIME){
+                return file_exists($filename);
+            }
             return self::filemtime($filename) === false ? false : true;
         }
 
@@ -82,10 +99,13 @@ if (!class_exists('SaeMC')) {
 
     }
 
-    register_shutdown_function(array('SaeMC', 'error'));
+    if(!SAE_RUNTIME) register_shutdown_function(array('SaeMC', 'error'));
     //[sae] 初始化memcache
+    if(!SAE_RUNTIME){
     if (!(SaeMC::$handler = @(memcache_init()))) {
         header('Content-Type:text/html; charset=utf-8');
         exit('<div style=\'font-weight:bold;float:left;width:430px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>您的Memcache还没有初始化，请登录SAE平台进行初始化~</div>');
     }
+}
+
 }

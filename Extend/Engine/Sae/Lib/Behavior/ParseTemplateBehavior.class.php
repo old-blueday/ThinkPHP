@@ -47,7 +47,8 @@ class ParseTemplateBehavior extends Behavior {
         $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
         if('think'==$engine){ //[sae] 采用Think模板引擎
             if($this->checkCache($_data['file'])) { // 缓存有效
-                SaeMC::include_file(md5($_data['file']).C('TMPL_CACHFILE_SUFFIX'),$_data['var']);
+                //[sae]，为方便saeCacheBuilder编译， 模板编译缓存不分组
+                SaeMC::include_file(CACHE_PATH.md5($_data['file']).C('TMPL_CACHFILE_SUFFIX'),$_data['var']);
             }else{
                 $tpl = Think::instance('ThinkTemplate');
                 // 编译并加载模板文件
@@ -72,7 +73,7 @@ class ParseTemplateBehavior extends Behavior {
         //[sae] 添加trace信息。
         trace(array(
             '[SAE]核心缓存'=>$_SERVER['HTTP_APPVERSION'].'/'.RUNTIME_FILE,
-            '[SAE]模板缓存'=>$_SERVER['HTTP_APPVERSION'].'/'.md5($_data['file']).C('TMPL_CACHFILE_SUFFIX')
+            '[SAE]模板缓存'=>$_SERVER['HTTP_APPVERSION'].'/'.CACHE_PATH.md5($_data['file']).C('TMPL_CACHFILE_SUFFIX')
         ));
     }
 
@@ -93,7 +94,7 @@ class ParseTemplateBehavior extends Behavior {
         if (!C('TMPL_CACHE_ON')) // 优先对配置设定检测
             return false;
         //[sae] 不加模版目录，简化模版名称
-        $tmplCacheFile = md5($tmplTemplateFile).C('TMPL_CACHFILE_SUFFIX');
+        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('TMPL_CACHFILE_SUFFIX');
         if(!SaeMC::file_exists($tmplCacheFile)){
             return false;
         //}elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {

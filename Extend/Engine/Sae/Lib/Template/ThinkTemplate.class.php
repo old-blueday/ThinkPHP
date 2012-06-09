@@ -45,7 +45,7 @@ class  ThinkTemplate {
      +----------------------------------------------------------
      */
     public function __construct(){
-        //[sae] 不用此项 $this->config['cache_path']        =  C('CACHE_PATH');
+        //$this->config['cache_path']        =  C('CACHE_PATH');
         $this->config['template_suffix']   =  C('TMPL_TEMPLATE_SUFFIX');
         $this->config['cache_suffix']       =  C('TMPL_CACHFILE_SUFFIX');
         $this->config['tmpl_cache']        =  C('TMPL_CACHE_ON');
@@ -98,7 +98,7 @@ class  ThinkTemplate {
     public function loadTemplate ($tmplTemplateFile) {
         $this->templateFile    =  $tmplTemplateFile;
         //[sae] 根据模版文件名定位缓存文件
-        $tmplCacheFile = md5($tmplTemplateFile).$this->config['cache_suffix'];
+        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).$this->config['cache_suffix'];
         // 读取模板文件内容
         $tmplContent = file_get_contents($tmplTemplateFile);
         // 判断是否启用布局
