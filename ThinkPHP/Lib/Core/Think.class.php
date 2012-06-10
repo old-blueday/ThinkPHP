@@ -36,6 +36,7 @@ class Think {
      */
     static public function start() {
         // 设定错误和异常处理
+        register_shutdown_function(array('Think','fatalError'));
         set_error_handler(array('Think','appError'));
         set_exception_handler(array('Think','appException'));
         // 注册AUTOLOAD方法
@@ -260,7 +261,11 @@ class Think {
     static public function appError($errno, $errstr, $errfile, $errline) {
       switch ($errno) {
           case E_ERROR:
+          case E_PARSE:
+          case E_CORE_ERROR:
+          case E_COMPILE_ERROR:
           case E_USER_ERROR:
+            ob_clean();
             $errorStr = "$errstr ".basename($errfile)." 第 $errline 行.";
             if(C('LOG_RECORD')) Log::write("[$errno] ".$errorStr,Log::ERR);
             halt($errorStr);
@@ -273,6 +278,13 @@ class Think {
             Log::record($errorStr,Log::NOTICE);
             break;
       }
+    }
+    
+    // 致命错误捕获
+    static public function fatalError() {
+        if ($e = error_get_last()) { 
+            Think::appError($e['type'],$e['message'],$e['file'],$e['line']);
+        }
     }
 
     /**
