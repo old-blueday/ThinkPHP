@@ -380,7 +380,7 @@ class DbMysqli extends Db{
      */
     public function error() {
         $this->error = $this->_linkID->error;
-        if($this->debug && '' != $this->queryStr){
+        if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         Log::record($this->error,Log::ERR);

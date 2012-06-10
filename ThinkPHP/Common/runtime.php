@@ -23,8 +23,8 @@ define('THINK_VERSION', '3.0');
 define('THINK_RELEASE', '20120323');
 
 //   系统信息
-if(version_compare(PHP_VERSION,'5.3.0','<') ) {
-    set_magic_quotes_runtime (0);
+if(version_compare(PHP_VERSION,'5.3.0','<')) {
+    set_magic_quotes_runtime(0);
     define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
 }else{
     define('MAGIC_QUOTES_GPC',True);

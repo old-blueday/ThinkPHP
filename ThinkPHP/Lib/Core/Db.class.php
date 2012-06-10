@@ -26,8 +26,6 @@ class Db {
     protected $dbType           = null;
     // 是否自动释放查询结果
     protected $autoFree         = false;
-    // 是否显示调试信息 如果启用会在日志文件记录sql语句
-    public $debug             = false;
     // 当前操作所属的模型名
     protected $model =  '_think_';
     // 是否使用永久连接
@@ -110,7 +108,6 @@ class Db {
                 $db->dbType = strtoupper($this->dbType);
             else
                 $db->dbType = $this->_getDsnType($db_config['dsn']);
-            if(APP_DEBUG)  $db->debug    = true;
         }else {
             // 类没有定义
             throw_exception(L('_NO_DB_DRIVER_').': ' . $class);
@@ -301,7 +298,7 @@ class Db {
         $this->modelSql[$this->model]   =  $this->queryStr;
         $this->model  =   '_think_';
         // 记录操作结束时间
-        if ( $this->debug ) {
+        if (C('DB_SQL_LOG')) {
             G('queryEndTime');
             Log::record($this->queryStr.' [ RunTime:'.G('queryStartTime','queryEndTime',6).'s ]',Log::SQL);
         }

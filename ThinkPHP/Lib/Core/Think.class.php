@@ -282,7 +282,7 @@ class Think {
     
     // 致命错误捕获
     static public function fatalError() {
-        if ($e = error_get_last()) { 
+        if ($e = error_get_last()) {
             Think::appError($e['type'],$e['message'],$e['file'],$e['line']);
         }
     }
