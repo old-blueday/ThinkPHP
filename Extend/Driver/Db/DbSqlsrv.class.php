@@ -350,7 +350,7 @@ class DbSqlsrv extends Db{
      */
     public function error() {
         $this->error = sqlsrv_errors();
-        if($this->debug && '' != $this->queryStr){
+        if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         Log::record($this->error,Log::ERR);

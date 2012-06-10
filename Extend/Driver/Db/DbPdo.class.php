@@ -440,7 +440,7 @@ class DbPdo extends Db{
         }else{
             $this->error = '';
         }
-        if($this->debug && '' != $this->queryStr){
+        if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         Log::record($this->error,Log::ERR);

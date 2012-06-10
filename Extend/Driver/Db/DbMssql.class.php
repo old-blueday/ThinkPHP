@@ -359,7 +359,7 @@ class DbMssql extends Db{
      */
     public function error() {
         $this->error = mssql_get_last_message();
-        if($this->debug && '' != $this->queryStr){
+        if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         Log::record($this->error,Log::ERR);

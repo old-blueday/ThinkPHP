@@ -308,7 +308,7 @@ class DbSqlite extends Db {
      */
     public function error() {
         $this->error = sqlite_error_string(sqlite_last_error($this->_linkID));
-        if($this->debug && '' != $this->queryStr){
+        if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         Log::record($this->error,Log::ERR);

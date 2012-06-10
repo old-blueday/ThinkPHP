@@ -331,7 +331,7 @@ class DbPgsql extends Db{
      */
     public function error($result = true) {
         $this->error = $result?pg_result_error($this->queryID): pg_last_error($this->_linkID);
-        if($this->debug && '' != $this->queryStr){
+        if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         Log::record($this->error,Log::ERR);
