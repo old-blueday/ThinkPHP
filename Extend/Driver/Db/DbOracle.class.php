@@ -336,6 +336,7 @@ class DbOracle extends Db{
         if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
+        Log::record($this->error,Log::ERR);
         return $this->error;
     }
 
