@@ -365,7 +365,7 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
      */
     public function error() {
         $this->error = ibase_errmsg();
-        if($this->debug && '' != $this->queryStr){
+        if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         Log::record($this->error,Log::ERR);

@@ -94,7 +94,7 @@ class DbMongo extends Db{
                 $this->_mongo = $this->_linkID->selectDb($db);
             }
             // 当前MongoCollection对象
-            if($this->debug) {
+            if(C('DB_SQL_LOG')) {
                 $this->queryStr   =  $this->_dbName.'.getCollection('.$collection.')';
             }
             if($this->_collectionName != $collection) {
@@ -203,6 +203,7 @@ class DbMongo extends Db{
      */
     public function error() {
         $this->error = $this->_mongo->lastError();
+        Log::record($this->error,Log::ERR);
         return $this->error;
     }
 
@@ -225,7 +226,7 @@ class DbMongo extends Db{
         }
         $this->model  =   $options['model'];
         N('db_write',1);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.insert(';
             $this->queryStr   .= $data?json_encode($data):'{}';
             $this->queryStr   .= ')';
@@ -290,7 +291,7 @@ class DbMongo extends Db{
      */
     public function mongo_next_id($pk) {
         N('db_read',1);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.find({},{'.$pk.':1}).sort({'.$pk.':-1}).limit(1)';
         }
         try{
@@ -325,7 +326,7 @@ class DbMongo extends Db{
         N('db_write',1);
         $query   = $this->parseWhere($options['where']);
         $set  =  $this->parseSet($data);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.update(';
             $this->queryStr   .= $query?json_encode($query):'{}';
             $this->queryStr   .=  ','.json_encode($set).')';
@@ -359,7 +360,7 @@ class DbMongo extends Db{
         $query   = $this->parseWhere($options['where']);
         $this->model  =   $options['model'];
         N('db_write',1);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.remove('.json_encode($query).')';
         }
         try{
@@ -390,7 +391,7 @@ class DbMongo extends Db{
         }
         $this->model  =   $options['model'];
         N('db_write',1);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.remove({})';
         }
         try{
@@ -432,7 +433,7 @@ class DbMongo extends Db{
         $query  =  $this->parseWhere($options['where']);
         $field =  $this->parseField($options['field']);
         try{
-            if($this->debug) {
+            if(C('DB_SQL_LOG')) {
                 $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.find(';
                 $this->queryStr  .=  $query? json_encode($query):'{}';
                 $this->queryStr  .=  $field? ','.json_encode($field):'';
@@ -443,7 +444,7 @@ class DbMongo extends Db{
             $_cursor   = $this->_collection->find($query,$field);
             if($options['order']) {
                 $order   =  $this->parseOrder($options['order']);
-                if($this->debug) {
+                if(C('DB_SQL_LOG')) {
                     $this->queryStr .= '.sort('.json_encode($order).')';
                 }
                 $_cursor =  $_cursor->sort($order);
@@ -462,12 +463,12 @@ class DbMongo extends Db{
             if(isset($options['limit'])) {
                 list($offset,$length) =  $this->parseLimit($options['limit']);
                 if(!empty($offset)) {
-                    if($this->debug) {
+                    if(C('DB_SQL_LOG')) {
                         $this->queryStr .= '.skip('.intval($offset).')';
                     }
                     $_cursor =  $_cursor->skip(intval($offset));
                 }
-                if($this->debug) {
+                if(C('DB_SQL_LOG')) {
                     $this->queryStr .= '.limit('.intval($length).')';
                 }
                 $_cursor =  $_cursor->limit(intval($length));
@@ -511,7 +512,7 @@ class DbMongo extends Db{
         N('db_query',1);
         $query  =  $this->parseWhere($options['where']);
         $fields    = $this->parseField($options['field']);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr = $this->_dbName.'.'.$this->_collectionName.'.findOne(';
             $this->queryStr .= $query?json_encode($query):'{}';
             $this->queryStr .= $fields?','.json_encode($fields):'';
@@ -549,7 +550,7 @@ class DbMongo extends Db{
         $this->model  =   $options['model'];
         N('db_query',1);
         $query  =  $this->parseWhere($options['where']);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName;
             $this->queryStr   .= $query?'.find('.json_encode($query).')':'';
             $this->queryStr   .= '.count()';
@@ -583,7 +584,7 @@ class DbMongo extends Db{
             $this->switchCollection($collection,'',false);
         }
         N('db_query',1);
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.findOne()';
         }
         try{
@@ -616,7 +617,7 @@ class DbMongo extends Db{
      +----------------------------------------------------------
      */
     public function getTables(){
-        if($this->debug) {
+        if(C('DB_SQL_LOG')) {
             $this->queryStr   =  $this->_dbName.'.getCollenctionNames()';
         }
         N('db_query',1);
