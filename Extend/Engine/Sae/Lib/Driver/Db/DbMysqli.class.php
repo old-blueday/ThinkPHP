@@ -60,9 +60,25 @@ class DbMysqli extends Db{
             $this->linkID[$linkNum] = new mysqli($config['hostname'],$config['username'],$config['password'],$config['database'],$config['hostport']?intval($config['hostport']):3306);
             if (mysqli_connect_errno()){
                 $errStr=mysqli_connect_error();
-                //[sae] 短信预警
-                if(C('SMS_ON')) Sms::send('连接数据库时出错，请在SAE日志中心查看详情',$errStr,Sms::MYSQL_ERROR);
-                throw_exception($errStr);
+                $errno=mysqli_connect_errno();
+                if($errno==13047){
+                    if(C('SMS_ON')) Sms::send('mysql超额被禁用,请在SAE日志中心查看详情', $errStr,Sms::MYSQL_ERROR);
+                    //[sae]启动备用数据库
+                    if(C('SPARE_DB_HOST')){
+                        $this->linkID[$linkNum]=new mysqli(C('SPARE_DB_HOST'),C('SPARE_DB_USER'),C('SPARE_DB_PWD'),C('SPARE_DB_NAME'),C('SPARE_DB_PORT')?intval(C('SPARE_DB_PORT')):3306);
+                        if(mysqli_connect_error()){
+                            throw_exception(mysqli_connect_errno());
+                        }
+                        $this->is_spare=true;
+                    }else{
+                        throw_exception($errStr);
+                    }
+                    //标记使用备用数据库状态
+                }else{
+                    //[sae] 短信预警
+                    if(C('SMS_ON')) Sms::send('数据库连接时出错,请在SAE日志中心查看详情', $errStr,Sms::MYSQL_ERROR);
+                    throw_exception($errStr);
+                }
          }
             $dbVersion = $this->linkID[$linkNum]->server_version;
             if ($dbVersion >= '4.1') {
@@ -147,6 +163,13 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     public function execute($str) {
+        //[sae] 判断是否开启了备用数据库
+        if($this->is_spare && !C('SPARE_DB_WRITEABLE')){
+            $this->error='mysql out of quota and spare db not writeable';
+            if(C('SPARE_INFO_FUNCTION')) 
+                call_user_func(C('SPARE_INFO_FUNCTION'));
+            return false;
+        }
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         $this->queryStr = $str;
