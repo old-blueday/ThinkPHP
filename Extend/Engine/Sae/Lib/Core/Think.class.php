@@ -36,13 +36,13 @@ class Think {
      */
     static public function start() {
         // 设定错误和异常处理
+        register_shutdown_function(array('Think','fatalError'));
         set_error_handler(array('Think','appError'));
         set_exception_handler(array('Think','appException'));
         // 注册AUTOLOAD方法
         spl_autoload_register(array('Think', 'autoload'));
         //[RUNTIME]
         Think::buildApp();         // 预编译项目
-        //TODU,是否是缓存生成器在访问，如果时返回缓存生成器方法
         //[/RUNTIME]
         // 运行应用
         App::run();
@@ -59,7 +59,6 @@ class Think {
      * @return string
      +----------------------------------------------------------
      */
-    //TODU,将部分IS_DEBUG常量，改为  IS_COMPILE常量
     static private function buildApp() {
         // 加载底层惯例配置文件
         C(include THINK_PATH.'Conf/convention.php');
@@ -112,7 +111,8 @@ class Think {
             $list  =  array(
                 SAE_PATH.'Common/functions.php', //[sae] 标准模式函数库
                 SAE_PATH.'Common/sae_functions.php',//[sae]新增sae专用函数
-                SAE_PATH.'Lib/Core/Log.class.php',    // 日志处理类
+                SAE_PATH.'Lib/Core/Log.class.php',    //[sae] 日志处理类
+                SAE_PATH.'Lib/Core/Sms.class.php',    //[sae] 短信预警类
                 CORE_PATH.'Core/Dispatcher.class.php', // URL调度类
                 CORE_PATH.'Core/App.class.php',   // 应用程序类
                 SAE_PATH.'Lib/Core/Action.class.php', //[sae] 控制器类
@@ -267,9 +267,15 @@ class Think {
     static public function appError($errno, $errstr, $errfile, $errline) {
       switch ($errno) {
           case E_ERROR:
+          case E_PARSE:
+          case E_CORE_ERROR:
+          case E_COMPILE_ERROR:
           case E_USER_ERROR:
-            $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-            if(C('LOG_RECORD')) Log::write($errorStr,Log::ERR);
+            ob_clean();
+            $errorStr = "$errstr ".basename($errfile)." 第 $errline 行.";
+            if(C('LOG_RECORD')) Log::write("[$errno] ".$errorStr,Log::ERR);
+            //[sae] 短信预警
+            if(C('SMS_ON')) Sms::send('程序出现致命错误,请在SAE日志中心查看详情',$errorStr,Sms::ERR);
             halt($errorStr);
             break;
           case E_STRICT:
@@ -278,8 +284,17 @@ class Think {
           default:
             $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
             Log::record($errorStr,Log::NOTICE);
+            //[sae] 短信预警
+            if(C('SMS_ON')) Sms::send('程序出现Notice报错，请在SAE日志中心查看详情',$errorStr,Sms::NOTICE);
             break;
       }
+    }
+    
+    // 致命错误捕获
+    static public function fatalError() {
+        if ($e = error_get_last()) {
+            Think::appError($e['type'],$e['message'],$e['file'],$e['line']);
+        }
     }
 
     /**

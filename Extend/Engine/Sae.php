@@ -25,6 +25,7 @@ if(PHP_SAPI=='cli' && (!defined('MODE_NAME') || strtolower(MODE_NAME)!='cli')){
     defined('ENGINE_PATH') or define('ENGINE_PATH', THINK_PATH . '/Extend/Engine/');
     define('SAE_PATH', ENGINE_PATH . 'Sae/');
     define('IS_SAE', TRUE);
+    define('SAE_CACHE_BUILDER',true);
     require SAE_PATH . 'Lib/Core/SaeMC.class.php';
     //载入缓存创建类
     require SAE_PATH.'/Lib/Extend/Tool/SaeCacheBuilder/runtime.php';
@@ -46,7 +47,7 @@ if (!isset($_SERVER['HTTP_APPCOOKIE'])) {
     require THINK_PATH . 'ThinkPHP.php';
 } else {
     define('IS_SAE', TRUE);
-    defined('SAE_RUNTIME') or defined('SAE_RUNTIME',false);
+    defined('SAE_RUNTIME') or define('SAE_RUNTIME',false);
     require SAE_PATH . 'Lib/Core/SaeMC.class.php';
     //记录开始运行时间
     $GLOBALS['_beginTime'] = microtime(TRUE);

@@ -43,7 +43,6 @@ class Think {
         spl_autoload_register(array('Think', 'autoload'));
         //[RUNTIME]
         Think::buildApp();         // 预编译项目
-        //TODU,是否是缓存生成器在访问，如果时返回缓存生成器方法
         //[/RUNTIME]
         //编译模版
         self::buildTemplateCache();
@@ -92,7 +91,6 @@ class Think {
      * @return string
      +----------------------------------------------------------
      */
-    //TODU,将部分IS_DEBUG常量，改为  IS_COMPILE常量
     static private function buildApp() {
         // 加载底层惯例配置文件
         C(include THINK_PATH.'Conf/convention.php');

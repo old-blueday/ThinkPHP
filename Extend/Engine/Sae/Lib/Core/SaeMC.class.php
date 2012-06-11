@@ -93,13 +93,14 @@ if (!class_exists('SaeMC')) {
             $error = error_get_last();
             if (!is_null($error)) {
                 $file = strpos($error['file'], 'eval()') !== false ? self::$current_include_file : $error['file'];
+                if(C('SMS_ON')) Sms::send($error['message'].'[file:'.$file.'][line:'.$error['line'].']',Sms::ERR);
                 exit("<br /><b>SAE_error</b>:  {$error['message']} in <b>" . $file . "</b> on line <b>{$error['line']}</b><br />");
             }
         }
 
     }
 
-    if(!SAE_RUNTIME) register_shutdown_function(array('SaeMC', 'error'));
+    register_shutdown_function(array('SaeMC', 'error'));
     //[sae] 初始化memcache
     if(!SAE_RUNTIME){
     if (!(SaeMC::$handler = @(memcache_init()))) {

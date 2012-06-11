@@ -61,9 +61,9 @@ class Log {
      +----------------------------------------------------------
      */
     static function record($message,$level=self::ERR,$record=false) {
-        if($record || strpos(C('LOG_LEVEL'),$level)) {
+        if($record || strpos(C('LOG_LEVEL'),$level)!==false) {
             //[sae] 下不记录时间 sae_debug会记录
-            self::$log[] = '###'.$_SERVER['REQUEST_URI'] . " | {$level}: {$message}###";
+            self::$log[] = "------｛{$level}: {$message}｝------";
         }
     }
 
@@ -84,6 +84,7 @@ class Log {
     //[sae]保存日志
     static function save($type='',$destination='',$extra='') {
         self::sae_set_display_errors(false);
+        sae_debug('###---｛'.get_client_ip().' REQUEST_URI:'.$_SERVER['REQUEST_URI'].'｝---###');
         foreach (self::$log as $log)
             sae_debug($log);
         // 保存后清空日志缓存

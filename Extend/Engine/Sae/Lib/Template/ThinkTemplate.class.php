@@ -45,7 +45,7 @@ class  ThinkTemplate {
      +----------------------------------------------------------
      */
     public function __construct(){
-        //$this->config['cache_path']        =  C('CACHE_PATH');
+        //[sae] 不用此配置 $this->config['cache_path']        =  C('CACHE_PATH');
         $this->config['template_suffix']   =  C('TMPL_TEMPLATE_SUFFIX');
         $this->config['cache_suffix']       =  C('TMPL_CACHFILE_SUFFIX');
         $this->config['tmpl_cache']        =  C('TMPL_CACHE_ON');

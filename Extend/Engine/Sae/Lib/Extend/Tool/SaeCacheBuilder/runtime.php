@@ -191,7 +191,8 @@ function build_runtime_cache($append='') {
     if(defined('RUNTIME_DEF_FILE')) { //[sae] 编译后的常量文件外部引入
         //SaeMC::set(RUNTIME_DEF_FILE, '<?php '.array_define($defs['user']));
         //[saebuilder] 生成常量文件
-        $defs['user']['APP_DEBUG']=false;//[saebuild] APP_DEBUG固定为false
+        $defs['user']['APP_DEBUG']=false;//[saebuilder] APP_DEBUG固定为false
+        unset($defs['user']['SAE_CACHE_BUILDER']);//[saebuilder]去掉SAE_CACHE_BUILDER常量
         file_put_contents(RUNTIME_DEF_FILE, '<?php '.array_define($defs['user']));
         echo 'build runtime_def_file:'.RUNTIME_DEF_FILE.PHP_EOL;
         $content  .=  'SaeMC::include_file(\''.RUNTIME_DEF_FILE.'\');';
@@ -218,7 +219,7 @@ function build_runtime_cache($append='') {
     $content .= 'alias_import('.var_export($alias,true).');';
     // 编译框架默认语言包和配置参数
     //[saebuilder] 处理配置项，将SAE常量原样输出
-    $content .= $append."\nL(".var_export(L(),true).");C(".preg_replace('/\'SAE_(.*?)\'/e', 'parse_sae_define("\\1")', var_export(C(),true)).');G(\'loadTime\');Think::Start();';
+    $content .= $append."\nL(".var_export(L(),true).");C(".preg_replace(array('/\'SAE_(.*?)\'/e','/\'~([a-zA-Z_][a-zA-Z0-9_]*)\((.*?)\)\'/'), array('parse_sae_define("\\1")','\\1(\\2)'), var_export(C(),true)).');G(\'loadTime\');Think::Start();';
     //[saebuilder] 生成缓存文件
     //SaeMC::set(RUNTIME_FILE, strip_whitespace('<?php '.$content));
     file_put_contents(RUNTIME_FILE, strip_whitespace('<?php '.$content));
