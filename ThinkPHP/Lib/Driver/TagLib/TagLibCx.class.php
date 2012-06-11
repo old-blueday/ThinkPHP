@@ -690,6 +690,7 @@ class TagLibCx extends TagLib {
     	$step 		= 1;
     	$comparison = 'lt';
     	$name		= 'i';
+		$rand       = rand(); //添加随机数，防止嵌套变量冲突
     	//获取属性
     	foreach ($this->parseXmlAttr($attr, 'for') as $key => $value){
     		$value = trim($value);
@@ -706,8 +707,8 @@ class TagLibCx extends TagLib {
     		}
     	}
     	
-    	$parseStr   = '<?php $__FOR_START__='.$start.';$__FOR_END__='.$end.';';
-    	$parseStr  .= 'for($'.$name.'=$__FOR_START__;'.$this->parseCondition('$'.$name.' '.$comparison.' $__FOR_END__').';$'.$name.'+='.$step.'){ ?>';
+    	$parseStr   = '<?php $__FOR_START_'.$rand.'__='.$start.';$__FOR_END_'.$rand.'__='.$end.';';
+    	$parseStr  .= 'for($'.$name.'=$__FOR_START_'.$rand.'__;'.$this->parseCondition('$'.$name.' '.$comparison.' $__FOR_END_'.$rand.'__').';$'.$name.'+='.$step.'){ ?>';
     	$parseStr  .= $content;
     	$parseStr  .= '<?php } ?>';
     	return $parseStr;
