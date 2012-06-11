@@ -30,8 +30,8 @@ function halt($error) {
             $trace = debug_backtrace();
             $e['message'] = $error;
             $e['file'] = $trace[0]['file'];
-            $e['class'] = $trace[0]['class'];
-            $e['function'] = $trace[0]['function'];
+            $e['class'] = isset($trace[0]['class'])?$trace[0]['class']:'';
+            $e['function'] = isset($trace[0]['function'])?$trace[0]['function']:'';
             $e['line'] = $trace[0]['line'];
             $traceInfo = '';
             $time = date('y-m-d H:i:m');
