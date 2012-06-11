@@ -607,11 +607,7 @@ function get_client_ip($type = 0) {
     }
     // IP地址合法验证
     $long = ip2long($ip);
-    if($long)
-    	$ip = array($ip, $long);
-    else
-    	$ip = array('0.0.0.0', 0);
-
+    $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
     return $ip[$type];
 }
 
