@@ -39,6 +39,9 @@ class DbMysqli extends Db{
         }
         if(!empty($config)) {
             $this->config   =   $config;
+            if(empty($this->config['params'])) {
+                $this->config['params'] =   '';
+            }
         }
     }
 
