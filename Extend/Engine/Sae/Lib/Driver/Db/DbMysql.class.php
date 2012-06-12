@@ -172,9 +172,12 @@ class DbMysql extends Db{
     public function execute($str) {
         //[sae] 判断是否开启了备用数据库
         if($this->is_spare && !C('SPARE_DB_WRITEABLE')){
-            $this->error='mysql out of quota and spare db not writeable';
             $fun=C('SPARE_INFO_FUNCTION');
-            if($fun) $fun();
+            if($fun){
+                $fun();
+                exit();
+            }
+            $this->error='mysql out of quota and spare db not writeable';
             return false;
         }
         $this->initConnect(true);

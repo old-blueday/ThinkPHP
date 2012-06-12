@@ -43,7 +43,7 @@ class Sms {
                 $sms = apibus::init('sms');
                 if (is_null($mobile)) $mobile = C('SMS_MOBILE');
                 $mc = memcache_init();
-                $obj = $sms->send($mobile, mb_substr(C('SMS_SIGN').$msg, 0,60,'utf-8'), "UTF-8");
+                $obj = $sms->send($mobile, mb_substr(C('SMS_SIGN').$msg, 0,65,'utf-8'), "UTF-8");
                 if($sms->isError($obj)){
                     $status='failed';
                 }else{
