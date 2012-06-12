@@ -205,21 +205,22 @@ function alias_import($alias, $classfile='') {
  * D函数用于实例化Model 格式 项目://分组/模块
  +----------------------------------------------------------
  * @param string name Model资源地址
+ * @param string layer 业务层名称
   +----------------------------------------------------------
  * @return Model
   +----------------------------------------------------------
  */
-function D($name='') {
+function D($name='',$layer='Model') {
     if(empty($name)) return new Model;
     static $_model = array();
     if(strpos($name,'://')) {// 指定项目
-        $name   =  str_replace('://','/Model/',$name);
+        $name   =  str_replace('://','/'.$layer.'/',$name);
     }else{
-        $name   =  C('DEFAULT_APP').'/Model/'.$name;
+        $name   =  C('DEFAULT_APP').'/'.$layer.'/'.$name;
     }
     if(isset($_model[$name]))   return $_model[$name];
-    import($name.'Model');
-    $class   =   basename($name.'Model');
+    import($name.$layer);
+    $class   =   basename($name.$layer);
     if(class_exists($class)) {
         $model = new $class();
     }else {
