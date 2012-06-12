@@ -46,7 +46,7 @@ function halt($error) {
             $e = $error;
         }
         // 包含异常页面模板
-        include realpath(C('TMPL_EXCEPTION_FILE'));
+        include C('TMPL_EXCEPTION_FILE');
     } else {
         //否则定向到错误页面
         $error_page = C('ERROR_PAGE');
@@ -58,7 +58,7 @@ function halt($error) {
             else
                 $e['message'] = C('ERROR_MESSAGE');
             // 包含异常页面模板
-            include realpath(C('TMPL_EXCEPTION_FILE'));
+            include C('TMPL_EXCEPTION_FILE');
         }
     }
     exit;
