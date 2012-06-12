@@ -268,7 +268,7 @@ class Think {
             ob_clean();
             $errorStr = "$errstr ".basename($errfile)." 第 $errline 行.";
             if(C('LOG_RECORD')) Log::write("[$errno] ".$errorStr,Log::ERR);
-            halt($errorStr);
+            function_exists('halt')?halt($errorStr):exit($errorStr);
             break;
           case E_STRICT:
           case E_USER_WARNING:
