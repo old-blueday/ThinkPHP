@@ -58,10 +58,10 @@ class DbMysqli extends Db{
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
             $this->linkID[$linkNum] = new mysqli($config['hostname'],$config['username'],$config['password'],$config['database'],$config['hostport']?intval($config['hostport']):3306);
-            if (mysqli_connect_errno()){
+            if (mysqli_connect_errno() || C('SPARE_DB_DEBUG')){
                 $errStr=mysqli_connect_error();
                 $errno=mysqli_connect_errno();
-                if($errno==13047){
+                if($errno==13047 || C('SPARE_DB_DEBUG')){
                     if(C('SMS_ON')) Sms::send('mysql超额被禁用,请在SAE日志中心查看详情', $errStr,Sms::MYSQL_ERROR);
                     //[sae]启动备用数据库
                     if(C('SPARE_DB_HOST')){

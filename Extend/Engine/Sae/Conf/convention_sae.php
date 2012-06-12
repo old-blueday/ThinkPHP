@@ -16,8 +16,9 @@ return array(
         'SPARE_DB_USER'=>'',
         'SPARE_DB_PWD'=>'',
         'SPARE_DB_PORT'=>'',
-        'SPARE_DB_WRITEABLE'=>false,//备用数据库是否允许写入数据
         'SPARE_INFO_FUNCTION'=>'',//给用户显示提示信息的函数
+        'SPARE_DB_DEBUG'=>false,//备用数据库调试，如果设置为true则会模拟mysql超额的状态
+        'SPARE_DB_WRITEABLE'=>false,//备用数据库是否允许写入数据
         //短信预警设置
         'SMS_ON'=>false,//短信预警开关
         'SMS_MOBILE'=>'',//接收短信的手机号
