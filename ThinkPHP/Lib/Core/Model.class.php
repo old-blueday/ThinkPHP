@@ -63,7 +63,7 @@ class Model {
     // 是否批处理验证
     protected $patchValidate   =  false;
     // 链操作方法列表
-    protected $methods = array('table','where','order','limit','page','alias','having','group','lock','distinct','auto','filter','validate');
+    protected $methods = array('table','order','limit','page','alias','having','group','lock','distinct','auto','filter','validate');
 
     /**
      +----------------------------------------------------------
@@ -1655,6 +1655,32 @@ class Model {
         
         if(is_array($options) && !empty($options)){
             $this->options  =   array_merge($this->options,array_change_key_case($options));
+        }
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 指定查询条件 支持安全过滤
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $where
+     * @param array $params
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function where(){
+        $args = func_get_args();
+        if($args) {
+            $where  =   array_shift($args);
+            if(empty($args)) {
+                $this->options['where'] =   $where;
+            }elseif(is_string($where)){
+                array_unshift($args,$where);
+                $this->options['where'] =   call_user_func_array('sprintf',$args);
+            }
         }
         return $this;
     }
