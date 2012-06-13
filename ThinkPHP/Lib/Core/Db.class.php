@@ -458,7 +458,7 @@ class Db {
         $whereStr = '';
         if(is_string($where)) {
             // 直接使用字符串条件
-            $whereStr = $where;
+            $whereStr = $this->escapeString($where);
         }else{ // 使用数组或者对象条件表达式
             if(isset($where['_logic'])) {
                 // 定义逻辑运算规则 例如 OR XOR AND NOT
