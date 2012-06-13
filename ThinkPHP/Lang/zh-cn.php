@@ -54,4 +54,5 @@ return array(
     '_TOKEN_ERROR_'=>'表单令牌错误',
     '_RECORD_HAS_UPDATE_'=>'记录已经更新',
     '_NOT_ALLOW_PHP_'=>'模板禁用PHP代码',
+    '_PARAM_ERROR_'=>'参数错误或者未定义',
 );
