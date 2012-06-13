@@ -7,10 +7,11 @@
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
+// |         lanfengye <zibin_5257@163.com>
 // +----------------------------------------------------------------------
 // $Id$
-
 class Page {
+	
     // 分页栏每页显示的页数
     public $rollPage = 5;
     // 页数跳转时要带的参数
@@ -70,30 +71,36 @@ class Page {
      * 分页显示输出
      +----------------------------------------------------------
      * @access public
+     * @author lanfengye <zibin_5257@163.com>
      +----------------------------------------------------------
      */
     public function show() {
         if(0 == $this->totalRows) return '';
         $p = $this->varPage;
         $nowCoolPage      = ceil($this->nowPage/$this->rollPage);
-        $url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?").$this->parameter;
-        $parse = parse_url($url);
-        if(isset($parse['query'])) {
-            parse_str($parse['query'],$params);
-            unset($params[$p]);
-            $url   =  $parse['path'].'?'.http_build_query($params);
-        }
+        
+        //获取控制器名和方法名，并判断是否url不区分大小写
+        $url_case=C('URL_CASE_INSENSITIVE');
+        $module_name=  $url_case?strtolower(parse_name(MODULE_NAME)):parse_name(MODULE_NAME);
+        $action_name= $url_case?strtolower(parse_name(ACTION_NAME)):parse_name(ACTION_NAME);
+        
+        //替换附加参数中的分隔符
+        $parameter=  str_replace('&', C('URL_PATHINFO_DEPR'), $this->parameter);
+        $parameter=  str_replace('=', C('URL_PATHINFO_DEPR'), $parameter);
+        //增加附加参数
+        $url  =  __APP__.'/'.$module_name.C('URL_PATHINFO_DEPR').$action_name.$parameter;
+        
         //上下翻页字符串
         $upRow   = $this->nowPage-1;
         $downRow = $this->nowPage+1;
         if ($upRow>0){
-            $upPage="<a href='".$url."&".$p."=$upRow'>".$this->config['prev']."</a>";
+            $upPage="<a href='".$url.C('URL_PATHINFO_DEPR').$p.C('URL_PATHINFO_DEPR')."$upRow".C('URL_HTML_SUFFIX')."'>".$this->config['prev']."</a>";
         }else{
             $upPage="";
         }
 
         if ($downRow <= $this->totalPages){
-            $downPage="<a href='".$url."&".$p."=$downRow'>".$this->config['next']."</a>";
+            $downPage="<a href='".$url.C('URL_PATHINFO_DEPR').$p.C('URL_PATHINFO_DEPR')."$downRow".C('URL_HTML_SUFFIX')."'>".$this->config['next']."</a>";
         }else{
             $downPage="";
         }
@@ -103,8 +110,8 @@ class Page {
             $prePage = "";
         }else{
             $preRow =  $this->nowPage-$this->rollPage;
-            $prePage = "<a href='".$url."&".$p."=$preRow' >上".$this->rollPage."页</a>";
-            $theFirst = "<a href='".$url."&".$p."=1' >".$this->config['first']."</a>";
+            $prePage = "<a href='".$url.C('URL_PATHINFO_DEPR').$p.C('URL_PATHINFO_DEPR')."$preRow".C('URL_HTML_SUFFIX')."' >上".$this->rollPage."页</a>";
+            $theFirst = "<a href='".$url.C('URL_PATHINFO_DEPR').$p.C('URL_PATHINFO_DEPR')."1".C('URL_HTML_SUFFIX')."' >".$this->config['first']."</a>";
         }
         if($nowCoolPage == $this->coolPages){
             $nextPage = "";
@@ -112,8 +119,8 @@ class Page {
         }else{
             $nextRow = $this->nowPage+$this->rollPage;
             $theEndRow = $this->totalPages;
-            $nextPage = "<a href='".$url."&".$p."=$nextRow' >下".$this->rollPage."页</a>";
-            $theEnd = "<a href='".$url."&".$p."=$theEndRow' >".$this->config['last']."</a>";
+            $nextPage = "<a href='".$url.C('URL_PATHINFO_DEPR').$p.C('URL_PATHINFO_DEPR')."$nextRow".C('URL_HTML_SUFFIX')."' >下".$this->rollPage."页</a>";
+            $theEnd = "<a href='".$url.C('URL_PATHINFO_DEPR').$p.C('URL_PATHINFO_DEPR')."$theEndRow".C('URL_HTML_SUFFIX')."' >".$this->config['last']."</a>";
         }
         // 1 2 3 4 5
         $linkPage = "";
@@ -121,7 +128,7 @@ class Page {
             $page=($nowCoolPage-1)*$this->rollPage+$i;
             if($page!=$this->nowPage){
                 if($page<=$this->totalPages){
-                    $linkPage .= "&nbsp;<a href='".$url."&".$p."=$page'>&nbsp;".$page."&nbsp;</a>";
+                    $linkPage .= "&nbsp;<a href='".$url.C('URL_PATHINFO_DEPR').$p.C('URL_PATHINFO_DEPR')."$page".C('URL_HTML_SUFFIX')."'>&nbsp;".$page."&nbsp;</a>";
                 }else{
                     break;
                 }
