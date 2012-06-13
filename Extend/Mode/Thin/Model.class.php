@@ -197,31 +197,31 @@ class Model {
      +----------------------------------------------------------
      * @param integer $linkNum  连接序号
      * @param mixed $config  数据库连接信息
-     * @param array $params  模型参数
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
      */
-    public function db($linkNum,$config='',$params=array()){
+    public function db($linkNum='',$config=''){
+        if(''===$linkNum && $this->db) {
+            return $this->db;
+        }
+        static $_linkNum    =   array();
         static $_db = array();
-        if(!isset($_db[$linkNum])) {
+        if(!isset($_db[$linkNum]) || (isset($_db[$linkNum]) && $_linkNum[$linkNum]!=$config) ) {
             // 创建一个新的实例
+            if(!empty($config) && is_string($config) && false === strpos($config,'/')) { // 支持读取配置参数
+                $config  =  C($config);
+            }
             $_db[$linkNum]            =    Db::getInstance($config);
         }elseif(NULL === $config){
             $_db[$linkNum]->close(); // 关闭数据库连接
             unset($_db[$linkNum]);
             return ;
         }
-        if(!empty($params)) {
-            if(is_string($params))    parse_str($params,$params);
-            foreach ($params as $name=>$value){
-                $this->setProperty($name,$value);
-            }
-        }
+        // 记录连接信息
+        $_linkNum[$linkNum] =   $config;
         // 切换数据库连接
         $this->db   =    $_db[$linkNum];
         return $this;
     }
-
-};
-?>
+}
