@@ -23,7 +23,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-!defined('THINK_PATH') && exit();
+defined('THINK_PATH') or exit();
 return  array(
     /* 项目设定 */
     'APP_STATUS'            => 'debug',  // 应用调试模式状态 调试模式开启后有效 默认为debug 可扩展 并自动加载对应的配置文件

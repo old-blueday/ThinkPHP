@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-!defined('THINK_PATH') && exit();
+defined('THINK_PATH') or exit();
 // 调试模式下面默认设置 可以在项目配置目录下重新定义 debug.php 覆盖
 return  array(
     'LOG_RECORD'=>true,  // 进行日志记录

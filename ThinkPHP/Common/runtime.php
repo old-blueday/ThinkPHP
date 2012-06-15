@@ -15,7 +15,7 @@
  * ThinkPHP 运行时文件 编译后不再加载
  +------------------------------------------------------------------------------
  */
-!defined('THINK_PATH') && exit();
+defined('THINK_PATH') or exit();
 if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
 
 //  版本信息
