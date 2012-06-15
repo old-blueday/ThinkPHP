@@ -23,7 +23,7 @@ return array(
         'SMS_ON'=>false,//短信预警开关
         'SMS_MOBILE'=>'',//接收短信的手机号
         'SMS_LEVEL'=>'ERR,MYSQL_ERROR,USER',//可以设置的有：ERR,MYSQL_ERROR,USER,NOTIC
-        'SMS_INTERVAL'=>1800,//发送短信的间隔频率
+        'SMS_INTERVAL'=>15,//发送短信的间隔频率
         'SMS_SIGN'=>'',//短信签名， 如果有多个网站，可以用它来识别是哪个网站在进行短信报警
         'SAE_SPECIALIZED_FILES'=>array(
             //SAE系统专属文件。
