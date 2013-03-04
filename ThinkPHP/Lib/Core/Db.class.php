@@ -335,8 +335,16 @@ class Db {
     protected function parseSet($data) {
         foreach ($data as $key=>$val){
             $value   =  $this->parseValue($val);
-            if(is_scalar($value)) // 过滤非标量数据
-                $set[]    = $this->parseKey($key).'='.$value;
+         
+                 if($val['field']!=""){
+					 //增加updatte set 字段1=字段2需求
+					 //data['xx']=array("field"=>'yy');   
+                       $tt=$val['field'];
+                       $set[]    = $this->parseKey($key).'='.$tt; 
+				  }else{
+                       if(is_scalar($value)) // 过滤非标量数据
+                       $set[]    = $this->parseKey($key).'='.$value;
+				  }
         }
         return ' SET '.implode(',',$set);
     }
